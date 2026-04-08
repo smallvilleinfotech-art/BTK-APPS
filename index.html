@@ -1734,7 +1734,12 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
 function applyLogo(){
   ['login-logo-img','sb-logo-img','footer-logo-img','mobile-logo-img'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el){el.src=LOGO_SRC;el.onerror=function(){this.style.display='none';};}
+    if (el && typeof LOGO_SRC !== "undefined" && LOGO_SRC !== "") {
+  el.src = LOGO_SRC;
+  el.onerror = function () {
+    this.style.display = 'none';
+  };
+}
   });
 }
 if(document.readyState==='loading'){
