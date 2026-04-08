@@ -461,7 +461,109 @@ tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!impo
 .lb-metric-fill{height:100%;border-radius:5px;transition:width .5s ease;}
 .lb-metric-val{font-size:12px;font-weight:800;color:var(--dark);min-width:36px;text-align:right;}
 
-.ss{border-radius:22px;overflow:hidden;margin-bottom:22px;position:relative;height:192px;box-shadow:var(--sh2),0 0 0 1px rgba(240,124,0,.1);}
+/* ═══════════════════════════════════════════
+   RANK BADGE — Student Dashboard Hero
+═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;900&display=swap');
+
+.dash-hero-row{
+  display:grid;
+  grid-template-columns:1fr 280px;
+  gap:18px;
+  margin-bottom:22px;
+  align-items:stretch;
+}
+.rank-badge-card{
+  border-radius:22px;
+  background:linear-gradient(145deg,#1A0800 0%,#2C1400 40%,#1A0800 100%);
+  box-shadow:0 8px 40px rgba(240,100,0,.35),0 0 0 1px rgba(255,184,64,.2),inset 0 1px 0 rgba(255,255,255,.07);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:22px 16px;position:relative;overflow:hidden;
+}
+.rank-badge-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,184,0,.18) 0%,transparent 65%);
+  pointer-events:none;
+}
+/* Animated shimmer sweep */
+.rank-badge-card::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+  animation:rankShimmer 3.5s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes rankShimmer{0%{left:-100%;}60%{left:150%;}100%{left:150%;}}
+
+.rank-badge-label{
+  font-family:'Cinzel',serif;
+  font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(255,184,64,.7);margin-bottom:14px;
+}
+/* 3D circle ring */
+.rank-badge-ring{
+  position:relative;width:148px;height:148px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+}
+.rank-badge-ring svg{
+  position:absolute;inset:0;width:100%;height:100%;
+}
+.rank-ring-outer{animation:rankSpin 8s linear infinite;}
+.rank-ring-pulse{animation:rankPulse 2.2s ease-in-out infinite;}
+@keyframes rankSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes rankPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
+
+.rank-badge-inner{
+  position:relative;z-index:2;
+  width:110px;height:110px;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%,#3D1A00,#1A0800);
+  box-shadow:inset 0 4px 16px rgba(0,0,0,.6),inset 0 -2px 8px rgba(255,184,0,.12),0 6px 24px rgba(0,0,0,.5);
+}
+.rank-badge-num{
+  font-family:'Cinzel Decorative',cursive;
+  line-height:1;color:white;
+  text-shadow:0 0 20px rgba(255,184,0,.8),0 0 40px rgba(255,120,0,.4),0 2px 4px rgba(0,0,0,.8);
+}
+.rank-badge-hash{font-size:18px;font-weight:700;opacity:.7;margin-bottom:-4px;}
+.rank-badge-digits{font-size:52px;font-weight:900;letter-spacing:-2px;}
+.rank-badge-cohort{
+  font-family:'Cinzel',serif;
+  font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,184,64,.8);text-align:center;line-height:1.4;
+  margin-top:2px;padding:0 8px;
+}
+.rank-badge-total{
+  font-family:'Cinzel',serif;
+  font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.35);
+  margin-top:8px;
+}
+/* Gold/Silver/Bronze/default ring colours — set via JS data-rank attr */
+.rank-badge-card[data-rank="1"] .rank-badge-num{color:#FFD700;text-shadow:0 0 24px rgba(255,215,0,.9),0 0 48px rgba(255,165,0,.5),0 2px 4px rgba(0,0,0,.8);}
+.rank-badge-card[data-rank="2"] .rank-badge-num{color:#E8E8E8;text-shadow:0 0 20px rgba(220,220,220,.8),0 0 40px rgba(180,180,180,.4),0 2px 4px rgba(0,0,0,.8);}
+.rank-badge-card[data-rank="3"] .rank-badge-num{color:#FFB347;text-shadow:0 0 20px rgba(205,127,50,.8),0 0 40px rgba(160,82,45,.5),0 2px 4px rgba(0,0,0,.8);}
+
+/* Rank message banner */
+.rank-msg-banner{
+  border-radius:14px;padding:14px 20px;margin-bottom:22px;
+  display:none;font-size:13.5px;font-weight:700;line-height:1.6;
+  animation:bannerSlide .4s ease;
+}
+@keyframes bannerSlide{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.rank-msg-banner.up{background:linear-gradient(135deg,#E6F7EE,#C8F0DC);color:#1A5C30;border:1.5px solid rgba(30,138,80,.25);display:block;}
+.rank-msg-banner.down{background:linear-gradient(135deg,var(--org-pale),#FFE0B0);color:#7A3800;border:1.5px solid rgba(240,124,0,.25);display:block;}
+.rank-msg-banner.same{background:linear-gradient(135deg,var(--blue-l),#CCE0FF);color:#1A3A7A;border:1.5px solid rgba(26,111,212,.2);display:block;}
+/* Slideshow inside hero row fills its cell height */
+.ss{border-radius:22px;overflow:hidden;margin-bottom:0;position:relative;height:192px;box-shadow:var(--sh2),0 0 0 1px rgba(240,124,0,.1);}
+.dash-hero-row .ss{height:100%;min-height:192px;}
+@media(max-width:700px){
+  .dash-hero-row{grid-template-columns:1fr;}
+  .rank-badge-card{padding:18px;}
+  .rank-badge-ring{width:120px;height:120px;}
+  .rank-badge-inner{width:90px;height:90px;}
+  .rank-badge-digits{font-size:40px;}
+}
+
 .slide{position:absolute;inset:0;padding:32px 40px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .9s ease;pointer-events:none;}
 .slide.active{opacity:1;pointer-events:all;}
 .sl1{background:linear-gradient(135deg,#FF6A00 0%,#F07C00 40%,#FFA733 80%,#FFD080 100%);}
@@ -969,31 +1071,40 @@ tr:hover td{background:var(--org-pale2);}
       <!-- DASHBOARD -->
       <div id="view-dashboard" class="view active">
         <div class="view-head"><div><h1>Dashboard</h1><p id="dash-date"></p></div></div>
-        <div class="ss" id="slideshow">
-          <div class="slide sl1 active">
-            <div class="sl-lbl">✦ Welcome Back</div>
-            <h2 id="sl-welcome-name">Welcome, King!</h2>
-            <p>"You are on a journey to greatness. Keep showing up."</p>
-            <div class="s-meta" id="sl-welcome-meta"></div>
+
+        <!-- HERO ROW: slideshow + rank badge (student only) -->
+        <div class="dash-hero-row" id="dash-hero-row">
+          <div class="ss" id="slideshow">
+            <div class="slide sl1 active">
+              <div class="sl-lbl">✦ Welcome Back</div>
+              <h2 id="sl-welcome-name">Welcome, King!</h2>
+              <p>"You are on a journey to greatness. Keep showing up."</p>
+              <div class="s-meta" id="sl-welcome-meta"></div>
+            </div>
+            <div class="slide sl2">
+              <div class="sl-lbl">📖 Daily Bible Reading</div>
+              <h2 id="bible-ref">Loading verse...</h2>
+              <p id="bible-text">Fetching today's Word...</p>
+              <div class="s-meta" id="bible-meta"></div>
+            </div>
+            <div class="slide sl3">
+              <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
+              <h2>This Week's Pledge</h2>
+              <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
+              <div class="s-meta" id="pledge-meta"></div>
+            </div>
+            <div class="ss-nav">
+              <div class="sd active" onclick="goSlide(0)"></div>
+              <div class="sd" onclick="goSlide(1)"></div>
+              <div class="sd" onclick="goSlide(2)"></div>
+            </div>
           </div>
-          <div class="slide sl2">
-            <div class="sl-lbl">📖 Daily Bible Reading</div>
-            <h2 id="bible-ref">Loading verse...</h2>
-            <p id="bible-text">Fetching today's Word...</p>
-            <div class="s-meta" id="bible-meta"></div>
-          </div>
-          <div class="slide sl3">
-            <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
-            <h2>This Week's Pledge</h2>
-            <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
-            <div class="s-meta" id="pledge-meta"></div>
-          </div>
-          <div class="ss-nav">
-            <div class="sd active" onclick="goSlide(0)"></div>
-            <div class="sd" onclick="goSlide(1)"></div>
-            <div class="sd" onclick="goSlide(2)"></div>
-          </div>
+          <!-- RANK BADGE — injected by JS for students only -->
+          <div id="dash-rank-badge-wrap"></div>
         </div>
+
+        <!-- RANK MESSAGE BANNER -->
+        <div id="dash-rank-msg" class="rank-msg-banner"></div>
         <div class="quick-cards">
           <div class="qcard qcard-1" onclick="openDevotionalQuiz()">
             <div class="qcard-accent">📖</div>
@@ -2086,7 +2197,9 @@ async function computeAllScores(){
 
 async function loadLeaderboard(){
   if(isAdmin()){
-    // Show admin section, hide student section
+    // Admin: collapse rank badge column, show admin leaderboards
+    document.getElementById('dash-hero-row').style.gridTemplateColumns='1fr';
+    document.getElementById('dash-rank-badge-wrap').style.display='none';
     document.getElementById('dash-lb-section').style.display='none';
     document.getElementById('dash-admin-lb-section').style.display='block';
     const scores=await computeAllScores();
@@ -2094,42 +2207,105 @@ async function loadLeaderboard(){
     const senior=scores.filter(s=>s.cohort==='Senior Boys').sort((a,b)=>b.pct-a.pct);
     document.getElementById('admin-lb-junior').innerHTML=renderLbRows(junior,null);
     document.getElementById('admin-lb-senior').innerHTML=renderLbRows(senior,null);
-  } else {
-    // Show student section, hide admin section
-    document.getElementById('dash-lb-section').style.display='grid';
-    document.getElementById('dash-admin-lb-section').style.display='none';
-    const scores=await computeAllScores();
-    const me=scores.find(s=>String(s.id)===String(S.id));
-    if(!me){return;}
-    const cohortScores=scores.filter(s=>s.cohort===me.cohort).sort((a,b)=>b.pct-a.pct);
-    const myRank=cohortScores.findIndex(s=>String(s.id)===String(S.id))+1;
-    // Rank change message
-    const prevRank=_lbPrevRank();
-    const msgEl=document.getElementById('dash-lb-msg');
-    if(prevRank!==null&&prevRank!==myRank){
-      if(myRank<prevRank){
-        msgEl.innerHTML=`<div class="lb-msg up">🎉 Congrats King! You climbed from #${prevRank} to #${myRank} on the leaderboard! Keep it up!</div>`;
-      } else {
-        // Find what area needs work
-        const areas=[];
-        if(me.breakdown.presenceMax>0&&me.breakdown.presence<me.breakdown.presenceMax) areas.push('Attendance');
-        if(me.breakdown.sessionMax>0&&me.breakdown.session/me.breakdown.sessionMax<0.7) areas.push('Session Scores');
-        if(me.breakdown.assignMax>0&&me.breakdown.assignment/me.breakdown.assignMax<0.7) areas.push('Assignments');
-        if(me.breakdown.devoMax>0&&me.breakdown.devo/me.breakdown.devoMax<0.7) areas.push('Devotional');
-        const tip=areas.length?` Focus on: ${areas.slice(0,2).join(' & ')}.`:'';
-        msgEl.innerHTML=`<div class="lb-msg down">💪 You dropped to #${myRank}. Don't give up, King!${tip}</div>`;
-      }
-    } else if(prevRank===null){
-      msgEl.innerHTML=`<div class="lb-msg same">👑 You are ranked #${myRank} in ${me.cohort||'your cohort'}. Keep climbing!</div>`;
-    } else {
-      msgEl.innerHTML='';
-    }
-    _lbSetPrevRank(myRank);
-    // Render leaderboard
-    document.getElementById('dash-leaderboard').innerHTML=renderLbRows(cohortScores,String(S.id));
-    // Render personal radar
-    renderScoreRadar(me,document.getElementById('dash-score-radar'));
+    return;
   }
+
+  // Student: full hero row layout
+  document.getElementById('dash-hero-row').style.gridTemplateColumns='';
+  document.getElementById('dash-rank-badge-wrap').style.display='block';
+  document.getElementById('dash-lb-section').style.display='grid';
+  document.getElementById('dash-admin-lb-section').style.display='none';
+
+  const scores=await computeAllScores();
+  const me=scores.find(s=>String(s.id)===String(S.id));
+  if(!me){
+    document.getElementById('dash-rank-badge-wrap').innerHTML='';
+    return;
+  }
+
+  // Sort cohort peers
+  const cohortScores=scores.filter(s=>s.cohort===me.cohort).sort((a,b)=>b.pct-a.pct);
+  const myRank=cohortScores.findIndex(s=>String(s.id)===String(S.id))+1;
+  const total=cohortScores.length;
+
+  // Rank change detection
+  const prevRank=_lbPrevRank();
+  const msgEl=document.getElementById('dash-rank-msg');
+  msgEl.className='rank-msg-banner';
+  if(prevRank!==null&&prevRank!==myRank){
+    if(myRank<prevRank){
+      msgEl.className='rank-msg-banner up';
+      msgEl.innerHTML=`🎉 Amazing, King! You climbed from <strong>#${prevRank}</strong> to <strong>#${myRank}</strong> on the ${me.cohort} leaderboard! Your hard work is paying off — keep pushing!`;
+    } else {
+      const areas=[];
+      if(me.breakdown.presenceMax>0&&me.breakdown.presence<me.breakdown.presenceMax) areas.push('Attendance');
+      if(me.breakdown.sessionMax>0&&me.breakdown.session/me.breakdown.sessionMax<0.7) areas.push('Session Scores');
+      if(me.breakdown.assignMax>0&&me.breakdown.assignment/me.breakdown.assignMax<0.7) areas.push('Assignments');
+      if(me.breakdown.devoMax>0&&me.breakdown.devo/me.breakdown.devoMax<0.7) areas.push('Devotional');
+      const tip=areas.length?` To climb back up, focus on: <strong>${areas.slice(0,2).join(' & ')}</strong>.`:'';
+      msgEl.className='rank-msg-banner down';
+      msgEl.innerHTML=`💪 You dropped to <strong>#${myRank}</strong>, King — but this is not where your story ends.${tip} Every King rises again!`;
+    }
+  } else if(prevRank===null){
+    msgEl.className='rank-msg-banner same';
+    msgEl.innerHTML=`👑 You are ranked <strong>#${myRank}</strong> of ${total} in <strong>${me.cohort||'your cohort'}</strong>. Keep showing up — greatness is built daily!`;
+  }
+  _lbSetPrevRank(myRank);
+
+  // Render rank badge
+  const ringColours=myRank===1
+    ?{outer:'#FFD700',inner:'#FFA500',mid:'#FFE566',glow:'rgba(255,215,0,0.6)'}
+    :myRank===2
+    ?{outer:'#C8C8C8',inner:'#A0A0A0',mid:'#E8E8E8',glow:'rgba(200,200,200,0.5)'}
+    :myRank===3
+    ?{outer:'#CD7F32',inner:'#A0522D',mid:'#E8A060',glow:'rgba(205,127,50,0.55)'}
+    :{outer:'#FF6A00',inner:'#F07C00',mid:'#FFA733',glow:'rgba(240,100,0,0.45)'};
+
+  const cohortShort=(me.cohort||'').replace(' Boys','');
+  document.getElementById('dash-rank-badge-wrap').innerHTML=`
+    <div class="rank-badge-card" data-rank="${Math.min(myRank,4)}">
+      <div class="rank-badge-label">Your Standing</div>
+      <div class="rank-badge-ring">
+        <svg viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Static deep shadow ring -->
+          <circle cx="74" cy="74" r="70" stroke="rgba(0,0,0,0.5)" stroke-width="6"/>
+          <!-- Pulsing glow ring -->
+          <circle cx="74" cy="74" r="68" stroke="${ringColours.glow}" stroke-width="4" class="rank-ring-pulse" opacity="0.7"/>
+          <!-- Spinning dashed outer ring -->
+          <circle cx="74" cy="74" r="64" stroke="${ringColours.outer}" stroke-width="2.5"
+            stroke-dasharray="8 5" stroke-linecap="round" class="rank-ring-outer" opacity="0.9"/>
+          <!-- Solid inner border ring -->
+          <circle cx="74" cy="74" r="58" stroke="${ringColours.inner}" stroke-width="1.5" opacity="0.5"/>
+          <!-- 3D highlight arc (top-left) -->
+          <path d="M 30 55 A 50 50 0 0 1 90 26" stroke="rgba(255,255,255,0.15)" stroke-width="5" stroke-linecap="round"/>
+          <!-- Decorative dots at cardinal points -->
+          <circle cx="74" cy="6"   r="3" fill="${ringColours.outer}" opacity="0.9"/>
+          <circle cx="74" cy="142" r="3" fill="${ringColours.outer}" opacity="0.9"/>
+          <circle cx="6"  cy="74"  r="3" fill="${ringColours.outer}" opacity="0.9"/>
+          <circle cx="142" cy="74" r="3" fill="${ringColours.outer}" opacity="0.9"/>
+          <!-- Small tick marks around ring -->
+          ${Array.from({length:24},(_,i)=>{
+            const a=(i/24)*Math.PI*2;
+            const r1=60,r2=i%6===0?54:57;
+            const x1=74+r1*Math.sin(a),y1=74-r1*Math.cos(a);
+            const x2=74+r2*Math.sin(a),y2=74-r2*Math.cos(a);
+            return`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${ringColours.mid}" stroke-width="${i%6===0?2:1}" opacity="${i%6===0?0.9:0.4}"/>`;
+          }).join('')}
+        </svg>
+        <div class="rank-badge-inner">
+          <div class="rank-badge-num">
+            <div class="rank-badge-hash">#</div>
+            <div class="rank-badge-digits">${myRank}</div>
+          </div>
+        </div>
+      </div>
+      <div class="rank-badge-cohort">${cohortShort}<br>Leaderboard</div>
+      <div class="rank-badge-total">of ${total} Kings</div>
+    </div>`;
+
+  // Render leaderboard and radar at bottom
+  document.getElementById('dash-leaderboard').innerHTML=renderLbRows(cohortScores,String(S.id));
+  renderScoreRadar(me,document.getElementById('dash-score-radar'));
 }
 
 function renderLbRows(sorted,myId){
