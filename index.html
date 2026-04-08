@@ -428,8 +428,39 @@ tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!impo
 .sq-text-inp:focus{border-color:var(--org);}
 
 /* ═══════════════════════════════════════════
-   SLIDESHOW
+   LEADERBOARD
 ═══════════════════════════════════════════ */
+.lb-wrap{margin-bottom:22px;}
+.lb-title{font-size:13px;font-weight:800;color:var(--dark);letter-spacing:.3px;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.lb-row{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border-radius:var(--r2);margin-bottom:6px;
+  background:white;border:1.5px solid var(--border);
+  transition:all .2s;
+}
+.lb-row:hover{border-color:var(--org);box-shadow:var(--sh3);}
+.lb-row.lb-me{background:linear-gradient(135deg,var(--org-pale),#FFF0D0);border-color:var(--org);box-shadow:var(--sh3);}
+.lb-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+.lb-rank.r1{background:linear-gradient(135deg,#FFD700,#FFA500);color:white;box-shadow:0 2px 8px rgba(255,165,0,.4);}
+.lb-rank.r2{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:white;}
+.lb-rank.r3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:white;}
+.lb-rank.rn{background:var(--border);color:var(--muted);}
+.lb-name{flex:1;font-size:13px;font-weight:700;color:var(--dark);}
+.lb-bar-wrap{width:100px;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.lb-bar-fill{height:100%;border-radius:4px;background:var(--org-grad);}
+.lb-pct{font-size:12px;font-weight:800;color:var(--org4);min-width:38px;text-align:right;}
+.lb-msg{padding:12px 16px;border-radius:var(--r2);font-size:13px;line-height:1.6;margin-bottom:14px;font-weight:600;}
+.lb-msg.up{background:var(--green-l);color:var(--green);border:1.5px solid rgba(30,138,80,.2);}
+.lb-msg.down{background:var(--org-pale);color:var(--org4);border:1.5px solid var(--border);}
+.lb-msg.same{background:var(--blue-l);color:var(--blue);border:1.5px solid rgba(26,111,212,.2);}
+.lb-score-radar{background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
+.lb-score-radar h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:14px;}
+.lb-metric-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.lb-metric-label{font-size:12px;font-weight:700;color:var(--muted);width:100px;flex-shrink:0;}
+.lb-metric-bar{flex:1;height:9px;background:var(--border);border-radius:5px;overflow:hidden;}
+.lb-metric-fill{height:100%;border-radius:5px;transition:width .5s ease;}
+.lb-metric-val{font-size:12px;font-weight:800;color:var(--dark);min-width:36px;text-align:right;}
+
 .ss{border-radius:22px;overflow:hidden;margin-bottom:22px;position:relative;height:192px;box-shadow:var(--sh2),0 0 0 1px rgba(240,124,0,.1);}
 .slide{position:absolute;inset:0;padding:32px 40px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .9s ease;pointer-events:none;}
 .slide.active{opacity:1;pointer-events:all;}
@@ -913,7 +944,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="nav-item" onclick="nav('meetings')"><span class="ni">📹</span> Live Sessions</div>
       <div class="nav-item" onclick="nav('materials')"><span class="ni">📂</span> Materials</div>
       <div class="nav-item" onclick="nav('talk-coach')"><span class="ni">💬</span> Talk to the Coach</div>
-      <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' Attendance</div>
+      <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' C.A</div>
       <div class="nav-item" onclick="nav('report-change')" id="nav-rc"><span class="ni">🌱</span> Report a Change <span class="sb-msg-badge" id="badge-rc">0</span></div>
     </div>
     <div class="nav-grp admin-only" id="admin-nav">
@@ -998,6 +1029,31 @@ tr:hover td{background:var(--org-pale2);}
         <div class="two-col">
           <div class="card"><div class="card-h"><h3>Upcoming Sessions</h3></div><div id="dash-meetings"></div></div>
           <div class="card"><div class="card-h"><h3>Pending Assignments</h3></div><div id="dash-pending"></div></div>
+        </div>
+        <!-- STUDENT SCORE RADAR + LEADERBOARD -->
+        <div class="two-col" id="dash-lb-section" style="display:none;">
+          <div class="card">
+            <div class="card-h"><h3>📊 My Performance Radar</h3></div>
+            <div id="dash-score-radar"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>🏆 Cohort Leaderboard</h3></div>
+            <div id="dash-lb-msg"></div>
+            <div id="dash-leaderboard"></div>
+          </div>
+        </div>
+        <!-- ADMIN LEADERBOARD (Junior + Senior separate) -->
+        <div id="dash-admin-lb-section" style="display:none;">
+          <div class="two-col">
+            <div class="card">
+              <div class="card-h"><h3>🏆 Junior Boys Leaderboard</h3></div>
+              <div id="admin-lb-junior"></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>🏆 Senior Boys Leaderboard</h3></div>
+              <div id="admin-lb-senior"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1147,7 +1203,7 @@ tr:hover td{background:var(--org-pale2);}
       <!-- BOYS ATTENDANCE -->
       <div id="view-boys-attendance" class="view">
         <div class="view-head">
-          <div><h1>Boys' Attendance</h1><p>Track session scores and assignment grades per course</p></div>
+          <div><h1>Boys' C.A</h1><p>Continuous assessment: presence, sessions, assignments &amp; devotional per course</p></div>
           <div class="vh-acts" id="att-head-acts" style="display:none;">
             <button class="btn btn-ghost btn-sm" onclick="backToAttGroups()">← Back</button>
             <button class="btn btn-sm btn-green" onclick="exportAttCSV()">⬇ Export CSV</button>
@@ -1185,8 +1241,8 @@ tr:hover td{background:var(--org-pale2);}
           <div class="coach-hero" style="background:linear-gradient(135deg,var(--green-l),white);border:1.5px solid rgba(30,138,80,.2);">
             <div class="coach-hero-icon" style="background:linear-gradient(135deg,var(--green),#28B466);">🌱</div>
             <div class="coach-hero-text">
-              <h2>Your Growth Story Matters, King</h2>
-              <p>Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
+              <h2 style="color:var(--green);text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 8px rgba(30,138,80,.15);">Your Growth Story Matters, King</h2>
+              <p style="color:#1A4A30;">Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
             </div>
           </div>
           <div class="coach-form">
@@ -1428,12 +1484,12 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
 
 <!-- Submit Assignment -->
 <div id="modal-submit-assign" class="overlay">
-  <div class="modal modal-wide" style="max-width:700px;max-height:90vh;overflow-y:auto;">
+  <div class="modal modal-wide" style="max-width:700px;">
     <h2 id="sub-title">Submit Assignment</h2>
     <div class="msub" id="sub-meta"></div>
     <div id="sub-msg"></div>
     <div id="sub-instructions" style="background:var(--blue-l);border-radius:var(--r2);padding:12px 16px;font-size:13px;color:var(--dark);margin-bottom:16px;line-height:1.7;display:none;"></div>
-    <div id="sub-questions-wrap" style="display:none;flex-direction:column;gap:14px;"></div>
+    <div id="sub-questions-wrap" style="display:flex;flex-direction:column;gap:18px;"></div>
     <div id="sub-freetext-wrap" class="fg" style="display:none;">
       <label>Your Submission</label>
       <textarea id="sub-text" rows="6" placeholder="Write your response here..."></textarea>
@@ -1596,15 +1652,8 @@ async function dbRead(tab){
   catch(e){console.error('dbRead',tab,e);return[];}
 }
 async function dbWrite(tab,row){
-  try{
-    // Use POST so large payloads (e.g. questions JSON) are never truncated by URL length limits
-    const r=await fetch(API_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:'action=write&tab='+encodeURIComponent(tab)+'&row='+encodeURIComponent(JSON.stringify(row))
-    });
-    return await r.json();
-  }catch(e){return{error:e.message};}
+  try{const r=await fetch(`${API_URL}?action=write&tab=${encodeURIComponent(tab)}&row=${encodeURIComponent(JSON.stringify(row))}`);return await r.json();}
+  catch(e){return{error:e.message};}
 }
 async function dbUpdate(tab,idCol,idVal,updates){
   try{const r=await fetch(`${API_URL}?action=update&tab=${encodeURIComponent(tab)}&idCol=${encodeURIComponent(idCol)}&idVal=${encodeURIComponent(idVal)}&updates=${encodeURIComponent(JSON.stringify(updates))}`);return await r.json();}
@@ -1950,6 +1999,172 @@ async function loadDashboard(){
   const pending=isAdmin()?assign.slice(0,4):myAssign.filter(a=>{const sub=mySubs.find(s=>String(s.assignmentId)===String(a.id));return!sub&&new Date(a.dueDate)>=now;}).slice(0,4);
   if(!pending.length){pEl.innerHTML='<div class="empty">No pending assignments.</div>';}
   else{pEl.innerHTML=pending.map(a=>`<div class="meet-item"><div class="meet-dt" style="background:linear-gradient(135deg,var(--purple),#8B78D8)"><div class="md-d" style="font-size:20px">📝</div></div><div class="meet-info"><h4>${a.title}</h4><p>${a.courseTitle} · Due: ${fmtDate(a.dueDate)}</p></div>${!isAdmin()?`<button class="btn-join" style="background:linear-gradient(135deg,var(--purple),#8B78D8)" onclick="openSubmitModal('${a.id}')">Submit</button>`:''}</div>`).join('');}
+  // Load leaderboard
+  loadLeaderboard();
+}
+
+// ═══════════════════════════════════════════
+//  LEADERBOARD & PERFORMANCE RADAR
+// ═══════════════════════════════════════════
+// Persistent previous rank storage (localStorage per user)
+function _lbPrevRank(){ try{return JSON.parse(localStorage.getItem('btk_prev_rank_'+S.id)||'null');}catch(e){return null;} }
+function _lbSetPrevRank(r){ try{localStorage.setItem('btk_prev_rank_'+S.id,JSON.stringify(r));}catch(e){} }
+
+// Compute a student's overall CA % from live data
+// Uses the same formula as renderAttTable:
+//   presence: 10pts max per course
+//   session:  10pts max per course
+//   assignment: 100pts max per assignment
+//   devotional: 10pts × devoMaxDays per course
+async function computeAllScores(){
+  const [courses,users,subs,assign,savedAtt,devos]=await Promise.all([
+    dbRead('Courses'),dbRead('Users'),dbRead('Submissions'),
+    dbRead('Assignments'),dbRead('Attendance'),dbRead('DevotionalScores')
+  ]);
+  const students=users.filter(u=>u.role==='user'&&u.status==='active');
+
+  // Build course list with devoMaxDays
+  const sortedC=[...courses].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+  const courseList=courses.map(c=>{
+    const cIdx=sortedC.findIndex(x=>String(x.id)===String(c.id));
+    const cStart=cIdx>0?new Date(sortedC[cIdx].createdAt):new Date(0);
+    const cEnd=cIdx<sortedC.length-1?new Date(sortedC[cIdx+1].createdAt):new Date('2099-01-01');
+    const days=new Set(devos.filter(d=>{const dd=new Date(d.date);return dd>=cStart&&dd<cEnd;}).map(d=>d.date?d.date.slice(0,10):''));
+    days.delete('');
+    const courseAssigns=assign.filter(a=>String(a.courseId)===String(c.id));
+    return{id:String(c.id),title:c.title,assignments:courseAssigns,devoMaxDays:days.size};
+  });
+
+  // Build maps
+  const subMap={};
+  subs.forEach(s=>{const sid=String(s.studentId);if(!subMap[sid])subMap[sid]={};subMap[sid][String(s.assignmentId)]=Number(s.score)||0;});
+
+  const sessMap={},checkMap={};
+  savedAtt.forEach(a=>{
+    if(a.type==='session'){if(!sessMap[a.studentId])sessMap[a.studentId]={};sessMap[a.studentId][a.colId]=Number(a.value)||0;}
+    else if(a.type==='present'){if(!checkMap[a.studentId])checkMap[a.studentId]={};checkMap[a.studentId][a.colId]=a.value==='true'||a.value===true;}
+  });
+
+  const devoMap={};
+  devos.forEach(d=>{
+    const dDate=new Date(d.date);
+    let bucketId=sortedC.length>0?sortedC[sortedC.length-1].id:null;
+    for(let i=0;i<sortedC.length-1;i++){if(dDate<new Date(sortedC[i+1].createdAt)){bucketId=sortedC[i].id;break;}}
+    if(!bucketId)return;
+    const sid=String(d.studentId);
+    if(!devoMap[sid])devoMap[sid]={};
+    if(d.correct==='true'||d.correct===true) devoMap[sid][String(bucketId)]=(devoMap[sid][String(bucketId)]||0)+1;
+  });
+
+  // Score each student
+  return students.map(st=>{
+    const sid=String(st.id);
+    let total=0,max=0;
+    const breakdown={presence:0,presenceMax:0,session:0,sessionMax:0,assignment:0,assignMax:0,devo:0,devoMax:0};
+    courseList.forEach(co=>{
+      // Presence
+      const pres=(checkMap[sid]||{})[co.id+'_present']?10:0;
+      total+=pres;max+=10;breakdown.presence+=pres;breakdown.presenceMax+=10;
+      // Session
+      const sess=Math.min((sessMap[sid]||{})[co.id+'_session']||0,10);
+      const sessEntered=(sessMap[sid]||{})[co.id+'_session']!==undefined;
+      if(sessEntered){total+=sess;max+=10;breakdown.session+=sess;breakdown.sessionMax+=10;}
+      // Assignments
+      co.assignments.forEach(a=>{
+        const raw=(subMap[sid]||{})[String(a.id)];
+        if(raw!==undefined){total+=raw;max+=100;breakdown.assignment+=raw;breakdown.assignMax+=100;}
+      });
+      // Devotional
+      const dCount=(devoMap[sid]||{})[String(co.id)]||0;
+      const dMax=co.devoMaxDays*10;
+      if(co.devoMaxDays>0){total+=Math.min(dCount*10,dMax);max+=dMax;breakdown.devo+=Math.min(dCount*10,dMax);breakdown.devoMax+=dMax;}
+    });
+    const pct=max>0?Math.round((total/max)*100):0;
+    return{id:sid,name:st.name,cohort:st.cohort||'',pct,total,max,breakdown};
+  });
+}
+
+async function loadLeaderboard(){
+  if(isAdmin()){
+    // Show admin section, hide student section
+    document.getElementById('dash-lb-section').style.display='none';
+    document.getElementById('dash-admin-lb-section').style.display='block';
+    const scores=await computeAllScores();
+    const junior=scores.filter(s=>s.cohort==='Junior Boys').sort((a,b)=>b.pct-a.pct);
+    const senior=scores.filter(s=>s.cohort==='Senior Boys').sort((a,b)=>b.pct-a.pct);
+    document.getElementById('admin-lb-junior').innerHTML=renderLbRows(junior,null);
+    document.getElementById('admin-lb-senior').innerHTML=renderLbRows(senior,null);
+  } else {
+    // Show student section, hide admin section
+    document.getElementById('dash-lb-section').style.display='grid';
+    document.getElementById('dash-admin-lb-section').style.display='none';
+    const scores=await computeAllScores();
+    const me=scores.find(s=>String(s.id)===String(S.id));
+    if(!me){return;}
+    const cohortScores=scores.filter(s=>s.cohort===me.cohort).sort((a,b)=>b.pct-a.pct);
+    const myRank=cohortScores.findIndex(s=>String(s.id)===String(S.id))+1;
+    // Rank change message
+    const prevRank=_lbPrevRank();
+    const msgEl=document.getElementById('dash-lb-msg');
+    if(prevRank!==null&&prevRank!==myRank){
+      if(myRank<prevRank){
+        msgEl.innerHTML=`<div class="lb-msg up">🎉 Congrats King! You climbed from #${prevRank} to #${myRank} on the leaderboard! Keep it up!</div>`;
+      } else {
+        // Find what area needs work
+        const areas=[];
+        if(me.breakdown.presenceMax>0&&me.breakdown.presence<me.breakdown.presenceMax) areas.push('Attendance');
+        if(me.breakdown.sessionMax>0&&me.breakdown.session/me.breakdown.sessionMax<0.7) areas.push('Session Scores');
+        if(me.breakdown.assignMax>0&&me.breakdown.assignment/me.breakdown.assignMax<0.7) areas.push('Assignments');
+        if(me.breakdown.devoMax>0&&me.breakdown.devo/me.breakdown.devoMax<0.7) areas.push('Devotional');
+        const tip=areas.length?` Focus on: ${areas.slice(0,2).join(' & ')}.`:'';
+        msgEl.innerHTML=`<div class="lb-msg down">💪 You dropped to #${myRank}. Don't give up, King!${tip}</div>`;
+      }
+    } else if(prevRank===null){
+      msgEl.innerHTML=`<div class="lb-msg same">👑 You are ranked #${myRank} in ${me.cohort||'your cohort'}. Keep climbing!</div>`;
+    } else {
+      msgEl.innerHTML='';
+    }
+    _lbSetPrevRank(myRank);
+    // Render leaderboard
+    document.getElementById('dash-leaderboard').innerHTML=renderLbRows(cohortScores,String(S.id));
+    // Render personal radar
+    renderScoreRadar(me,document.getElementById('dash-score-radar'));
+  }
+}
+
+function renderLbRows(sorted,myId){
+  if(!sorted.length)return'<div class="empty">No scores yet.</div>';
+  return sorted.map((s,i)=>{
+    const rank=i+1;
+    const isMe=myId&&String(s.id)===myId;
+    const rankCls=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    return`<div class="lb-row${isMe?' lb-me':''}">
+      <div class="lb-rank ${rankCls}">${medal}</div>
+      <div class="lb-name">${s.name}${isMe?' <span style="font-size:10px;color:var(--org4);">(You)</span>':''}</div>
+      <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${s.pct}%;background:${rank===1?'linear-gradient(90deg,#FFD700,#FFA500)':rank<=3?'var(--org-grad)':'linear-gradient(90deg,var(--blue),var(--teal))'}"></div></div>
+      <div class="lb-pct">${s.pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderScoreRadar(me,el){
+  if(!el)return;
+  const metrics=[
+    {label:'Attendance',val:me.breakdown.presenceMax>0?Math.round((me.breakdown.presence/me.breakdown.presenceMax)*100):0,color:'var(--org)'},
+    {label:'Sessions',val:me.breakdown.sessionMax>0?Math.round((me.breakdown.session/me.breakdown.sessionMax)*100):0,color:'var(--blue)'},
+    {label:'Assignments',val:me.breakdown.assignMax>0?Math.round((me.breakdown.assignment/me.breakdown.assignMax)*100):0,color:'var(--purple)'},
+    {label:'Devotional',val:me.breakdown.devoMax>0?Math.round((me.breakdown.devo/me.breakdown.devoMax)*100):0,color:'var(--teal)'},
+    {label:'Overall',val:me.pct,color:'var(--green)'},
+  ];
+  el.innerHTML=`<div class="lb-score-radar">
+    <h4>Overall Score: <span style="color:var(--org4);font-size:20px;">${me.pct}%</span></h4>
+    ${metrics.map(m=>`<div class="lb-metric-row">
+      <div class="lb-metric-label">${m.label}</div>
+      <div class="lb-metric-bar"><div class="lb-metric-fill" style="width:${m.val}%;background:${m.color};"></div></div>
+      <div class="lb-metric-val">${m.val}%</div>
+    </div>`).join('')}
+  </div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -2017,29 +2232,20 @@ async function openSubmitModal(id){
   const qWrap=document.getElementById('sub-questions-wrap');
   const ftWrap=document.getElementById('sub-freetext-wrap');
   qWrap.innerHTML='';
-  qWrap.style.display='none';
-  ftWrap.style.display='none';
   let questions=[];
-  try{
-    if(a.questions){
-      var p=JSON.parse(a.questions);
-      if(typeof p==='string') p=JSON.parse(p);
-      if(Array.isArray(p)) questions=p;
-    }
-  }catch(e){}
+  try{if(a.questions)questions=JSON.parse(a.questions);}catch(e){}
   if(questions.length>0){
-    qWrap.style.display='flex';
+    ftWrap.style.display='none';
     questions.forEach(function(q,qi){
       const card=document.createElement('div');
       card.className='sq-card';
-      let inner='<div class="sq-q"><strong style="color:var(--org4);">Q'+(qi+1)+'.</strong> '+q.question+'</div>';
+      let inner='<div class="sq-q">Q'+(qi+1)+'. '+q.question+'</div>';
       if(q.type==='text'){
         inner+='<textarea class="sq-text-inp" id="sq-ans-'+qi+'" rows="4" placeholder="Write your answer here..."></textarea>';
       } else {
-        const opts=Array.isArray(q.options)?q.options:[];
-        opts.forEach(function(opt,oi){
+        q.options.forEach(function(opt,oi){
           const inpType=q.type==='multi'?'checkbox':'radio';
-          inner+='<label class="sq-opt" id="sq-opt-'+qi+'-'+oi+'" onclick="sqSelectOpt(this,'+qi+','+oi+',\''+q.type+'\')">'
+          inner+='<label class="sq-opt" id="sq-opt-'+qi+'-'+oi+'" onclick="sqSelectOpt(this,'+qi+','+oi+',&quot;'+q.type+'&quot;)">'
                 +'<input type="'+inpType+'" name="sq-'+qi+'" id="sq-chk-'+qi+'-'+oi+'" style="accent-color:var(--blue);margin-top:2px;" onclick="event.stopPropagation()">'
                 +'<span class="sq-opt-label">'+opt+'</span></label>';
         });
@@ -3163,11 +3369,20 @@ async function openAttendanceList(group){
   ]);
 
   // Build course list — every platform course, each with its assignments
+  // Also count how many distinct devo days exist per course (for max devo points)
+  const allDevos = await dbRead('DevotionalScores');
+  const sortedCoursesForBuild = [...courses].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
   _attCourseList = courses.map(c => {
     const courseAssigns = assign
       .filter(a => String(a.courseId) === String(c.id))
       .map(a => ({ id: String(a.id), title: a.title, maxScore: Number(a.maxScore) || 100 }));
-    return { id: String(c.id), title: c.title, assignments: courseAssigns };
+    // Count distinct devotional days bucketed to this course
+    const cIdx = sortedCoursesForBuild.findIndex(x=>String(x.id)===String(c.id));
+    const cStart = cIdx > 0 ? new Date(sortedCoursesForBuild[cIdx].createdAt) : new Date(0);
+    const cEnd   = cIdx < sortedCoursesForBuild.length-1 ? new Date(sortedCoursesForBuild[cIdx+1].createdAt) : new Date('2099-01-01');
+    const devodays = new Set(allDevos.filter(d=>{const dd=new Date(d.date);return dd>=cStart&&dd<cEnd;}).map(d=>d.date?d.date.slice(0,10):''));
+    devodays.delete('');
+    return { id: String(c.id), title: c.title, assignments: courseAssigns, devoMaxDays: devodays.size };
   });
 
   // Filter students by cohort
@@ -3204,13 +3419,10 @@ async function openAttendanceList(group){
     _attSubMap[sid][aid] = Number(s.score) || 0;
   });
 
-  // Build devotional points map: studentId -> courseId -> total correct answers
-  // We assign devotional scores to the most-recently-created course at the time of the devotional
+  // Build devotional points map: studentId -> courseId -> correct answer count
   _attDevoMap = {};
-  const devos = await dbRead('DevotionalScores');
-  // Sort courses by createdAt ascending so we can bucket devos
   const sortedCourses = [...courses].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
-  devos.forEach(d => {
+  allDevos.forEach(d => {
     const dDate = new Date(d.date);
     // Find which course period this devo belongs to
     // A devo belongs to course N if it was done before the next course was created
@@ -3252,12 +3464,12 @@ function renderAttTable(){
     var span = 3 + co.assignments.length;
     r1 += '<th class="course-group-hd" colspan="'+span+'">'+co.title+'</th>';
     r2 += '<th style="background:linear-gradient(135deg,#FFF3CD,#FFE58A);color:#856404;font-size:10px;min-width:52px;">&#9745; Present</th>';
-    r2 += '<th class="sub-score">&#128221; Session</th>';
+    r2 += '<th class="sub-score">&#128221; Session<br><span style="font-size:9px;opacity:.7;">/10</span></th>';
     co.assignments.forEach(function(a){
       var short = a.title.length > 12 ? a.title.slice(0,11)+'\u2026' : a.title;
       r2 += '<th class="sub-assign" title="'+a.title+' (max '+a.maxScore+')">'+short+'<br><span style="font-size:9px;opacity:.7;">/'+a.maxScore+'</span></th>';
     });
-    r2 += '<th style="background:linear-gradient(135deg,#D1ECF1,#A8D8E8);color:#0c5460;font-size:10px;min-width:60px;">&#128218; Devotional</th>';
+    r2 += '<th style="background:linear-gradient(135deg,#D1ECF1,#A8D8E8);color:#0c5460;font-size:10px;min-width:60px;">&#128218; Devo<br><span style="font-size:9px;opacity:.7;">correct/days</span></th>';
   });
   if(_attCourseList.length===0){
     r1 += '<th colspan="4" style="color:var(--muted);font-style:italic;">No courses yet</th>';
@@ -3278,11 +3490,12 @@ function renderAttTable(){
     var cells='';
 
     _attCourseList.forEach(function(co){
-      /* PRESENCE CHECKBOX */
+      /* ── PRESENCE (max 10 pts per course) ─────────────────────────────── */
       var chkKey  = co.id+'_present';
       var checked = chkMap[chkKey]==='true' || chkMap[chkKey]===true;
-      if(checked) totalPts+=10;
-      maxPts+=10;
+      var presencePts = checked ? 10 : 0;
+      totalPts += presencePts;
+      maxPts   += 10;
       if(admin){
         cells += '<td style="text-align:center;">'
                + '<input type="checkbox"'+(checked?' checked':'')
@@ -3293,15 +3506,15 @@ function renderAttTable(){
         cells += '<td style="text-align:center;">'+(checked?'&#10003;':'&mdash;')+'</td>';
       }
 
-      /* SESSION SCORE */
+      /* ── SESSION SCORE (max 10 pts per course) ─────────────────────────── */
       var sessKey = co.id+'_session';
       var sessVal = scores[sessKey]!==undefined ? scores[sessKey] : '';
-      var sessNum = sessVal!=='' ? Number(sessVal) : NaN;
-      if(!isNaN(sessNum)){totalPts+=sessNum;maxPts+=100;}
-      var sessCls = isNaN(sessNum)?'':sessNum>=75?'good':sessNum>=50?'ok':'low';
+      var sessNum = sessVal!=='' ? Math.min(Number(sessVal),10) : NaN;
+      if(!isNaN(sessNum)){ totalPts += sessNum; maxPts += 10; }
+      var sessCls = isNaN(sessNum)?'':sessNum>=7?'good':sessNum>=4?'ok':'low';
       if(admin){
         cells += '<td>'
-               + '<input type="number" min="0" max="100" value="'+sessVal+'"'
+               + '<input type="number" min="0" max="10" value="'+sessVal+'"'
                + ' placeholder="&mdash;"'
                + ' oninput="saveAttScore(\''+stId+'\',\''+co.id+'_session\',this.value)"'
                + ' style="width:52px;">'
@@ -3310,26 +3523,29 @@ function renderAttTable(){
         cells += '<td class="att-score-cell '+sessCls+'">'+(sessVal!==''?sessVal:'&mdash;')+'</td>';
       }
 
-      /* ASSIGNMENT SCORES */
+      /* ── ASSIGNMENT SCORES (max 100 pts per assignment) ────────────────── */
       co.assignments.forEach(function(a){
         var raw = subSt[String(a.id)];
         var num = raw!==undefined ? Number(raw) : NaN;
-        if(!isNaN(num)){totalPts+=num;maxPts+=a.maxScore;}
-        var pct = !isNaN(num)?Math.round((num/a.maxScore)*100):NaN;
+        if(!isNaN(num)){ totalPts += num; maxPts += 100; }
+        var pct = !isNaN(num)?Math.round((num/100)*100):NaN;
         var cls = isNaN(pct)?'':pct>=75?'good':pct>=50?'ok':'low';
         cells += '<td class="att-score-cell '+cls+'">'+(!isNaN(num)?num:'&mdash;')+'</td>';
       });
 
-      /* DEVOTIONAL POINTS */
-      var dpts = devoPts[String(co.id)];
-      var dptsNum = dpts!==undefined ? Number(dpts) : NaN;
-      if(!isNaN(dptsNum)&&dptsNum>0){totalPts+=dptsNum*10;maxPts+=100;}
-      var dptsCls = isNaN(dptsNum)?'':dptsNum>=7?'good':dptsNum>=4?'ok':'low';
-      cells += '<td class="att-score-cell '+dptsCls+'" style="color:var(--teal);">'
-             + (!isNaN(dptsNum)?dptsNum:'&mdash;')+'</td>';
+      /* ── DEVOTIONAL (max 10 pts × number of devo days for this course) ── */
+      /* _attDevoMap stores correct-answer COUNT per student per course      */
+      var dCount  = devoPts[String(co.id)];                 // # correct answers
+      var dTotal  = co.devoMaxDays || 0;                    // total devo days for this course
+      var dEarned = dCount!==undefined ? Math.min(Number(dCount)*10, dTotal*10) : NaN;
+      var dMax    = dTotal > 0 ? dTotal * 10 : NaN;
+      if(!isNaN(dEarned) && !isNaN(dMax) && dMax>0){ totalPts += dEarned; maxPts += dMax; }
+      var dCls    = isNaN(dCount)?'':Number(dCount)>=Math.ceil(dTotal*0.75)?'good':Number(dCount)>=Math.ceil(dTotal*0.5)?'ok':'low';
+      cells += '<td class="att-score-cell '+dCls+'" style="color:var(--teal);">'
+             + (!isNaN(dCount) ? dCount+(dTotal>0?'/'+dTotal:'') : '&mdash;')+'</td>';
     });
 
-    /* OVERALL % METER */
+    /* ── OVERALL % = (totalPts / maxPts) × 100 ─────────────────────────── */
     var ovPct  = maxPts>0 ? Math.round((totalPts/maxPts)*100) : null;
     var ovCls  = ovPct===null?'':ovPct>=75?'good':ovPct>=50?'ok':'low';
     var meterCell = '<td><div class="att-meter-wrap">'
