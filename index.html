@@ -365,29 +365,19 @@ input,select,textarea,button{font-family:inherit;}
 /* ═══════════════════════════════════════════
    PAYMENT STATUS COLOUR SCALE
 ═══════════════════════════════════════════ */
-/* Payment status — row highlight via tr class */
-tr.pay-paid    td.pay-name { background:#2e7d32 !important; color:white !important; font-weight:800; }
-tr.pay-install td.pay-name { background:#c9a227 !important; color:white !important; font-weight:800; }
-tr.pay-scholar td.pay-name { background:#7b3fa0 !important; color:white !important; font-weight:800; }
-tr.pay-none    td.pay-name { background:white   !important; color:var(--dark) !important; }
-/* Also apply to frozen-col in attendance */
-tr.pay-paid    td.frozen-col { background:#2e7d32 !important; color:white !important; font-weight:800; }
-tr.pay-install td.frozen-col { background:#c9a227 !important; color:white !important; font-weight:800; }
-tr.pay-scholar td.frozen-col { background:#7b3fa0 !important; color:white !important; font-weight:800; }
-td.pay-name{min-width:140px;transition:background .3s,color .3s;}
-tr.pay-none    td.frozen-col { background:white   !important; color:var(--dark) !important; }
-/* Payment pill badge in Users table */
-/* Attendance row — payment colour on name cell */
-tr.pay-paid    td.frozen-col { background:#2e7d32!important;color:white!important;font-weight:800; }
-tr.pay-install td.frozen-col { background:#c9a227!important;color:white!important;font-weight:800; }
-tr.pay-scholar td.frozen-col { background:#7b3fa0!important;color:white!important;font-weight:800; }
-tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!important; }
-.pay-pill { display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
-  padding:3px 10px;border-radius:20px;letter-spacing:.3px; }
-.pay-pill.paid    { background:#2e7d32;color:white; }
-.pay-pill.install { background:#c9a227;color:white; }
-.pay-pill.scholar { background:#7b3fa0;color:white; }
-.pay-pill.none    { background:var(--border);color:var(--muted); }
+tr.pay-paid    td.frozen-col, .pay-badge-paid    { background:#2e7d32 !important; color:white !important; }
+tr.pay-paid    td.frozen-col { font-weight:800; }
+tr.pay-install td.frozen-col, .pay-badge-install  { background:#c9a227 !important; color:white !important; }
+tr.pay-install td.frozen-col { font-weight:800; }
+tr.pay-scholar td.frozen-col, .pay-badge-scholar  { background:#7b3fa0 !important; color:white !important; }
+tr.pay-scholar td.frozen-col { font-weight:800; }
+tr.pay-none    td.frozen-col { background:white  !important; color:var(--dark) !important; }
+.pay-badge-none { background:white; color:var(--dark); border:1.5px solid var(--border); }
+.pay-dot { width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle; }
+.pay-dot.paid    { background:#2e7d32; }
+.pay-dot.install { background:#c9a227; }
+.pay-dot.scholar { background:#7b3fa0; }
+.pay-dot.none    { background:#ccc;border:1px solid #aaa; }
 /* Admin badge counter in sidebar */
 .sb-msg-badge{
   background:var(--red);color:white;border-radius:20px;
@@ -428,142 +418,9 @@ tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!impo
 .sq-text-inp:focus{border-color:var(--org);}
 
 /* ═══════════════════════════════════════════
-   LEADERBOARD
+   SLIDESHOW
 ═══════════════════════════════════════════ */
-.lb-wrap{margin-bottom:22px;}
-.lb-title{font-size:13px;font-weight:800;color:var(--dark);letter-spacing:.3px;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
-.lb-row{
-  display:flex;align-items:center;gap:12px;padding:10px 14px;
-  border-radius:var(--r2);margin-bottom:6px;
-  background:white;border:1.5px solid var(--border);
-  transition:all .2s;
-}
-.lb-row:hover{border-color:var(--org);box-shadow:var(--sh3);}
-.lb-row.lb-me{background:linear-gradient(135deg,var(--org-pale),#FFF0D0);border-color:var(--org);box-shadow:var(--sh3);}
-.lb-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
-.lb-rank.r1{background:linear-gradient(135deg,#FFD700,#FFA500);color:white;box-shadow:0 2px 8px rgba(255,165,0,.4);}
-.lb-rank.r2{background:linear-gradient(135deg,#C0C0C0,#A0A0A0);color:white;}
-.lb-rank.r3{background:linear-gradient(135deg,#CD7F32,#A0522D);color:white;}
-.lb-rank.rn{background:var(--border);color:var(--muted);}
-.lb-name{flex:1;font-size:13px;font-weight:700;color:var(--dark);}
-.lb-bar-wrap{width:100px;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
-.lb-bar-fill{height:100%;border-radius:4px;background:var(--org-grad);}
-.lb-pct{font-size:12px;font-weight:800;color:var(--org4);min-width:38px;text-align:right;}
-.lb-msg{padding:12px 16px;border-radius:var(--r2);font-size:13px;line-height:1.6;margin-bottom:14px;font-weight:600;}
-.lb-msg.up{background:var(--green-l);color:var(--green);border:1.5px solid rgba(30,138,80,.2);}
-.lb-msg.down{background:var(--org-pale);color:var(--org4);border:1.5px solid var(--border);}
-.lb-msg.same{background:var(--blue-l);color:var(--blue);border:1.5px solid rgba(26,111,212,.2);}
-.lb-score-radar{background:white;border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:20px;}
-.lb-score-radar h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:14px;}
-.lb-metric-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
-.lb-metric-label{font-size:12px;font-weight:700;color:var(--muted);width:100px;flex-shrink:0;}
-.lb-metric-bar{flex:1;height:9px;background:var(--border);border-radius:5px;overflow:hidden;}
-.lb-metric-fill{height:100%;border-radius:5px;transition:width .5s ease;}
-.lb-metric-val{font-size:12px;font-weight:800;color:var(--dark);min-width:36px;text-align:right;}
-
-/* ═══════════════════════════════════════════
-   RANK BADGE — Student Dashboard Hero
-═══════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@600;900&display=swap');
-
-.dash-hero-row{
-  display:grid;
-  grid-template-columns:1fr 280px;
-  gap:18px;
-  margin-bottom:22px;
-  align-items:stretch;
-}
-.rank-badge-card{
-  border-radius:22px;
-  background:linear-gradient(145deg,#1A0800 0%,#2C1400 40%,#1A0800 100%);
-  box-shadow:0 8px 40px rgba(240,100,0,.35),0 0 0 1px rgba(255,184,64,.2),inset 0 1px 0 rgba(255,255,255,.07);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:22px 16px;position:relative;overflow:hidden;
-}
-.rank-badge-card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 0%,rgba(255,184,0,.18) 0%,transparent 65%);
-  pointer-events:none;
-}
-/* Animated shimmer sweep */
-.rank-badge-card::after{
-  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
-  animation:rankShimmer 3.5s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes rankShimmer{0%{left:-100%;}60%{left:150%;}100%{left:150%;}}
-
-.rank-badge-label{
-  font-family:'Cinzel',serif;
-  font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;
-  color:rgba(255,184,64,.7);margin-bottom:14px;
-}
-/* 3D circle ring */
-.rank-badge-ring{
-  position:relative;width:148px;height:148px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:14px;
-}
-.rank-badge-ring svg{
-  position:absolute;inset:0;width:100%;height:100%;
-}
-.rank-ring-outer{animation:rankSpin 8s linear infinite;}
-.rank-ring-pulse{animation:rankPulse 2.2s ease-in-out infinite;}
-@keyframes rankSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@keyframes rankPulse{0%,100%{opacity:.6;}50%{opacity:1;}}
-
-.rank-badge-inner{
-  position:relative;z-index:2;
-  width:110px;height:110px;border-radius:50%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 35% 30%,#3D1A00,#1A0800);
-  box-shadow:inset 0 4px 16px rgba(0,0,0,.6),inset 0 -2px 8px rgba(255,184,0,.12),0 6px 24px rgba(0,0,0,.5);
-}
-.rank-badge-num{
-  font-family:'Cinzel Decorative',cursive;
-  line-height:1;color:white;
-  text-shadow:0 0 20px rgba(255,184,0,.8),0 0 40px rgba(255,120,0,.4),0 2px 4px rgba(0,0,0,.8);
-}
-.rank-badge-hash{font-size:18px;font-weight:700;opacity:.7;margin-bottom:-4px;}
-.rank-badge-digits{font-size:52px;font-weight:900;letter-spacing:-2px;}
-.rank-badge-cohort{
-  font-family:'Cinzel',serif;
-  font-size:8.5px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
-  color:rgba(255,184,64,.8);text-align:center;line-height:1.4;
-  margin-top:2px;padding:0 8px;
-}
-.rank-badge-total{
-  font-family:'Cinzel',serif;
-  font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.35);
-  margin-top:8px;
-}
-/* Gold/Silver/Bronze/default ring colours — set via JS data-rank attr */
-.rank-badge-card[data-rank="1"] .rank-badge-num{color:#FFD700;text-shadow:0 0 24px rgba(255,215,0,.9),0 0 48px rgba(255,165,0,.5),0 2px 4px rgba(0,0,0,.8);}
-.rank-badge-card[data-rank="2"] .rank-badge-num{color:#E8E8E8;text-shadow:0 0 20px rgba(220,220,220,.8),0 0 40px rgba(180,180,180,.4),0 2px 4px rgba(0,0,0,.8);}
-.rank-badge-card[data-rank="3"] .rank-badge-num{color:#FFB347;text-shadow:0 0 20px rgba(205,127,50,.8),0 0 40px rgba(160,82,45,.5),0 2px 4px rgba(0,0,0,.8);}
-
-/* Rank message banner */
-.rank-msg-banner{
-  border-radius:14px;padding:14px 20px;margin-bottom:22px;
-  display:none;font-size:13.5px;font-weight:700;line-height:1.6;
-  animation:bannerSlide .4s ease;
-}
-@keyframes bannerSlide{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-.rank-msg-banner.up{background:linear-gradient(135deg,#E6F7EE,#C8F0DC);color:#1A5C30;border:1.5px solid rgba(30,138,80,.25);display:block;}
-.rank-msg-banner.down{background:linear-gradient(135deg,var(--org-pale),#FFE0B0);color:#7A3800;border:1.5px solid rgba(240,124,0,.25);display:block;}
-.rank-msg-banner.same{background:linear-gradient(135deg,var(--blue-l),#CCE0FF);color:#1A3A7A;border:1.5px solid rgba(26,111,212,.2);display:block;}
-/* Slideshow inside hero row fills its cell height */
-.ss{border-radius:22px;overflow:hidden;margin-bottom:0;position:relative;height:192px;box-shadow:var(--sh2),0 0 0 1px rgba(240,124,0,.1);}
-.dash-hero-row .ss{height:100%;min-height:192px;}
-@media(max-width:700px){
-  .dash-hero-row{grid-template-columns:1fr;}
-  .rank-badge-card{padding:18px;}
-  .rank-badge-ring{width:120px;height:120px;}
-  .rank-badge-inner{width:90px;height:90px;}
-  .rank-badge-digits{font-size:40px;}
-}
-
+.ss{border-radius:22px;overflow:hidden;margin-bottom:22px;position:relative;height:192px;box-shadow:var(--sh2),0 0 0 1px rgba(240,124,0,.1);}
 .slide{position:absolute;inset:0;padding:32px 40px;display:flex;flex-direction:column;justify-content:center;opacity:0;transition:opacity .9s ease;pointer-events:none;}
 .slide.active{opacity:1;pointer-events:all;}
 .sl1{background:linear-gradient(135deg,#FF6A00 0%,#F07C00 40%,#FFA733 80%,#FFD080 100%);}
@@ -1046,7 +903,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="nav-item" onclick="nav('meetings')"><span class="ni">📹</span> Live Sessions</div>
       <div class="nav-item" onclick="nav('materials')"><span class="ni">📂</span> Materials</div>
       <div class="nav-item" onclick="nav('talk-coach')"><span class="ni">💬</span> Talk to the Coach</div>
-      <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' C.A</div>
+      <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' Attendance</div>
       <div class="nav-item" onclick="nav('report-change')" id="nav-rc"><span class="ni">🌱</span> Report a Change <span class="sb-msg-badge" id="badge-rc">0</span></div>
     </div>
     <div class="nav-grp admin-only" id="admin-nav">
@@ -1071,40 +928,31 @@ tr:hover td{background:var(--org-pale2);}
       <!-- DASHBOARD -->
       <div id="view-dashboard" class="view active">
         <div class="view-head"><div><h1>Dashboard</h1><p id="dash-date"></p></div></div>
-
-        <!-- HERO ROW: slideshow + rank badge (student only) -->
-        <div class="dash-hero-row" id="dash-hero-row">
-          <div class="ss" id="slideshow">
-            <div class="slide sl1 active">
-              <div class="sl-lbl">✦ Welcome Back</div>
-              <h2 id="sl-welcome-name">Welcome, King!</h2>
-              <p>"You are on a journey to greatness. Keep showing up."</p>
-              <div class="s-meta" id="sl-welcome-meta"></div>
-            </div>
-            <div class="slide sl2">
-              <div class="sl-lbl">📖 Daily Bible Reading</div>
-              <h2 id="bible-ref">Loading verse...</h2>
-              <p id="bible-text">Fetching today's Word...</p>
-              <div class="s-meta" id="bible-meta"></div>
-            </div>
-            <div class="slide sl3">
-              <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
-              <h2>This Week's Pledge</h2>
-              <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
-              <div class="s-meta" id="pledge-meta"></div>
-            </div>
-            <div class="ss-nav">
-              <div class="sd active" onclick="goSlide(0)"></div>
-              <div class="sd" onclick="goSlide(1)"></div>
-              <div class="sd" onclick="goSlide(2)"></div>
-            </div>
+        <div class="ss" id="slideshow">
+          <div class="slide sl1 active">
+            <div class="sl-lbl">✦ Welcome Back</div>
+            <h2 id="sl-welcome-name">Welcome, King!</h2>
+            <p>"You are on a journey to greatness. Keep showing up."</p>
+            <div class="s-meta" id="sl-welcome-meta"></div>
           </div>
-          <!-- RANK BADGE — injected by JS for students only -->
-          <div id="dash-rank-badge-wrap"></div>
+          <div class="slide sl2">
+            <div class="sl-lbl">📖 Daily Bible Reading</div>
+            <h2 id="bible-ref">Loading verse...</h2>
+            <p id="bible-text">Fetching today's Word...</p>
+            <div class="s-meta" id="bible-meta"></div>
+          </div>
+          <div class="slide sl3">
+            <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
+            <h2>This Week's Pledge</h2>
+            <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
+            <div class="s-meta" id="pledge-meta"></div>
+          </div>
+          <div class="ss-nav">
+            <div class="sd active" onclick="goSlide(0)"></div>
+            <div class="sd" onclick="goSlide(1)"></div>
+            <div class="sd" onclick="goSlide(2)"></div>
+          </div>
         </div>
-
-        <!-- RANK MESSAGE BANNER -->
-        <div id="dash-rank-msg" class="rank-msg-banner"></div>
         <div class="quick-cards">
           <div class="qcard qcard-1" onclick="openDevotionalQuiz()">
             <div class="qcard-accent">📖</div>
@@ -1140,31 +988,6 @@ tr:hover td{background:var(--org-pale2);}
         <div class="two-col">
           <div class="card"><div class="card-h"><h3>Upcoming Sessions</h3></div><div id="dash-meetings"></div></div>
           <div class="card"><div class="card-h"><h3>Pending Assignments</h3></div><div id="dash-pending"></div></div>
-        </div>
-        <!-- STUDENT SCORE RADAR + LEADERBOARD -->
-        <div class="two-col" id="dash-lb-section" style="display:none;">
-          <div class="card">
-            <div class="card-h"><h3>📊 My Performance Radar</h3></div>
-            <div id="dash-score-radar"></div>
-          </div>
-          <div class="card">
-            <div class="card-h"><h3>🏆 Cohort Leaderboard</h3></div>
-            <div id="dash-lb-msg"></div>
-            <div id="dash-leaderboard"></div>
-          </div>
-        </div>
-        <!-- ADMIN LEADERBOARD (Junior + Senior separate) -->
-        <div id="dash-admin-lb-section" style="display:none;">
-          <div class="two-col">
-            <div class="card">
-              <div class="card-h"><h3>🏆 Junior Boys Leaderboard</h3></div>
-              <div id="admin-lb-junior"></div>
-            </div>
-            <div class="card">
-              <div class="card-h"><h3>🏆 Senior Boys Leaderboard</h3></div>
-              <div id="admin-lb-senior"></div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -1314,7 +1137,7 @@ tr:hover td{background:var(--org-pale2);}
       <!-- BOYS ATTENDANCE -->
       <div id="view-boys-attendance" class="view">
         <div class="view-head">
-          <div><h1>Boys' C.A</h1><p>Continuous assessment: presence, sessions, assignments &amp; devotional per course</p></div>
+          <div><h1>Boys' Attendance</h1><p>Track session scores and assignment grades per course</p></div>
           <div class="vh-acts" id="att-head-acts" style="display:none;">
             <button class="btn btn-ghost btn-sm" onclick="backToAttGroups()">← Back</button>
             <button class="btn btn-sm btn-green" onclick="exportAttCSV()">⬇ Export CSV</button>
@@ -1352,8 +1175,8 @@ tr:hover td{background:var(--org-pale2);}
           <div class="coach-hero" style="background:linear-gradient(135deg,var(--green-l),white);border:1.5px solid rgba(30,138,80,.2);">
             <div class="coach-hero-icon" style="background:linear-gradient(135deg,var(--green),#28B466);">🌱</div>
             <div class="coach-hero-text">
-              <h2 style="color:var(--green);text-shadow:0 1px 0 rgba(255,255,255,.9),0 0 8px rgba(30,138,80,.15);">Your Growth Story Matters, King</h2>
-              <p style="color:#1A4A30;">Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
+              <h2>Your Growth Story Matters, King</h2>
+              <p>Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
             </div>
           </div>
           <div class="coach-form">
@@ -1728,22 +1551,19 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
     </div>
   </div>
 </div>
-   
-function applyLogo(){
-  ['logo1','logo2'].forEach(id=>{
-    var el = document.getElementById(id);
-    if(el){
-      if (typeof LOGO_SRC !== "undefined" && LOGO_SRC !== "") {
-        el.src = LOGO_SRC;
-      } else {
-        el.style.display = "none";
-      }
 
-      el.onerror = function(){
-        this.style.display = 'none';
-      };
-    }
+<script>
+// Logo is hardcoded directly in HTML img tags
+function applyLogo(){
+  ['login-logo-img','sb-logo-img','footer-logo-img','mobile-logo-img'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.src=LOGO_SRC;el.onerror=function(){this.style.display='none';};}
   });
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',applyLogo);
+}else{
+  applyLogo();
 }
 
 // ═══════════════════════════════════════════
@@ -2113,249 +1933,6 @@ async function loadDashboard(){
   const pending=isAdmin()?assign.slice(0,4):myAssign.filter(a=>{const sub=mySubs.find(s=>String(s.assignmentId)===String(a.id));return!sub&&new Date(a.dueDate)>=now;}).slice(0,4);
   if(!pending.length){pEl.innerHTML='<div class="empty">No pending assignments.</div>';}
   else{pEl.innerHTML=pending.map(a=>`<div class="meet-item"><div class="meet-dt" style="background:linear-gradient(135deg,var(--purple),#8B78D8)"><div class="md-d" style="font-size:20px">📝</div></div><div class="meet-info"><h4>${a.title}</h4><p>${a.courseTitle} · Due: ${fmtDate(a.dueDate)}</p></div>${!isAdmin()?`<button class="btn-join" style="background:linear-gradient(135deg,var(--purple),#8B78D8)" onclick="openSubmitModal('${a.id}')">Submit</button>`:''}</div>`).join('');}
-  // Load leaderboard
-  loadLeaderboard();
-}
-
-// ═══════════════════════════════════════════
-//  LEADERBOARD & PERFORMANCE RADAR
-// ═══════════════════════════════════════════
-// Persistent previous rank storage (localStorage per user)
-function _lbPrevRank(){ try{return JSON.parse(localStorage.getItem('btk_prev_rank_'+S.id)||'null');}catch(e){return null;} }
-function _lbSetPrevRank(r){ try{localStorage.setItem('btk_prev_rank_'+S.id,JSON.stringify(r));}catch(e){} }
-
-// Compute a student's overall CA % from live data
-// Uses the same formula as renderAttTable:
-//   presence: 10pts max per course
-//   session:  10pts max per course
-//   assignment: 100pts max per assignment
-//   devotional: 10pts × devoMaxDays per course
-async function computeAllScores(){
-  const [courses,users,subs,assign,savedAtt,devos]=await Promise.all([
-    dbRead('Courses'),dbRead('Users'),dbRead('Submissions'),
-    dbRead('Assignments'),dbRead('Attendance'),dbRead('DevotionalScores')
-  ]);
-  const students=users.filter(u=>u.role==='user'&&u.status==='active');
-
-  // Build course list with devoMaxDays
-  const sortedC=[...courses].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
-  const courseList=courses.map(c=>{
-    const cIdx=sortedC.findIndex(x=>String(x.id)===String(c.id));
-    const cStart=cIdx>0?new Date(sortedC[cIdx].createdAt):new Date(0);
-    const cEnd=cIdx<sortedC.length-1?new Date(sortedC[cIdx+1].createdAt):new Date('2099-01-01');
-    const days=new Set(devos.filter(d=>{const dd=new Date(d.date);return dd>=cStart&&dd<cEnd;}).map(d=>d.date?d.date.slice(0,10):''));
-    days.delete('');
-    const courseAssigns=assign.filter(a=>String(a.courseId)===String(c.id));
-    return{id:String(c.id),title:c.title,assignments:courseAssigns,devoMaxDays:days.size};
-  });
-
-  // Build maps
-  const subMap={};
-  subs.forEach(s=>{const sid=String(s.studentId);if(!subMap[sid])subMap[sid]={};subMap[sid][String(s.assignmentId)]=Number(s.score)||0;});
-
-  const sessMap={},checkMap={};
-  savedAtt.forEach(a=>{
-    if(a.type==='session'){if(!sessMap[a.studentId])sessMap[a.studentId]={};sessMap[a.studentId][a.colId]=Number(a.value)||0;}
-    else if(a.type==='present'){if(!checkMap[a.studentId])checkMap[a.studentId]={};checkMap[a.studentId][a.colId]=a.value==='true'||a.value===true;}
-  });
-
-  const devoMap={};
-  devos.forEach(d=>{
-    const dDate=new Date(d.date);
-    let bucketId=sortedC.length>0?sortedC[sortedC.length-1].id:null;
-    for(let i=0;i<sortedC.length-1;i++){if(dDate<new Date(sortedC[i+1].createdAt)){bucketId=sortedC[i].id;break;}}
-    if(!bucketId)return;
-    const sid=String(d.studentId);
-    if(!devoMap[sid])devoMap[sid]={};
-    if(d.correct==='true'||d.correct===true) devoMap[sid][String(bucketId)]=(devoMap[sid][String(bucketId)]||0)+1;
-  });
-
-  // Score each student — ALL metrics always count in maxPts so every student
-  // is judged against the same denominator regardless of whether they attempted.
-  return students.map(st=>{
-    const sid=String(st.id);
-    let total=0,max=0;
-    const breakdown={presence:0,presenceMax:0,session:0,sessionMax:0,assignment:0,assignMax:0,devo:0,devoMax:0};
-    courseList.forEach(co=>{
-      // ── Presence: max 10 per course — always in denominator ──────────────
-      const pres=(checkMap[sid]||{})[co.id+'_present']?10:0;
-      total+=pres; max+=10;
-      breakdown.presence+=pres; breakdown.presenceMax+=10;
-
-      // ── Session: max 10 per course — always in denominator ───────────────
-      const sessRaw=(sessMap[sid]||{})[co.id+'_session'];
-      const sess=sessRaw!==undefined?Math.min(Number(sessRaw),10):0;
-      total+=sess; max+=10;
-      breakdown.session+=sess; breakdown.sessionMax+=10;
-
-      // ── Assignments: max 100 each — always in denominator ────────────────
-      co.assignments.forEach(a=>{
-        const raw=(subMap[sid]||{})[String(a.id)];
-        const earned=raw!==undefined?Number(raw):0;
-        total+=earned; max+=100;
-        breakdown.assignment+=earned; breakdown.assignMax+=100;
-      });
-
-      // ── Devotional: max 10×days — always in denominator when days exist ──
-      if(co.devoMaxDays>0){
-        const dCount=(devoMap[sid]||{})[String(co.id)]||0;
-        const dMax=co.devoMaxDays*10;
-        const dEarned=Math.min(dCount*10,dMax);
-        total+=dEarned; max+=dMax;
-        breakdown.devo+=dEarned; breakdown.devoMax+=dMax;
-      }
-    });
-    const pct=max>0?Math.round((total/max)*100):0;
-    return{id:sid,name:st.name,cohort:st.cohort||'',pct,total,max,breakdown};
-  });
-}
-
-async function loadLeaderboard(){
-  if(isAdmin()){
-    // Admin: collapse rank badge column, show admin leaderboards
-    document.getElementById('dash-hero-row').style.gridTemplateColumns='1fr';
-    document.getElementById('dash-rank-badge-wrap').style.display='none';
-    document.getElementById('dash-lb-section').style.display='none';
-    document.getElementById('dash-admin-lb-section').style.display='block';
-    const scores=await computeAllScores();
-    const junior=scores.filter(s=>s.cohort==='Junior Boys').sort((a,b)=>b.pct-a.pct);
-    const senior=scores.filter(s=>s.cohort==='Senior Boys').sort((a,b)=>b.pct-a.pct);
-    document.getElementById('admin-lb-junior').innerHTML=renderLbRows(junior,null);
-    document.getElementById('admin-lb-senior').innerHTML=renderLbRows(senior,null);
-    return;
-  }
-
-  // Student: full hero row layout
-  document.getElementById('dash-hero-row').style.gridTemplateColumns='';
-  document.getElementById('dash-rank-badge-wrap').style.display='block';
-  document.getElementById('dash-lb-section').style.display='grid';
-  document.getElementById('dash-admin-lb-section').style.display='none';
-
-  const scores=await computeAllScores();
-  const me=scores.find(s=>String(s.id)===String(S.id));
-  if(!me){
-    document.getElementById('dash-rank-badge-wrap').innerHTML='';
-    return;
-  }
-
-  // Sort cohort peers
-  const cohortScores=scores.filter(s=>s.cohort===me.cohort).sort((a,b)=>b.pct-a.pct);
-  const myRank=cohortScores.findIndex(s=>String(s.id)===String(S.id))+1;
-  const total=cohortScores.length;
-
-  // Rank change detection
-  const prevRank=_lbPrevRank();
-  const msgEl=document.getElementById('dash-rank-msg');
-  msgEl.className='rank-msg-banner';
-  if(prevRank!==null&&prevRank!==myRank){
-    if(myRank<prevRank){
-      msgEl.className='rank-msg-banner up';
-      msgEl.innerHTML=`🎉 Amazing, King! You climbed from <strong>#${prevRank}</strong> to <strong>#${myRank}</strong> on the ${me.cohort} leaderboard! Your hard work is paying off — keep pushing!`;
-    } else {
-      const areas=[];
-      if(me.breakdown.presenceMax>0&&me.breakdown.presence<me.breakdown.presenceMax) areas.push('Attendance');
-      if(me.breakdown.sessionMax>0&&me.breakdown.session/me.breakdown.sessionMax<0.7) areas.push('Session Scores');
-      if(me.breakdown.assignMax>0&&me.breakdown.assignment/me.breakdown.assignMax<0.7) areas.push('Assignments');
-      if(me.breakdown.devoMax>0&&me.breakdown.devo/me.breakdown.devoMax<0.7) areas.push('Devotional');
-      const tip=areas.length?` To climb back up, focus on: <strong>${areas.slice(0,2).join(' & ')}</strong>.`:'';
-      msgEl.className='rank-msg-banner down';
-      msgEl.innerHTML=`💪 You dropped to <strong>#${myRank}</strong>, King — but this is not where your story ends.${tip} Every King rises again!`;
-    }
-  } else if(prevRank===null){
-    msgEl.className='rank-msg-banner same';
-    msgEl.innerHTML=`👑 You are ranked <strong>#${myRank}</strong> of ${total} in <strong>${me.cohort||'your cohort'}</strong>. Keep showing up — greatness is built daily!`;
-  }
-  _lbSetPrevRank(myRank);
-
-  // Render rank badge
-  const ringColours=myRank===1
-    ?{outer:'#FFD700',inner:'#FFA500',mid:'#FFE566',glow:'rgba(255,215,0,0.6)'}
-    :myRank===2
-    ?{outer:'#C8C8C8',inner:'#A0A0A0',mid:'#E8E8E8',glow:'rgba(200,200,200,0.5)'}
-    :myRank===3
-    ?{outer:'#CD7F32',inner:'#A0522D',mid:'#E8A060',glow:'rgba(205,127,50,0.55)'}
-    :{outer:'#FF6A00',inner:'#F07C00',mid:'#FFA733',glow:'rgba(240,100,0,0.45)'};
-
-  const cohortShort=(me.cohort||'').replace(' Boys','');
-  document.getElementById('dash-rank-badge-wrap').innerHTML=`
-    <div class="rank-badge-card" data-rank="${Math.min(myRank,4)}">
-      <div class="rank-badge-label">Your Standing</div>
-      <div class="rank-badge-ring">
-        <svg viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Static deep shadow ring -->
-          <circle cx="74" cy="74" r="70" stroke="rgba(0,0,0,0.5)" stroke-width="6"/>
-          <!-- Pulsing glow ring -->
-          <circle cx="74" cy="74" r="68" stroke="${ringColours.glow}" stroke-width="4" class="rank-ring-pulse" opacity="0.7"/>
-          <!-- Spinning dashed outer ring -->
-          <circle cx="74" cy="74" r="64" stroke="${ringColours.outer}" stroke-width="2.5"
-            stroke-dasharray="8 5" stroke-linecap="round" class="rank-ring-outer" opacity="0.9"/>
-          <!-- Solid inner border ring -->
-          <circle cx="74" cy="74" r="58" stroke="${ringColours.inner}" stroke-width="1.5" opacity="0.5"/>
-          <!-- 3D highlight arc (top-left) -->
-          <path d="M 30 55 A 50 50 0 0 1 90 26" stroke="rgba(255,255,255,0.15)" stroke-width="5" stroke-linecap="round"/>
-          <!-- Decorative dots at cardinal points -->
-          <circle cx="74" cy="6"   r="3" fill="${ringColours.outer}" opacity="0.9"/>
-          <circle cx="74" cy="142" r="3" fill="${ringColours.outer}" opacity="0.9"/>
-          <circle cx="6"  cy="74"  r="3" fill="${ringColours.outer}" opacity="0.9"/>
-          <circle cx="142" cy="74" r="3" fill="${ringColours.outer}" opacity="0.9"/>
-          <!-- Small tick marks around ring -->
-          ${Array.from({length:24},(_,i)=>{
-            const a=(i/24)*Math.PI*2;
-            const r1=60,r2=i%6===0?54:57;
-            const x1=74+r1*Math.sin(a),y1=74-r1*Math.cos(a);
-            const x2=74+r2*Math.sin(a),y2=74-r2*Math.cos(a);
-            return`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${ringColours.mid}" stroke-width="${i%6===0?2:1}" opacity="${i%6===0?0.9:0.4}"/>`;
-          }).join('')}
-        </svg>
-        <div class="rank-badge-inner">
-          <div class="rank-badge-num">
-            <div class="rank-badge-hash">#</div>
-            <div class="rank-badge-digits">${myRank}</div>
-          </div>
-        </div>
-      </div>
-      <div class="rank-badge-cohort">${cohortShort}<br>Leaderboard</div>
-      <div class="rank-badge-total">of ${total} Kings</div>
-    </div>`;
-
-  // Render leaderboard and radar at bottom
-  document.getElementById('dash-leaderboard').innerHTML=renderLbRows(cohortScores,String(S.id));
-  renderScoreRadar(me,document.getElementById('dash-score-radar'));
-}
-
-function renderLbRows(sorted,myId){
-  if(!sorted.length)return'<div class="empty">No scores yet.</div>';
-  return sorted.map((s,i)=>{
-    const rank=i+1;
-    const isMe=myId&&String(s.id)===myId;
-    const rankCls=rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
-    const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
-    return`<div class="lb-row${isMe?' lb-me':''}">
-      <div class="lb-rank ${rankCls}">${medal}</div>
-      <div class="lb-name">${s.name}${isMe?' <span style="font-size:10px;color:var(--org4);">(You)</span>':''}</div>
-      <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${s.pct}%;background:${rank===1?'linear-gradient(90deg,#FFD700,#FFA500)':rank<=3?'var(--org-grad)':'linear-gradient(90deg,var(--blue),var(--teal))'}"></div></div>
-      <div class="lb-pct">${s.pct}%</div>
-    </div>`;
-  }).join('');
-}
-
-function renderScoreRadar(me,el){
-  if(!el)return;
-  const metrics=[
-    {label:'Attendance',val:me.breakdown.presenceMax>0?Math.round((me.breakdown.presence/me.breakdown.presenceMax)*100):0,color:'var(--org)'},
-    {label:'Sessions',val:me.breakdown.sessionMax>0?Math.round((me.breakdown.session/me.breakdown.sessionMax)*100):0,color:'var(--blue)'},
-    {label:'Assignments',val:me.breakdown.assignMax>0?Math.round((me.breakdown.assignment/me.breakdown.assignMax)*100):0,color:'var(--purple)'},
-    {label:'Devotional',val:me.breakdown.devoMax>0?Math.round((me.breakdown.devo/me.breakdown.devoMax)*100):0,color:'var(--teal)'},
-    {label:'Overall',val:me.pct,color:'var(--green)'},
-  ];
-  el.innerHTML=`<div class="lb-score-radar">
-    <h4>Overall Score: <span style="color:var(--org4);font-size:20px;">${me.pct}%</span></h4>
-    ${metrics.map(m=>`<div class="lb-metric-row">
-      <div class="lb-metric-label">${m.label}</div>
-      <div class="lb-metric-bar"><div class="lb-metric-fill" style="width:${m.val}%;background:${m.color};"></div></div>
-      <div class="lb-metric-val">${m.val}%</div>
-    </div>`).join('')}
-  </div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -2707,53 +2284,15 @@ async function sendDistressReply(msgId,studentName){
 let _allUsers=[];
 async function loadManageUsers(){_allUsers=await dbRead('Users');renderUsersTable(_allUsers);}
 function renderUsersTable(users){
-  var tb=document.getElementById('users-tbody');
-  if(!users.length){tb.innerHTML='<tr><td colspan="8" class="empty">No users yet.</td></tr>';return;}
-  var PAY_LABELS={paid:'Paid in Full',install:'Two Installments',scholar:'Scholarships','':'No Decision'};
-  var PAY_BG={paid:'#2e7d32',install:'#c9a227',scholar:'#7b3fa0','':'transparent'};
-  var PAY_TC={paid:'white',install:'white',scholar:'white','':'var(--dark)'};
-  var rows='';
-  users.forEach(function(u){
-    var pay=u.payment||'';
-    var trCls='pay-'+(pay||'none');
-    var payLabel=PAY_LABELS[pay]||'No Decision';
-    var payBg=PAY_BG[pay]||'transparent';
-    var payTc=PAY_TC[pay]||'var(--dark)';
-    var nameStyle=pay?'background:'+payBg+';color:'+payTc+';font-weight:800;padding:3px 8px;border-radius:5px;display:inline-block;':'';;
-    var cohortBg=u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)';
-    var cohortCl=u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)';
-    var btnPayStyle='background:'+payBg+';color:'+payTc+';font-weight:700;border:1.5px solid '+(pay?payBg:'var(--border)')+';';
-    rows+='<tr class="'+trCls+'" data-uid="'+u.id+'" data-pay="'+pay+'" data-status="'+u.status+'" data-role="'+u.role+'" data-cohort="'+(u.cohort||'')+'">'
-      +'<td class="pay-name" style="min-width:140px;"><span style="'+nameStyle+'">'+u.name+'</span></td>'
-      +'<td>'+u.email+'</td>'
-      +'<td><span class="badge b-'+u.role+'">'+u.role+'</span></td>'
-      +'<td><span class="badge" style="background:'+cohortBg+';color:'+cohortCl+'">'+(u.cohort||'&mdash;')+'</span></td>'
-      +'<td><span class="pay-pill '+(pay||'none')+'" style="background:'+payBg+';color:'+payTc+';border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">'+payLabel+'</span></td>'
-      +'<td><span class="badge b-'+u.status+'">'+u.status+'</span></td>'
-      +'<td>'+fmtDate(u.createdAt)+'</td>'
-      +'<td style="display:flex;gap:5px;flex-wrap:wrap;">'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="status">'+( u.status==='active'?'Deactivate':'Activate')+'</button>'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="role">'+( u.role==='admin'?'&rarr; User':'&rarr; Admin')+'</button>'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="cohort">Cohort</button>'
-        +'<button class="btn btn-sm usr-action" data-action="payment" style="'+btnPayStyle+'">'+payLabel+'</button>'
-      +'</td>'
-      +'</tr>';
-  });
-  tb.innerHTML=rows;
-  // Event delegation - one listener on tbody handles all actions
-  tb.onclick=function(e){
-    var btn=e.target.closest('.usr-action');
-    if(!btn)return;
-    var tr=btn.closest('tr');
-    var uid=tr.dataset.uid;
-    var action=btn.dataset.action;
-    if(action==='status') toggleStatus(uid,tr.dataset.status);
-    else if(action==='role') toggleRole(uid,tr.dataset.role);
-    else if(action==='cohort') changeCohort(uid,tr.dataset.cohort);
-    else if(action==='payment') changePayment(uid,tr.dataset.pay);
-  };
+  const tb=document.getElementById('users-tbody');
+  if(!users.length){tb.innerHTML='<tr><td colspan="7" class="empty">No users yet.</td></tr>';return;}
+  tb.innerHTML=users.map(u=>{
+  const pay=u.payment||'';
+  const payLabel={'paid':'Paid in Full','install':'Two Installments','scholar':'Scholarships','':'No Decision'}[pay]||'No Decision';
+  const payCls={'paid':'pay-dot paid','install':'pay-dot install','scholar':'pay-dot scholar','':'pay-dot none'}[pay]||'pay-dot none';
+  return`<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="badge b-${u.role}">${u.role}</span></td><td><span class="badge" style="background:${u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)'};color:${u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)'}">${u.cohort||'—'}</span></td><td><span class="${payCls}"></span>${payLabel}</td><td><span class="badge b-${u.status}">${u.status}</span></td><td>${fmtDate(u.createdAt)}</td><td style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-ghost" onclick="toggleStatus('${u.id}','${u.status}')">${u.status==='active'?'Deactivate':'Activate'}</button><button class="btn btn-sm btn-ghost" onclick="toggleRole('${u.id}','${u.role}')">${u.role==='admin'?'→ User':'→ Admin'}</button><button class="btn btn-sm btn-ghost" onclick="changeCohort('${u.id}','${u.cohort||''}')">Cohort</button><button class="btn btn-sm btn-ghost" onclick="changePayment('${u.id}','${pay}')">💳 Pay</button></td></tr>`;
+}).join('');
 }
-
 function filterUsers(){const q=document.getElementById('user-search').value.toLowerCase();renderUsersTable(_allUsers.filter(u=>(u.name+u.email+u.role).toLowerCase().includes(q)));}
 async function createUser(){
   const name=document.getElementById('nu-name').value.trim();
@@ -2779,51 +2318,11 @@ async function changeCohort(id,cur){
 }
 async function changePayment(id,cur){
   const opts=['','paid','install','scholar'];
-  const PAY_NAMES={'':'No Decision','paid':'Paid in Full','install':'Two Installments','scholar':'Scholarships'};
-  const PAY_ICONS={'':'⬜','paid':'🟢','install':'🟡','scholar':'🟣'};
+  const labels=['No Decision','Paid in Full','Two Installments','Scholarships'];
   const idx=opts.indexOf(cur)<0?0:opts.indexOf(cur);
   const next=opts[(idx+1)%opts.length];
-  // Optimistic update — change in-memory cache immediately so UI responds instantly
-  const u=_allUsers.find(x=>String(x.id)===String(id));
-  if(u){ u.payment=next; renderUsersTable(_allUsers); }
-  // Also update attendance list if loaded
-  if(_attStudentList.length){
-    const st=_attStudentList.find(x=>String(x.id)===String(id));
-    if(st){ st.payment=next; }
-  }
-  // Persist to sheet
-  const res=await dbUpdate('Users','id',id,{payment:next});
-  if(res&&res.error){
-    // Revert on error
-    if(u){ u.payment=cur; renderUsersTable(_allUsers); }
-    alert('Could not save payment status: '+res.error);
-    return;
-  }
-  // Re-render attendance table if it is currently visible (so colour updates live)
-  if(_attStudentList && _attStudentList.length){
-    var st=_attStudentList.find(function(x){return String(x.id)===String(id);});
-    if(st){ st.payment=next; renderAttTable(); }
-  }
-  // Show confirmation toast
-  var PAY_ICONS2={'':'&#9634;','paid':'&#128994;','install':'&#128993;','scholar':'&#128995;'};
-  showToast(PAY_ICONS2[next]+' '+PAY_NAMES[next]+' saved for '+(u?u.name:'student'));
-}
-
-function showToast(msg){
-  var t=document.getElementById('pay-toast');
-  if(!t){
-    t=document.createElement('div');
-    t.id='pay-toast';
-    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
-      +'background:var(--dark);color:white;padding:10px 22px;border-radius:30px;'
-      +'font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;'
-      +'box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;';
-    document.body.appendChild(t);
-  }
-  t.textContent=msg;
-  t.style.opacity='1';
-  clearTimeout(t._timer);
-  t._timer=setTimeout(function(){t.style.opacity='0';},2500);
+  await dbUpdate('Users','id',id,{payment:next});
+  loadManageUsers();
 }
 
 // ═══════════════════════════════════════════
@@ -3560,20 +3059,11 @@ async function openAttendanceList(group){
   ]);
 
   // Build course list — every platform course, each with its assignments
-  // Also count how many distinct devo days exist per course (for max devo points)
-  const allDevos = await dbRead('DevotionalScores');
-  const sortedCoursesForBuild = [...courses].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
   _attCourseList = courses.map(c => {
     const courseAssigns = assign
       .filter(a => String(a.courseId) === String(c.id))
       .map(a => ({ id: String(a.id), title: a.title, maxScore: Number(a.maxScore) || 100 }));
-    // Count distinct devotional days bucketed to this course
-    const cIdx = sortedCoursesForBuild.findIndex(x=>String(x.id)===String(c.id));
-    const cStart = cIdx > 0 ? new Date(sortedCoursesForBuild[cIdx].createdAt) : new Date(0);
-    const cEnd   = cIdx < sortedCoursesForBuild.length-1 ? new Date(sortedCoursesForBuild[cIdx+1].createdAt) : new Date('2099-01-01');
-    const devodays = new Set(allDevos.filter(d=>{const dd=new Date(d.date);return dd>=cStart&&dd<cEnd;}).map(d=>d.date?d.date.slice(0,10):''));
-    devodays.delete('');
-    return { id: String(c.id), title: c.title, assignments: courseAssigns, devoMaxDays: devodays.size };
+    return { id: String(c.id), title: c.title, assignments: courseAssigns };
   });
 
   // Filter students by cohort
@@ -3610,10 +3100,13 @@ async function openAttendanceList(group){
     _attSubMap[sid][aid] = Number(s.score) || 0;
   });
 
-  // Build devotional points map: studentId -> courseId -> correct answer count
+  // Build devotional points map: studentId -> courseId -> total correct answers
+  // We assign devotional scores to the most-recently-created course at the time of the devotional
   _attDevoMap = {};
+  const devos = await dbRead('DevotionalScores');
+  // Sort courses by createdAt ascending so we can bucket devos
   const sortedCourses = [...courses].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
-  allDevos.forEach(d => {
+  devos.forEach(d => {
     const dDate = new Date(d.date);
     // Find which course period this devo belongs to
     // A devo belongs to course N if it was done before the next course was created
@@ -3655,12 +3148,12 @@ function renderAttTable(){
     var span = 3 + co.assignments.length;
     r1 += '<th class="course-group-hd" colspan="'+span+'">'+co.title+'</th>';
     r2 += '<th style="background:linear-gradient(135deg,#FFF3CD,#FFE58A);color:#856404;font-size:10px;min-width:52px;">&#9745; Present</th>';
-    r2 += '<th class="sub-score">&#128221; Session<br><span style="font-size:9px;opacity:.7;">/10</span></th>';
+    r2 += '<th class="sub-score">&#128221; Session</th>';
     co.assignments.forEach(function(a){
       var short = a.title.length > 12 ? a.title.slice(0,11)+'\u2026' : a.title;
       r2 += '<th class="sub-assign" title="'+a.title+' (max '+a.maxScore+')">'+short+'<br><span style="font-size:9px;opacity:.7;">/'+a.maxScore+'</span></th>';
     });
-    r2 += '<th style="background:linear-gradient(135deg,#D1ECF1,#A8D8E8);color:#0c5460;font-size:10px;min-width:60px;">&#128218; Devo<br><span style="font-size:9px;opacity:.7;">correct/days</span></th>';
+    r2 += '<th style="background:linear-gradient(135deg,#D1ECF1,#A8D8E8);color:#0c5460;font-size:10px;min-width:60px;">&#128218; Devotional</th>';
   });
   if(_attCourseList.length===0){
     r1 += '<th colspan="4" style="color:var(--muted);font-style:italic;">No courses yet</th>';
@@ -3681,12 +3174,11 @@ function renderAttTable(){
     var cells='';
 
     _attCourseList.forEach(function(co){
-      /* ── PRESENCE (max 10 pts per course) ─────────────────────────────── */
+      /* PRESENCE CHECKBOX */
       var chkKey  = co.id+'_present';
       var checked = chkMap[chkKey]==='true' || chkMap[chkKey]===true;
-      var presencePts = checked ? 10 : 0;
-      totalPts += presencePts;
-      maxPts   += 10;
+      if(checked) totalPts+=10;
+      maxPts+=10;
       if(admin){
         cells += '<td style="text-align:center;">'
                + '<input type="checkbox"'+(checked?' checked':'')
@@ -3697,15 +3189,15 @@ function renderAttTable(){
         cells += '<td style="text-align:center;">'+(checked?'&#10003;':'&mdash;')+'</td>';
       }
 
-      /* ── SESSION SCORE (max 10 pts per course) — always in denominator ── */
+      /* SESSION SCORE */
       var sessKey = co.id+'_session';
       var sessVal = scores[sessKey]!==undefined ? scores[sessKey] : '';
-      var sessNum = sessVal!=='' ? Math.min(Number(sessVal),10) : 0;
-      totalPts += sessNum; maxPts += 10;
-      var sessCls = sessVal===''?'':sessNum>=7?'good':sessNum>=4?'ok':'low';
+      var sessNum = sessVal!=='' ? Number(sessVal) : NaN;
+      if(!isNaN(sessNum)){totalPts+=sessNum;maxPts+=100;}
+      var sessCls = isNaN(sessNum)?'':sessNum>=75?'good':sessNum>=50?'ok':'low';
       if(admin){
         cells += '<td>'
-               + '<input type="number" min="0" max="10" value="'+sessVal+'"'
+               + '<input type="number" min="0" max="100" value="'+sessVal+'"'
                + ' placeholder="&mdash;"'
                + ' oninput="saveAttScore(\''+stId+'\',\''+co.id+'_session\',this.value)"'
                + ' style="width:52px;">'
@@ -3714,29 +3206,26 @@ function renderAttTable(){
         cells += '<td class="att-score-cell '+sessCls+'">'+(sessVal!==''?sessVal:'&mdash;')+'</td>';
       }
 
-      /* ── ASSIGNMENT SCORES (max 100 each) — always in denominator ──────── */
+      /* ASSIGNMENT SCORES */
       co.assignments.forEach(function(a){
         var raw = subSt[String(a.id)];
-        var num = raw!==undefined ? Number(raw) : 0;
-        totalPts += num; maxPts += 100;
-        var pct = raw!==undefined?Math.round((num/100)*100):NaN;
+        var num = raw!==undefined ? Number(raw) : NaN;
+        if(!isNaN(num)){totalPts+=num;maxPts+=a.maxScore;}
+        var pct = !isNaN(num)?Math.round((num/a.maxScore)*100):NaN;
         var cls = isNaN(pct)?'':pct>=75?'good':pct>=50?'ok':'low';
-        cells += '<td class="att-score-cell '+cls+'">'+(raw!==undefined?num:'&mdash;')+'</td>';
+        cells += '<td class="att-score-cell '+cls+'">'+(!isNaN(num)?num:'&mdash;')+'</td>';
       });
 
-      /* ── DEVOTIONAL (max 10 × devo days) — always in denominator ─────── */
-      var dCount  = devoPts[String(co.id)];
-      var dTotal  = co.devoMaxDays || 0;
-      var dEarned = dCount!==undefined ? Math.min(Number(dCount)*10, dTotal*10) : 0;
-      var dMax    = dTotal * 10;
-      if(dTotal>0){ totalPts += dEarned; maxPts += dMax; }
-
-      var dCls    = isNaN(dCount)?'':Number(dCount)>=Math.ceil(dTotal*0.75)?'good':Number(dCount)>=Math.ceil(dTotal*0.5)?'ok':'low';
-      cells += '<td class="att-score-cell '+dCls+'" style="color:var(--teal);">'
-             + (!isNaN(dCount) ? dCount+(dTotal>0?'/'+dTotal:'') : '&mdash;')+'</td>';
+      /* DEVOTIONAL POINTS */
+      var dpts = devoPts[String(co.id)];
+      var dptsNum = dpts!==undefined ? Number(dpts) : NaN;
+      if(!isNaN(dptsNum)&&dptsNum>0){totalPts+=dptsNum*10;maxPts+=100;}
+      var dptsCls = isNaN(dptsNum)?'':dptsNum>=7?'good':dptsNum>=4?'ok':'low';
+      cells += '<td class="att-score-cell '+dptsCls+'" style="color:var(--teal);">'
+             + (!isNaN(dptsNum)?dptsNum:'&mdash;')+'</td>';
     });
 
-    /* ── OVERALL % = (totalPts / maxPts) × 100 ─────────────────────────── */
+    /* OVERALL % METER */
     var ovPct  = maxPts>0 ? Math.round((totalPts/maxPts)*100) : null;
     var ovCls  = ovPct===null?'':ovPct>=75?'good':ovPct>=50?'ok':'low';
     var meterCell = '<td><div class="att-meter-wrap">'
@@ -4062,25 +3551,6 @@ function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleDateString(
 window.addEventListener('DOMContentLoaded',()=>{
   if(loadSession()&&S){bootApp();}else{showPage('page-login');}
 });
-</script>
-const LOGO_SRC = "";
-
-function applyLogo(){
-  ['logo1','logo2'].forEach(id=>{
-    var el = document.getElementById(id);
-    if(el){
-      if (typeof LOGO_SRC !== "undefined" && LOGO_SRC !== "") {
-        el.src = LOGO_SRC;
-      } else {
-        el.style.display = "none";
-      }
-
-      el.onerror = function(){
-        this.style.display = 'none';
-      };
-    }
-  });
-}
 </script>
 </body>
 </html>
