@@ -2167,28 +2167,40 @@ async function computeAllScores(){
     if(d.correct==='true'||d.correct===true) devoMap[sid][String(bucketId)]=(devoMap[sid][String(bucketId)]||0)+1;
   });
 
-  // Score each student
+  // Score each student — ALL metrics always count in maxPts so every student
+  // is judged against the same denominator regardless of whether they attempted.
   return students.map(st=>{
     const sid=String(st.id);
     let total=0,max=0;
     const breakdown={presence:0,presenceMax:0,session:0,sessionMax:0,assignment:0,assignMax:0,devo:0,devoMax:0};
     courseList.forEach(co=>{
-      // Presence
+      // ── Presence: max 10 per course — always in denominator ──────────────
       const pres=(checkMap[sid]||{})[co.id+'_present']?10:0;
-      total+=pres;max+=10;breakdown.presence+=pres;breakdown.presenceMax+=10;
-      // Session
-      const sess=Math.min((sessMap[sid]||{})[co.id+'_session']||0,10);
-      const sessEntered=(sessMap[sid]||{})[co.id+'_session']!==undefined;
-      if(sessEntered){total+=sess;max+=10;breakdown.session+=sess;breakdown.sessionMax+=10;}
-      // Assignments
+      total+=pres; max+=10;
+      breakdown.presence+=pres; breakdown.presenceMax+=10;
+
+      // ── Session: max 10 per course — always in denominator ───────────────
+      const sessRaw=(sessMap[sid]||{})[co.id+'_session'];
+      const sess=sessRaw!==undefined?Math.min(Number(sessRaw),10):0;
+      total+=sess; max+=10;
+      breakdown.session+=sess; breakdown.sessionMax+=10;
+
+      // ── Assignments: max 100 each — always in denominator ────────────────
       co.assignments.forEach(a=>{
         const raw=(subMap[sid]||{})[String(a.id)];
-        if(raw!==undefined){total+=raw;max+=100;breakdown.assignment+=raw;breakdown.assignMax+=100;}
+        const earned=raw!==undefined?Number(raw):0;
+        total+=earned; max+=100;
+        breakdown.assignment+=earned; breakdown.assignMax+=100;
       });
-      // Devotional
-      const dCount=(devoMap[sid]||{})[String(co.id)]||0;
-      const dMax=co.devoMaxDays*10;
-      if(co.devoMaxDays>0){total+=Math.min(dCount*10,dMax);max+=dMax;breakdown.devo+=Math.min(dCount*10,dMax);breakdown.devoMax+=dMax;}
+
+      // ── Devotional: max 10×days — always in denominator when days exist ──
+      if(co.devoMaxDays>0){
+        const dCount=(devoMap[sid]||{})[String(co.id)]||0;
+        const dMax=co.devoMaxDays*10;
+        const dEarned=Math.min(dCount*10,dMax);
+        total+=dEarned; max+=dMax;
+        breakdown.devo+=dEarned; breakdown.devoMax+=dMax;
+      }
     });
     const pct=max>0?Math.round((total/max)*100):0;
     return{id:sid,name:st.name,cohort:st.cohort||'',pct,total,max,breakdown};
@@ -3682,12 +3694,12 @@ function renderAttTable(){
         cells += '<td style="text-align:center;">'+(checked?'&#10003;':'&mdash;')+'</td>';
       }
 
-      /* ── SESSION SCORE (max 10 pts per course) ─────────────────────────── */
+      /* ── SESSION SCORE (max 10 pts per course) — always in denominator ── */
       var sessKey = co.id+'_session';
       var sessVal = scores[sessKey]!==undefined ? scores[sessKey] : '';
-      var sessNum = sessVal!=='' ? Math.min(Number(sessVal),10) : NaN;
-      if(!isNaN(sessNum)){ totalPts += sessNum; maxPts += 10; }
-      var sessCls = isNaN(sessNum)?'':sessNum>=7?'good':sessNum>=4?'ok':'low';
+      var sessNum = sessVal!=='' ? Math.min(Number(sessVal),10) : 0;
+      totalPts += sessNum; maxPts += 10;
+      var sessCls = sessVal===''?'':sessNum>=7?'good':sessNum>=4?'ok':'low';
       if(admin){
         cells += '<td>'
                + '<input type="number" min="0" max="10" value="'+sessVal+'"'
@@ -3699,23 +3711,23 @@ function renderAttTable(){
         cells += '<td class="att-score-cell '+sessCls+'">'+(sessVal!==''?sessVal:'&mdash;')+'</td>';
       }
 
-      /* ── ASSIGNMENT SCORES (max 100 pts per assignment) ────────────────── */
+      /* ── ASSIGNMENT SCORES (max 100 each) — always in denominator ──────── */
       co.assignments.forEach(function(a){
         var raw = subSt[String(a.id)];
-        var num = raw!==undefined ? Number(raw) : NaN;
-        if(!isNaN(num)){ totalPts += num; maxPts += 100; }
-        var pct = !isNaN(num)?Math.round((num/100)*100):NaN;
+        var num = raw!==undefined ? Number(raw) : 0;
+        totalPts += num; maxPts += 100;
+        var pct = raw!==undefined?Math.round((num/100)*100):NaN;
         var cls = isNaN(pct)?'':pct>=75?'good':pct>=50?'ok':'low';
-        cells += '<td class="att-score-cell '+cls+'">'+(!isNaN(num)?num:'&mdash;')+'</td>';
+        cells += '<td class="att-score-cell '+cls+'">'+(raw!==undefined?num:'&mdash;')+'</td>';
       });
 
-      /* ── DEVOTIONAL (max 10 pts × number of devo days for this course) ── */
-      /* _attDevoMap stores correct-answer COUNT per student per course      */
-      var dCount  = devoPts[String(co.id)];                 // # correct answers
-      var dTotal  = co.devoMaxDays || 0;                    // total devo days for this course
-      var dEarned = dCount!==undefined ? Math.min(Number(dCount)*10, dTotal*10) : NaN;
-      var dMax    = dTotal > 0 ? dTotal * 10 : NaN;
-      if(!isNaN(dEarned) && !isNaN(dMax) && dMax>0){ totalPts += dEarned; maxPts += dMax; }
+      /* ── DEVOTIONAL (max 10 × devo days) — always in denominator ─────── */
+      var dCount  = devoPts[String(co.id)];
+      var dTotal  = co.devoMaxDays || 0;
+      var dEarned = dCount!==undefined ? Math.min(Number(dCount)*10, dTotal*10) : 0;
+      var dMax    = dTotal * 10;
+      if(dTotal>0){ totalPts += dEarned; maxPts += dMax; }
+
       var dCls    = isNaN(dCount)?'':Number(dCount)>=Math.ceil(dTotal*0.75)?'good':Number(dCount)>=Math.ceil(dTotal*0.5)?'ok':'low';
       cells += '<td class="att-score-cell '+dCls+'" style="color:var(--teal);">'
              + (!isNaN(dCount) ? dCount+(dTotal>0?'/'+dTotal:'') : '&mdash;')+'</td>';
