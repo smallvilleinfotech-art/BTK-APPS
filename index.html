@@ -365,19 +365,29 @@ input,select,textarea,button{font-family:inherit;}
 /* ═══════════════════════════════════════════
    PAYMENT STATUS COLOUR SCALE
 ═══════════════════════════════════════════ */
-tr.pay-paid    td.frozen-col, .pay-badge-paid    { background:#2e7d32 !important; color:white !important; }
-tr.pay-paid    td.frozen-col { font-weight:800; }
-tr.pay-install td.frozen-col, .pay-badge-install  { background:#c9a227 !important; color:white !important; }
-tr.pay-install td.frozen-col { font-weight:800; }
-tr.pay-scholar td.frozen-col, .pay-badge-scholar  { background:#7b3fa0 !important; color:white !important; }
-tr.pay-scholar td.frozen-col { font-weight:800; }
-tr.pay-none    td.frozen-col { background:white  !important; color:var(--dark) !important; }
-.pay-badge-none { background:white; color:var(--dark); border:1.5px solid var(--border); }
-.pay-dot { width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle; }
-.pay-dot.paid    { background:#2e7d32; }
-.pay-dot.install { background:#c9a227; }
-.pay-dot.scholar { background:#7b3fa0; }
-.pay-dot.none    { background:#ccc;border:1px solid #aaa; }
+/* Payment status — row highlight via tr class */
+tr.pay-paid    td.pay-name { background:#2e7d32 !important; color:white !important; font-weight:800; }
+tr.pay-install td.pay-name { background:#c9a227 !important; color:white !important; font-weight:800; }
+tr.pay-scholar td.pay-name { background:#7b3fa0 !important; color:white !important; font-weight:800; }
+tr.pay-none    td.pay-name { background:white   !important; color:var(--dark) !important; }
+/* Also apply to frozen-col in attendance */
+tr.pay-paid    td.frozen-col { background:#2e7d32 !important; color:white !important; font-weight:800; }
+tr.pay-install td.frozen-col { background:#c9a227 !important; color:white !important; font-weight:800; }
+tr.pay-scholar td.frozen-col { background:#7b3fa0 !important; color:white !important; font-weight:800; }
+td.pay-name{min-width:140px;transition:background .3s,color .3s;}
+tr.pay-none    td.frozen-col { background:white   !important; color:var(--dark) !important; }
+/* Payment pill badge in Users table */
+/* Attendance row — payment colour on name cell */
+tr.pay-paid    td.frozen-col { background:#2e7d32!important;color:white!important;font-weight:800; }
+tr.pay-install td.frozen-col { background:#c9a227!important;color:white!important;font-weight:800; }
+tr.pay-scholar td.frozen-col { background:#7b3fa0!important;color:white!important;font-weight:800; }
+tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!important; }
+.pay-pill { display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:20px;letter-spacing:.3px; }
+.pay-pill.paid    { background:#2e7d32;color:white; }
+.pay-pill.install { background:#c9a227;color:white; }
+.pay-pill.scholar { background:#7b3fa0;color:white; }
+.pay-pill.none    { background:var(--border);color:var(--muted); }
 /* Admin badge counter in sidebar */
 .sb-msg-badge{
   background:var(--red);color:white;border-radius:20px;
@@ -1553,18 +1563,7 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
 </div>
 
 <script>
-// Logo is hardcoded directly in HTML img tags
-function applyLogo(){
-  ['login-logo-img','sb-logo-img','footer-logo-img','mobile-logo-img'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){el.src=LOGO_SRC;el.onerror=function(){this.style.display='none';};}
-  });
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',applyLogo);
-}else{
-  applyLogo();
-}
+// Logos are hardcoded directly in HTML img tags — no dynamic src needed
 
 // ═══════════════════════════════════════════
 //  COACH PHONE & WHATSAPP
@@ -1581,22 +1580,53 @@ localStorage.setItem('btk_api_url',API_URL);
 // ═══════════════════════════════════════════
 //  DB LAYER
 // ═══════════════════════════════════════════
+// ── DB LAYER (fixed) ────────────────────────────────────────────
+// dbRead  → GET  (reads are safe as GET, no payload size issue)
+// dbWrite → POST (fixes "Unknown action" + large JSON questions bug)
+// dbUpdate → GET (small payload, fine)
+// dbDelete → GET (small payload, fine)
+
 async function dbRead(tab){
-  try{const r=await fetch(`${API_URL}?action=read&tab=${encodeURIComponent(tab)}`);const d=await r.json();return Array.isArray(d)?d:[];}
-  catch(e){console.error('dbRead',tab,e);return[];}
+  try{
+    const r=await fetch(`${API_URL}?action=read&tab=${encodeURIComponent(tab)}`);
+    const d=await r.json();
+    return Array.isArray(d)?d:[];
+  }catch(e){console.error('dbRead',tab,e);return[];}
 }
+
 async function dbWrite(tab,row){
-  try{const r=await fetch(`${API_URL}?action=write&tab=${encodeURIComponent(tab)}&row=${encodeURIComponent(JSON.stringify(row))}`);return await r.json();}
-  catch(e){return{error:e.message};}
+  // POST so that large payloads (e.g. assignment questions JSON) never hit URL length limits
+  try{
+    const body=new FormData();
+    body.append('action','write');
+    body.append('tab',tab);
+    body.append('row',JSON.stringify(row));
+    const r=await fetch(API_URL,{method:'POST',body});
+    return await r.json();
+  }catch(e){return{error:e.message};}
 }
+
 async function dbUpdate(tab,idCol,idVal,updates){
-  try{const r=await fetch(`${API_URL}?action=update&tab=${encodeURIComponent(tab)}&idCol=${encodeURIComponent(idCol)}&idVal=${encodeURIComponent(idVal)}&updates=${encodeURIComponent(JSON.stringify(updates))}`);return await r.json();}
-  catch(e){return{error:e.message};}
+  try{
+    const r=await fetch(
+      `${API_URL}?action=update&tab=${encodeURIComponent(tab)}`+
+      `&idCol=${encodeURIComponent(idCol)}&idVal=${encodeURIComponent(idVal)}`+
+      `&updates=${encodeURIComponent(JSON.stringify(updates))}`
+    );
+    return await r.json();
+  }catch(e){return{error:e.message};}
 }
+
 async function dbDelete(tab,idCol,idVal){
-  try{const r=await fetch(`${API_URL}?action=delete&tab=${encodeURIComponent(tab)}&idCol=${encodeURIComponent(idCol)}&idVal=${encodeURIComponent(idVal)}`);return await r.json();}
-  catch(e){return{error:e.message};}
+  try{
+    const r=await fetch(
+      `${API_URL}?action=delete&tab=${encodeURIComponent(tab)}`+
+      `&idCol=${encodeURIComponent(idCol)}&idVal=${encodeURIComponent(idVal)}`
+    );
+    return await r.json();
+  }catch(e){return{error:e.message};}
 }
+
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 
 // ═══════════════════════════════════════════
@@ -1639,11 +1669,17 @@ function showLogin(){showPage('page-login');}
 //  AUTH
 // ═══════════════════════════════════════════
 async function dbLogin(email,pass){
+  // POST keeps the password out of the URL / server logs
   try{
-    const r=await fetch(`${API_URL}?action=login&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
+    const body=new FormData();
+    body.append('action','login');
+    body.append('email',email);
+    body.append('password',pass);
+    const r=await fetch(API_URL,{method:'POST',body});
     const d=await r.json();
     return d;
   }catch(e){return{success:false};}
+}
 }
 async function doLogin(){
   const email=document.getElementById('li-email').value.trim().toLowerCase();
@@ -2284,15 +2320,53 @@ async function sendDistressReply(msgId,studentName){
 let _allUsers=[];
 async function loadManageUsers(){_allUsers=await dbRead('Users');renderUsersTable(_allUsers);}
 function renderUsersTable(users){
-  const tb=document.getElementById('users-tbody');
-  if(!users.length){tb.innerHTML='<tr><td colspan="7" class="empty">No users yet.</td></tr>';return;}
-  tb.innerHTML=users.map(u=>{
-  const pay=u.payment||'';
-  const payLabel={'paid':'Paid in Full','install':'Two Installments','scholar':'Scholarships','':'No Decision'}[pay]||'No Decision';
-  const payCls={'paid':'pay-dot paid','install':'pay-dot install','scholar':'pay-dot scholar','':'pay-dot none'}[pay]||'pay-dot none';
-  return`<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="badge b-${u.role}">${u.role}</span></td><td><span class="badge" style="background:${u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)'};color:${u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)'}">${u.cohort||'—'}</span></td><td><span class="${payCls}"></span>${payLabel}</td><td><span class="badge b-${u.status}">${u.status}</span></td><td>${fmtDate(u.createdAt)}</td><td style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-ghost" onclick="toggleStatus('${u.id}','${u.status}')">${u.status==='active'?'Deactivate':'Activate'}</button><button class="btn btn-sm btn-ghost" onclick="toggleRole('${u.id}','${u.role}')">${u.role==='admin'?'→ User':'→ Admin'}</button><button class="btn btn-sm btn-ghost" onclick="changeCohort('${u.id}','${u.cohort||''}')">Cohort</button><button class="btn btn-sm btn-ghost" onclick="changePayment('${u.id}','${pay}')">💳 Pay</button></td></tr>`;
-}).join('');
+  var tb=document.getElementById('users-tbody');
+  if(!users.length){tb.innerHTML='<tr><td colspan="8" class="empty">No users yet.</td></tr>';return;}
+  var PAY_LABELS={paid:'Paid in Full',install:'Two Installments',scholar:'Scholarships','':'No Decision'};
+  var PAY_BG={paid:'#2e7d32',install:'#c9a227',scholar:'#7b3fa0','':'transparent'};
+  var PAY_TC={paid:'white',install:'white',scholar:'white','':'var(--dark)'};
+  var rows='';
+  users.forEach(function(u){
+    var pay=u.payment||'';
+    var trCls='pay-'+(pay||'none');
+    var payLabel=PAY_LABELS[pay]||'No Decision';
+    var payBg=PAY_BG[pay]||'transparent';
+    var payTc=PAY_TC[pay]||'var(--dark)';
+    var nameStyle=pay?'background:'+payBg+';color:'+payTc+';font-weight:800;padding:3px 8px;border-radius:5px;display:inline-block;':'';;
+    var cohortBg=u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)';
+    var cohortCl=u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)';
+    var btnPayStyle='background:'+payBg+';color:'+payTc+';font-weight:700;border:1.5px solid '+(pay?payBg:'var(--border)')+';';
+    rows+='<tr class="'+trCls+'" data-uid="'+u.id+'" data-pay="'+pay+'" data-status="'+u.status+'" data-role="'+u.role+'" data-cohort="'+(u.cohort||'')+'">'
+      +'<td class="pay-name" style="min-width:140px;"><span style="'+nameStyle+'">'+u.name+'</span></td>'
+      +'<td>'+u.email+'</td>'
+      +'<td><span class="badge b-'+u.role+'">'+u.role+'</span></td>'
+      +'<td><span class="badge" style="background:'+cohortBg+';color:'+cohortCl+'">'+(u.cohort||'&mdash;')+'</span></td>'
+      +'<td><span class="pay-pill '+(pay||'none')+'" style="background:'+payBg+';color:'+payTc+';border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">'+payLabel+'</span></td>'
+      +'<td><span class="badge b-'+u.status+'">'+u.status+'</span></td>'
+      +'<td>'+fmtDate(u.createdAt)+'</td>'
+      +'<td style="display:flex;gap:5px;flex-wrap:wrap;">'
+        +'<button class="btn btn-sm btn-ghost usr-action" data-action="status">'+( u.status==='active'?'Deactivate':'Activate')+'</button>'
+        +'<button class="btn btn-sm btn-ghost usr-action" data-action="role">'+( u.role==='admin'?'&rarr; User':'&rarr; Admin')+'</button>'
+        +'<button class="btn btn-sm btn-ghost usr-action" data-action="cohort">Cohort</button>'
+        +'<button class="btn btn-sm usr-action" data-action="payment" style="'+btnPayStyle+'">'+payLabel+'</button>'
+      +'</td>'
+      +'</tr>';
+  });
+  tb.innerHTML=rows;
+  // Event delegation - one listener on tbody handles all actions
+  tb.onclick=function(e){
+    var btn=e.target.closest('.usr-action');
+    if(!btn)return;
+    var tr=btn.closest('tr');
+    var uid=tr.dataset.uid;
+    var action=btn.dataset.action;
+    if(action==='status') toggleStatus(uid,tr.dataset.status);
+    else if(action==='role') toggleRole(uid,tr.dataset.role);
+    else if(action==='cohort') changeCohort(uid,tr.dataset.cohort);
+    else if(action==='payment') changePayment(uid,tr.dataset.pay);
+  };
 }
+
 function filterUsers(){const q=document.getElementById('user-search').value.toLowerCase();renderUsersTable(_allUsers.filter(u=>(u.name+u.email+u.role).toLowerCase().includes(q)));}
 async function createUser(){
   const name=document.getElementById('nu-name').value.trim();
@@ -2318,11 +2392,51 @@ async function changeCohort(id,cur){
 }
 async function changePayment(id,cur){
   const opts=['','paid','install','scholar'];
-  const labels=['No Decision','Paid in Full','Two Installments','Scholarships'];
+  const PAY_NAMES={'':'No Decision','paid':'Paid in Full','install':'Two Installments','scholar':'Scholarships'};
+  const PAY_ICONS={'':'⬜','paid':'🟢','install':'🟡','scholar':'🟣'};
   const idx=opts.indexOf(cur)<0?0:opts.indexOf(cur);
   const next=opts[(idx+1)%opts.length];
-  await dbUpdate('Users','id',id,{payment:next});
-  loadManageUsers();
+  // Optimistic update — change in-memory cache immediately so UI responds instantly
+  const u=_allUsers.find(x=>String(x.id)===String(id));
+  if(u){ u.payment=next; renderUsersTable(_allUsers); }
+  // Also update attendance list if loaded
+  if(_attStudentList.length){
+    const st=_attStudentList.find(x=>String(x.id)===String(id));
+    if(st){ st.payment=next; }
+  }
+  // Persist to sheet
+  const res=await dbUpdate('Users','id',id,{payment:next});
+  if(res&&res.error){
+    // Revert on error
+    if(u){ u.payment=cur; renderUsersTable(_allUsers); }
+    alert('Could not save payment status: '+res.error);
+    return;
+  }
+  // Re-render attendance table if it is currently visible (so colour updates live)
+  if(_attStudentList && _attStudentList.length){
+    var st=_attStudentList.find(function(x){return String(x.id)===String(id);});
+    if(st){ st.payment=next; renderAttTable(); }
+  }
+  // Show confirmation toast
+  var PAY_ICONS2={'':'&#9634;','paid':'&#128994;','install':'&#128993;','scholar':'&#128995;'};
+  showToast(PAY_ICONS2[next]+' '+PAY_NAMES[next]+' saved for '+(u?u.name:'student'));
+}
+
+function showToast(msg){
+  var t=document.getElementById('pay-toast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='pay-toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
+      +'background:var(--dark);color:white;padding:10px 22px;border-radius:30px;'
+      +'font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;'
+      +'box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;
+  t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.style.opacity='0';},2500);
 }
 
 // ═══════════════════════════════════════════
