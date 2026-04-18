@@ -1576,6 +1576,21 @@ const COACH_PHONE='+2348090459999';
 // ═══════════════════════════════════════════
 const API_URL='https://script.google.com/macros/s/AKfycbw5T6bNG9TGWmv6qlXdaRPtkNN0VhktF31OgwseQbtcWA3rphfXh7x_aQ2-TxZ0RHCQMQ/exec';
 localStorage.setItem('btk_api_url',API_URL);
+   // ── SHARED MEETING DATE/TIME HELPERS ──────────────────────────────
+// Google Sheets corrupts time cells as 1899-12-30T16:30:00.000Z
+function parseMeetDT(m){
+  try{
+    var dateStr=m.scheduledDate||'';
+    var timeStr=m.scheduledTime||'';
+    if(timeStr.includes('T')){var tMatch=timeStr.match(/T(\d{2}:\d{2})/);if(tMatch)timeStr=tMatch[1];}
+    if(dateStr.includes('1899')||dateStr.includes('T')){var dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);if(dMatch&&!dMatch[1].startsWith('1899')){dateStr=dMatch[1];}else{dateStr=new Date().toISOString().slice(0,10);}}
+    if(dateStr&&timeStr){var dt=new Date(dateStr+'T'+timeStr+':00');if(!isNaN(dt))return dt;var dt2=new Date(dateStr+' '+timeStr);if(!isNaN(dt2))return dt2;}
+    if(dateStr){var d=new Date(dateStr);if(!isNaN(d))return d;}
+    return new Date(0);
+  }catch(e){return new Date(0);}
+}
+function meetDisplayDate(m){var d=m.scheduledDate||'';if(d.includes('T')){var x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}if(!d||d.startsWith('1899'))return parseMeetDT(m);var dt=new Date(d);return isNaN(dt)?parseMeetDT(m):dt;}
+function meetDisplayTime(m){var t=m.scheduledTime||'';if(t.includes('T')){var x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}return t;}
 
 // ═══════════════════════════════════════════
 //  DB LAYER
@@ -1891,45 +1906,9 @@ async function loadDashboard(){
   const mySubs=subs.filter(s=>String(s.studentId)===String(S.id));
   const now=new Date();
   // Clean display helpers for Google Sheets corrupted date/time values
-  function meetDisplayDate(m){
-    // Extract real date from scheduledDate (may be 1899-corrupted ISO)
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);
-    return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
-    // Extract HH:MM from raw time field (may be 1899-12-30T16:30:00.000Z)
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  // Robust date parsing for scheduled sessions
-  function meetDisplayDate(m){
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  function parseMeetDT(m){
-    try{
-      const today=new Date();
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
+   // Robust date parsing for scheduled sessions
 
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
-      if(timeStr.includes('T')){
-        const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
-        if(tMatch)timeStr=tMatch[1];
-      }
-
+ 
       // Fix Google Sheets date corruption: year 1899 means date-only wasn't set
       // Use the scheduledDate field value directly if it's a real date
       if(dateStr.includes('1899')||dateStr.includes('T')){
@@ -2164,60 +2143,31 @@ function lGrade(score,max){const p=(score/max)*100;if(p>=90)return'A+';if(p>=80)
 async function loadMyMeetings(){
   const meets=await dbRead('Meetings');
   const now=new Date();
-  function meetDisplayDate(m){
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  function parseMeetDT(m){
-    try{
-      const today=new Date();
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
-
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
-      if(timeStr.includes('T')){
-        const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
-        if(tMatch)timeStr=tMatch[1];
-      }
-
-      // Fix Google Sheets date corruption: year 1899 means date-only wasn't set
-      // Use the scheduledDate field value directly if it's a real date
-      if(dateStr.includes('1899')||dateStr.includes('T')){
-        // dateStr might also be an ISO with 1899 — use today as base date fallback
-        const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        if(dMatch&&!dMatch[1].startsWith('1899')){
-          dateStr=dMatch[1];
-        } else {
-          // No valid date — can't determine if upcoming, skip filtering out
-          dateStr=new Date().toISOString().slice(0,10);
-        }
-      }
-
-      if(dateStr&&timeStr){
-        const dt=new Date(dateStr+'T'+timeStr+':00');
-        if(!isNaN(dt))return dt;
-        const dt2=new Date(dateStr+' '+timeStr);
-        if(!isNaN(dt2))return dt2;
-      }
-      if(dateStr){
-        const d=new Date(dateStr);
-        if(!isNaN(d))return d;
-      }
-      return new Date(0);
-    }catch(e){return new Date(0);}
-  }
-  const sorted=meets.sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
+  const upcoming=meets.filter(m=>parseMeetDT(m)>=now).sort((a,b)=>parseMeetDT(a)-parseMeetDT(b));
+  const past=meets.filter(m=>parseMeetDT(m)<now).sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
+  const sorted=[...upcoming,...past];
   const el=document.getElementById('my-meetings-list');
   if(!sorted.length){el.innerHTML='<div class="empty">No sessions scheduled yet.</div>';return;}
-  el.innerHTML=`<div class="card">${sorted.map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const past=parseMeetDT(m)<now;return`<div class="meet-item"><div class="meet-dt" style="${past?'background:linear-gradient(135deg,#999,#BBB)':''}"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">${past?'<span class="badge b-closed">Ended</span>':'<span class="badge b-active">Upcoming</span>'}<a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${past?'opacity:.5':''}">Join</a></div></div>`;}).join('')}</div>`;
+  el.innerHTML=`<div class="card">${sorted.map(m=>{
+    const d=meetDisplayDate(m);
+    const tStr=meetDisplayTime(m);
+    const isUpcoming=parseMeetDT(m)>=now;
+    return`<div class="meet-item">
+      <div class="meet-dt" style="${!isUpcoming?'background:linear-gradient(135deg,#999,#BBB)':''}">
+        <div class="md-d">${d.getDate()}</div>
+        <div class="md-m">${d.toLocaleString('en',{month:'short'})}</div>
+      </div>
+      <div class="meet-info">
+        <h4>${m.title}</h4>
+        <p>${m.platform} · ${tStr} · ${m.cohort}</p>
+        ${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        ${isUpcoming?'<span class="badge b-active">Upcoming</span>':'<span class="badge b-closed">Ended</span>'}
+        <a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${!isUpcoming?'opacity:.5':''}">Join</a>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 }
 
 // ═══════════════════════════════════════════
