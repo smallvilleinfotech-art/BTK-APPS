@@ -203,8 +203,6 @@ input,select,textarea,button{font-family:inherit;}
   background:linear-gradient(135deg,var(--org-pale),#FFE8C0);border:1px solid var(--border);
 }
 .notif-ic.new-assign{background:linear-gradient(135deg,var(--purple-l),#E0D8FF);border-color:var(--purple);}
-.notif-ic.new-course{background:linear-gradient(135deg,var(--org-pale),#FFE8C0);border-color:var(--org);}
-.notif-ic.new-session{background:linear-gradient(135deg,var(--blue-l),#D0E8FF);border-color:var(--blue);}
 .notif-body{flex:1;}
 .notif-title{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:2px;}
 .notif-meta{font-size:11.5px;color:var(--muted);}
@@ -360,72 +358,6 @@ input,select,textarea,button{font-family:inherit;}
   font-size:13px;color:var(--text);outline:none;resize:none;min-height:60px;
 }
 .dm-reply-form textarea:focus{border-color:var(--org);}
-
-
-/* ═══════════════════════════════════════════
-   PAYMENT STATUS COLOUR SCALE
-═══════════════════════════════════════════ */
-/* Payment status — row highlight via tr class */
-tr.pay-paid    td.pay-name { background:#2e7d32 !important; color:white !important; font-weight:800; }
-tr.pay-install td.pay-name { background:#c9a227 !important; color:white !important; font-weight:800; }
-tr.pay-scholar td.pay-name { background:#7b3fa0 !important; color:white !important; font-weight:800; }
-tr.pay-none    td.pay-name { background:white   !important; color:var(--dark) !important; }
-/* Also apply to frozen-col in attendance */
-tr.pay-paid    td.frozen-col { background:#2e7d32 !important; color:white !important; font-weight:800; }
-tr.pay-install td.frozen-col { background:#c9a227 !important; color:white !important; font-weight:800; }
-tr.pay-scholar td.frozen-col { background:#7b3fa0 !important; color:white !important; font-weight:800; }
-td.pay-name{min-width:140px;transition:background .3s,color .3s;}
-tr.pay-none    td.frozen-col { background:white   !important; color:var(--dark) !important; }
-/* Payment pill badge in Users table */
-/* Attendance row — payment colour on name cell */
-tr.pay-paid    td.frozen-col { background:#2e7d32!important;color:white!important;font-weight:800; }
-tr.pay-install td.frozen-col { background:#c9a227!important;color:white!important;font-weight:800; }
-tr.pay-scholar td.frozen-col { background:#7b3fa0!important;color:white!important;font-weight:800; }
-tr.pay-none    td.frozen-col { background:white!important;color:var(--dark)!important; }
-.pay-pill { display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
-  padding:3px 10px;border-radius:20px;letter-spacing:.3px; }
-.pay-pill.paid    { background:#2e7d32;color:white; }
-.pay-pill.install { background:#c9a227;color:white; }
-.pay-pill.scholar { background:#7b3fa0;color:white; }
-.pay-pill.none    { background:var(--border);color:var(--muted); }
-/* Admin badge counter in sidebar */
-.sb-msg-badge{
-  background:var(--red);color:white;border-radius:20px;
-  font-size:9px;font-weight:800;padding:1px 6px;min-width:16px;text-align:center;
-  display:none;margin-left:auto;
-}
-.sb-msg-badge.show{display:inline-block;}
-
-
-/* ═══════════════════════════════════════════
-   ASSIGNMENT QUESTION BUILDER
-═══════════════════════════════════════════ */
-.aq-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 16px;position:relative;}
-.aq-num{font-size:10px;font-weight:800;color:var(--org4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
-.aq-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);background:white;outline:none;margin-bottom:8px;}
-.aq-input:focus{border-color:var(--org);}
-.aq-type-sel{padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);background:white;cursor:pointer;margin-bottom:8px;}
-.aq-opts{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
-.aq-opt-row{display:flex;align-items:center;gap:8px;}
-.aq-opt-inp{flex:1;padding:6px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;color:var(--text);background:white;outline:none;}
-.aq-opt-inp:focus{border-color:var(--org);}
-.aq-correct-chk{width:16px;height:16px;accent-color:var(--green);cursor:pointer;}
-.aq-del-btn{background:none;border:none;cursor:pointer;color:var(--red);font-size:16px;padding:2px 6px;border-radius:5px;}
-.aq-del-btn:hover{background:var(--red-l);}
-.aq-add-opt{font-size:11px;color:var(--org4);background:none;border:1px dashed var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;margin-top:4px;width:100%;}
-.aq-add-opt:hover{background:var(--org-pale);}
-/* Student submission form */
-.sq-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--r2);padding:16px 18px;}
-.sq-q{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;line-height:1.6;}
-.sq-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .18s;background:white;margin-bottom:7px;}
-.sq-opt:hover{border-color:var(--org);background:var(--org-pale);}
-.sq-opt.selected{border-color:var(--blue);background:var(--blue-l);}
-.sq-opt.correct{border-color:var(--green);background:var(--green-l);}
-.sq-opt.wrong{border-color:var(--red);background:var(--red-l);}
-.sq-opt input[type=radio]{accent-color:var(--blue);margin-top:2px;}
-.sq-opt-label{font-size:13.5px;color:var(--text);}
-.sq-text-inp{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;color:var(--text);background:white;outline:none;resize:vertical;min-height:70px;}
-.sq-text-inp:focus{border-color:var(--org);}
 
 /* ═══════════════════════════════════════════
    SLIDESHOW
@@ -914,7 +846,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="nav-item" onclick="nav('materials')"><span class="ni">📂</span> Materials</div>
       <div class="nav-item" onclick="nav('talk-coach')"><span class="ni">💬</span> Talk to the Coach</div>
       <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' Attendance</div>
-      <div class="nav-item" onclick="nav('report-change')" id="nav-rc"><span class="ni">🌱</span> Report a Change <span class="sb-msg-badge" id="badge-rc">0</span></div>
+      <div class="nav-item" onclick="nav('report-change')"><span class="ni">🌱</span> Report a Change</div>
     </div>
     <div class="nav-grp admin-only" id="admin-nav">
       <div class="nav-grp-lbl">Admin Panel</div>
@@ -924,7 +856,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="nav-item" onclick="nav('manage-meetings')"><span class="ni">📅</span> Schedule Sessions</div>
       <div class="nav-item" onclick="nav('manage-enrolments')"><span class="ni">📋</span> Enrolments</div>
       <div class="nav-item" onclick="nav('manage-grades')"><span class="ni">🏅</span> Grades</div>
-      <div class="nav-item" onclick="nav('manage-distress')" id="nav-distress"><span class="ni">🔔</span> Coach Messages <span class="sb-msg-badge" id="badge-distress">0</span></div>
+      <div class="nav-item" onclick="nav('manage-distress')"><span class="ni">🔔</span> Coach Messages</div>
       <div class="nav-item" onclick="nav('pledge-editor')"><span class="ni">📖</span> Kings' Pledge</div>
       <div class="nav-item" onclick="nav('login-activity')"><span class="ni">🕐</span> Login Activity</div>
       <div class="nav-item" onclick="openModal('modal-setup-guide')" style="color:var(--org);border:1.5px dashed var(--border);"><span class="ni">⚙️</span> New Sheets Setup</div>
@@ -1072,7 +1004,7 @@ tr:hover td{background:var(--org-pale2);}
             <button class="btn btn-org" onclick="openModal('modal-add-user')">+ New User</button>
           </div>
         </div>
-        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Cohort</th><th>Payment</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Cohort</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody id="users-tbody"></tbody></table></div>
       </div>
 
       <!-- ADMIN: COURSES -->
@@ -1281,33 +1213,7 @@ tr:hover td{background:var(--org-pale2);}
         <p style="font-size:12.5px;color:var(--text);line-height:1.7;">In the Users sheet, add a column header called <code>cohort</code>. Fill it with <code>Junior Boys</code> or <code>Senior Boys</code> for each student — or use the new <strong>Cohort</strong> button in the Users admin panel to cycle through values. This is what splits students into the two attendance lists.</p>
       </div>
     </div>
-    <div style="margin-top:18px;background:var(--dark);border-radius:var(--r2);padding:16px 18px;color:white;">
-      <div style="font-size:13px;font-weight:800;color:var(--org2);margin-bottom:10px;">⚡ Speed Tips — Make the App Blazing Fast</div>
-      <div style="font-size:12px;line-height:1.9;color:rgba(255,255,255,.85);">
-        <strong style="color:var(--org3);">1. Apps Script — return JSON directly</strong><br>
-        In your <code>doGet()</code>, set <code>ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON)</code> — never HTML output for data calls.<br><br>
-        <strong style="color:var(--org3);">2. Apps Script — batch reads, not loops</strong><br>
-        Never call <code>sheet.getRange(row,col)</code> in a loop. Always use <code>sheet.getDataRange().getValues()</code> once and filter in JS.<br><br>
-        <strong style="color:var(--org3);">3. Apps Script — use CacheService</strong><br>
-        Wrap heavy reads (Users, Courses) with <code>CacheService.getScriptCache()</code> with a 60-120s TTL. First call hits Sheets; subsequent calls return instantly.<br><br>
-        <code style="font-size:11px;background:rgba(255,255,255,.1);padding:2px 6px;border-radius:4px;">const cache = CacheService.getScriptCache();<br>
-const cached = cache.get('Users');<br>
-if(cached) return JSON.parse(cached);<br>
-// ... read sheet ...<br>
-cache.put('Users', JSON.stringify(data), 120);</code><br><br>
-        <strong style="color:var(--org3);">4. Apps Script — deploy as Web App with "Execute as: Me"</strong><br>
-        This avoids per-user auth overhead. Use "Anyone" access.<br><br>
-        <strong style="color:var(--org3);">5. HTML side — Promise.all() for parallel reads</strong><br>
-        Already done in this app — never <code>await</code> sequential reads when they can run in parallel.<br><br>
-        <strong style="color:var(--org3);">6. HTML side — in-memory 60s cache</strong><br>
-        Already built in (<code>dbReadCached()</code>). Use it for read-heavy views like attendance and grades.<br><br>
-        <strong style="color:var(--org3);">7. Google Sheets — keep sheets lean</strong><br>
-        Archive old rows to a separate "Archive" sheet after each semester. The less data in active sheets, the faster every read.<br><br>
-        <strong style="color:var(--org3);">8. Apps Script — avoid SpreadsheetApp.getActiveSpreadsheet()</strong><br>
-        Use <code>SpreadsheetApp.openById('YOUR_SHEET_ID')</code> instead — it's significantly faster in web app deployments.
-      </div>
-    </div>
-    <div class="modal-acts" style="margin-top:14px;"><button class="btn btn-org" onclick="closeModal('modal-setup-guide')">Got it! 🚀</button></div>
+    <div class="modal-acts"><button class="btn btn-org" onclick="closeModal('modal-setup-guide')">Got it, I'll add those tabs!</button></div>
   </div>
 </div>
 
@@ -1400,47 +1306,33 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
 
 <!-- Add Assignment -->
 <div id="modal-add-assignment" class="overlay">
-  <div class="modal modal-wide" style="max-width:720px;">
-    <h2>Create Assignment</h2>
-    <div class="msub">Build a Google-Form style quiz. Students answer each question when submitting.</div>
+  <div class="modal modal-wide">
+    <h2>Create Assignment</h2><div class="msub">Set a submission window. The grading engine scores against your instructions.</div>
     <div id="add-assign-msg"></div>
     <div class="fg"><label>Assignment Title</label><input type="text" id="na-title" placeholder="e.g. Week 2 Reflection"></div>
     <div class="fg"><label>Course</label><select id="na-course"></select></div>
-    <div class="fg"><label>General Instructions (optional intro text)</label>
-      <textarea id="na-instructions" rows="3" placeholder="e.g. Answer all questions honestly and in your own words."></textarea>
-    </div>
+    <div class="fg"><label>Instructions</label><textarea id="na-instructions" rows="5" placeholder="What should students do? Be thorough — the grading engine compares submissions to this text."></textarea></div>
     <div class="two-col">
-      <div class="fg"><label>Open Date &amp; Time</label><input type="datetime-local" id="na-open"></div>
-      <div class="fg"><label>Due Date &amp; Time</label><input type="datetime-local" id="na-due"></div>
-      <div class="fg"><label>Points Per Question</label><input type="number" id="na-max" value="10" min="1" max="100"></div>
+      <div class="fg"><label>Open Date & Time</label><input type="datetime-local" id="na-open"></div>
+      <div class="fg"><label>Due Date & Time</label><input type="datetime-local" id="na-due"></div>
+      <div class="fg"><label>Max Score</label><input type="number" id="na-max" value="100" min="1" max="100"></div>
     </div>
-    <div style="margin:14px 0 8px;display:flex;align-items:center;justify-content:space-between;">
-      <strong style="font-size:14px;color:var(--dark);">Questions</strong>
-      <button class="btn btn-sm btn-org" type="button" onclick="addAssignQuestion()">+ Add Question</button>
-    </div>
-    <div id="na-questions-wrap" style="display:flex;flex-direction:column;gap:14px;max-height:380px;overflow-y:auto;padding-right:4px;"></div>
-    <div class="modal-acts" style="margin-top:16px;">
+    <div class="modal-acts">
       <button class="btn btn-ghost" onclick="closeModal('modal-add-assignment')">Cancel</button>
-      <button class="btn btn-org" onclick="createAssignment()">Publish Assignment</button>
+      <button class="btn btn-org" onclick="createAssignment()">Create Assignment</button>
     </div>
   </div>
 </div>
 
 <!-- Submit Assignment -->
 <div id="modal-submit-assign" class="overlay">
-  <div class="modal modal-wide" style="max-width:700px;">
-    <h2 id="sub-title">Submit Assignment</h2>
-    <div class="msub" id="sub-meta"></div>
+  <div class="modal modal-wide">
+    <h2 id="sub-title">Submit Assignment</h2><div class="msub" id="sub-meta"></div>
     <div id="sub-msg"></div>
-    <div id="sub-instructions" style="background:var(--blue-l);border-radius:var(--r2);padding:12px 16px;font-size:13px;color:var(--dark);margin-bottom:16px;line-height:1.7;display:none;"></div>
-    <div id="sub-questions-wrap" style="display:flex;flex-direction:column;gap:18px;"></div>
-    <div id="sub-freetext-wrap" class="fg" style="display:none;">
-      <label>Your Submission</label>
-      <textarea id="sub-text" rows="6" placeholder="Write your response here..."></textarea>
-    </div>
-    <div class="modal-acts" style="margin-top:20px;">
+    <div class="fg"><label>Your Submission</label><textarea id="sub-text" rows="8" placeholder="Write your response here. Address all points in the instructions thoroughly..."></textarea></div>
+    <div class="modal-acts">
       <button class="btn btn-ghost" onclick="closeModal('modal-submit-assign')">Cancel</button>
-      <button class="btn btn-org" id="sub-btn" onclick="submitAssignment()">Submit &amp; Grade</button>
+      <button class="btn btn-org" id="sub-btn" onclick="submitAssignment()">Submit & Auto-Grade</button>
     </div>
   </div>
 </div>
@@ -1683,7 +1575,6 @@ function bootApp(){
   if(isAdmin())document.querySelectorAll('.admin-only').forEach(el=>el.classList.add('show'));
   nav('dashboard');startSlideshow();
   if(!isAdmin())loadNotifications();
-  if(isAdmin())loadAdminBadges();
 }
 
 // ═══════════════════════════════════════════
@@ -1707,10 +1598,7 @@ function nav(v){
   const el=document.getElementById('view-'+v);if(el)el.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(x=>{if(x.getAttribute('onclick')===`nav('${v}')`)x.classList.add('active');});
   if(LOADERS[v])LOADERS[v]();
-  // If leaving boys-attendance, restore sidebar
-  if(v!=='boys-attendance'){document.getElementById('page-app').classList.remove('att-mode');}
-  // Refresh admin badges when navigating to relevant sections
-  if(isAdmin()&&(v==='manage-distress'||v==='report-change'))loadAdminBadges();
+  // Close sidebar on mobile after navigation
   closeSidebar();
 }
 
@@ -2000,115 +1888,26 @@ async function openSubmitModal(id){
   _submitId=id;
   const a=_myAssign.find(x=>String(x.id)===String(id));if(!a)return;
   document.getElementById('sub-title').textContent=a.title;
-  document.getElementById('sub-meta').textContent=a.courseTitle+' · Due: '+fmtDate(a.dueDate)+' · Max: '+a.maxScore;
+  document.getElementById('sub-meta').textContent=`${a.courseTitle} · Due: ${fmtDate(a.dueDate)} · Max: ${a.maxScore}`;
+  document.getElementById('sub-text').value='';
   document.getElementById('sub-msg').innerHTML='';
-  // Show instructions if any
-  const instrEl=document.getElementById('sub-instructions');
-  if(a.instructions){instrEl.textContent=a.instructions;instrEl.style.display='block';}
-  else{instrEl.style.display='none';}
-  // Build question form or free-text fallback
-  const qWrap=document.getElementById('sub-questions-wrap');
-  const ftWrap=document.getElementById('sub-freetext-wrap');
-  qWrap.innerHTML='';
-  let questions=[];
-  try{if(a.questions)questions=JSON.parse(a.questions);}catch(e){}
-  if(questions.length>0){
-    ftWrap.style.display='none';
-    questions.forEach(function(q,qi){
-      const card=document.createElement('div');
-      card.className='sq-card';
-      let inner='<div class="sq-q">Q'+(qi+1)+'. '+q.question+'</div>';
-      if(q.type==='text'){
-        inner+='<textarea class="sq-text-inp" id="sq-ans-'+qi+'" rows="4" placeholder="Write your answer here..."></textarea>';
-      } else {
-        q.options.forEach(function(opt,oi){
-          const inpType=q.type==='multi'?'checkbox':'radio';
-          inner+='<label class="sq-opt" id="sq-opt-'+qi+'-'+oi+'" onclick="sqSelectOpt(this,'+qi+','+oi+',&quot;'+q.type+'&quot;)">'
-                +'<input type="'+inpType+'" name="sq-'+qi+'" id="sq-chk-'+qi+'-'+oi+'" style="accent-color:var(--blue);margin-top:2px;" onclick="event.stopPropagation()">'
-                +'<span class="sq-opt-label">'+opt+'</span></label>';
-        });
-      }
-      card.innerHTML=inner;
-      qWrap.appendChild(card);
-    });
-    document.getElementById('sub-btn').textContent='Submit & Grade';
-  } else {
-    ftWrap.style.display='block';
-    document.getElementById('sub-text').value='';
-    document.getElementById('sub-btn').textContent='Submit & Auto-Grade';
-  }
   openModal('modal-submit-assign');
 }
-function sqSelectOpt(label,qi,oi,type){
-  if(type==='mcq'){
-    document.querySelectorAll('[id^="sq-opt-'+qi+'-"]').forEach(function(l){l.classList.remove('selected');});
-    document.getElementById('sq-chk-'+qi+'-'+oi).checked=true;
-  } else {
-    const chk=document.getElementById('sq-chk-'+qi+'-'+oi);
-    chk.checked=!chk.checked;
-  }
-  label.classList.toggle('selected',document.getElementById('sq-chk-'+qi+'-'+oi).checked);
-}
 async function submitAssignment(){
+  const text=document.getElementById('sub-text').value.trim();
   const btn=document.getElementById('sub-btn');
   const msg=document.getElementById('sub-msg');
+  if(!text){msg.innerHTML='<div class="alert alert-err">Please write your submission before submitting.</div>';return;}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Auto-grading...';
   const a=_myAssign.find(x=>String(x.id)===String(_submitId));
-  if(!a)return;
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Grading...';
-  let questions=[];
-  try{if(a.questions)questions=JSON.parse(a.questions);}catch(e){}
-  let submissionText='';
-  let score=0;
-  const ppq=Number(a.pointsPerQuestion)||10;
-  let feedbackLines=[];
-  if(questions.length>0){
-    // Grade question-by-question
-    questions.forEach(function(q,qi){
-      if(q.type==='text'){
-        const ans=document.getElementById('sq-ans-'+qi);
-        const txt=ans?ans.value.trim():'';
-        submissionText+='Q'+(qi+1)+'. '+q.question+'\nA: '+txt+'\n\n';
-        // Text answers get AI-style grading via autoGrade partial
-        if(txt.length>10){ score+=Math.round(ppq*0.7); feedbackLines.push('Q'+(qi+1)+': Written answer received.'); }
-        else if(txt){ score+=Math.round(ppq*0.3); feedbackLines.push('Q'+(qi+1)+': Answer too short.'); }
-        else { feedbackLines.push('Q'+(qi+1)+': No answer provided.'); }
-      } else {
-        // MCQ / multi-select
-        const chosen=[];
-        (q.options||[]).forEach(function(opt,oi){
-          const chk=document.getElementById('sq-chk-'+qi+'-'+oi);
-          if(chk&&chk.checked) chosen.push(oi);
-        });
-        submissionText+='Q'+(qi+1)+'. '+q.question+'\nChosen: '+chosen.map(function(i){return q.options[i]||'?';}).join(', ')+'\n\n';
-        const correct=q.correctIndexes||[];
-        const isCorrect=correct.length>0&&chosen.length===correct.length&&
-          chosen.every(function(i){return correct.indexOf(i)>-1;});
-        if(isCorrect){ score+=ppq; feedbackLines.push('Q'+(qi+1)+': ✅ Correct!'); }
-        else { feedbackLines.push('Q'+(qi+1)+': ❌ Incorrect. Correct: '+correct.map(function(i){return q.options[i]||'?';}).join(', ')); }
-      }
-    });
-  } else {
-    // Free-text fallback
-    submissionText=document.getElementById('sub-text').value.trim();
-    if(!submissionText){
-      msg.innerHTML='<div class="alert alert-err">Please answer before submitting.</div>';
-      btn.disabled=false;btn.innerHTML='Submit &amp; Auto-Grade';return;
-    }
-    var graded=autoGrade(submissionText,a.instructions,parseInt(a.maxScore)||100);
-    score=graded.score;feedbackLines=[graded.feedback];
-  }
-  score=Math.min(score,parseInt(a.maxScore)||100);
-  var grade=lGrade(score,parseInt(a.maxScore)||100);
-  var feedback=feedbackLines.join(' | ');
-  const sub={id:uid(),assignmentId:a.id,studentId:S.id,studentName:S.name,courseId:a.courseId,
-    submissionText:submissionText,score:score,grade:grade,feedback:feedback,
-    status:'graded',submittedAt:new Date().toISOString(),gradedAt:new Date().toISOString()};
+  const {score,grade,feedback}=autoGrade(text,a.instructions,parseInt(a.maxScore)||100);
+  const sub={id:uid(),assignmentId:a.id,studentId:S.id,studentName:S.name,courseId:a.courseId,submissionText:text,score,grade,feedback,status:'graded',submittedAt:new Date().toISOString(),gradedAt:new Date().toISOString()};
   const res=await dbWrite('Submissions',sub);
-  btn.disabled=false;btn.innerHTML='Submit &amp; Grade';
-  if(res.error){msg.innerHTML='<div class="alert alert-err">Error: '+res.error+'</div>';return;}
+  btn.disabled=false;btn.innerHTML='Submit & Auto-Grade';
+  if(res.error){msg.innerHTML=`<div class="alert alert-err">Error: ${res.error}</div>`;return;}
   closeModal('modal-submit-assign');
   loadMyAssignments();
-  setTimeout(function(){alert('Submitted!\n\nScore: '+score+'/'+a.maxScore+' - '+grade+'\n\n'+feedback);},200);
+  setTimeout(()=>alert(`✅ Submitted!\n\nScore: ${score}/${a.maxScore} · ${grade}\n\nFeedback: ${feedback}`),200);
 }
 function autoGrade(submission,instructions,maxScore){
   const sl=submission.toLowerCase(),il=instructions.toLowerCase();
@@ -2294,53 +2093,10 @@ async function sendDistressReply(msgId,studentName){
 let _allUsers=[];
 async function loadManageUsers(){_allUsers=await dbRead('Users');renderUsersTable(_allUsers);}
 function renderUsersTable(users){
-  var tb=document.getElementById('users-tbody');
-  if(!users.length){tb.innerHTML='<tr><td colspan="8" class="empty">No users yet.</td></tr>';return;}
-  var PAY_LABELS={paid:'Paid in Full',install:'Two Installments',scholar:'Scholarships','':'No Decision'};
-  var PAY_BG={paid:'#2e7d32',install:'#c9a227',scholar:'#7b3fa0','':'transparent'};
-  var PAY_TC={paid:'white',install:'white',scholar:'white','':'var(--dark)'};
-  var rows='';
-  users.forEach(function(u){
-    var pay=u.payment||'';
-    var trCls='pay-'+(pay||'none');
-    var payLabel=PAY_LABELS[pay]||'No Decision';
-    var payBg=PAY_BG[pay]||'transparent';
-    var payTc=PAY_TC[pay]||'var(--dark)';
-    var nameStyle=pay?'background:'+payBg+';color:'+payTc+';font-weight:800;padding:3px 8px;border-radius:5px;display:inline-block;':'';;
-    var cohortBg=u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)';
-    var cohortCl=u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)';
-    var btnPayStyle='background:'+payBg+';color:'+payTc+';font-weight:700;border:1.5px solid '+(pay?payBg:'var(--border)')+';';
-    rows+='<tr class="'+trCls+'" data-uid="'+u.id+'" data-pay="'+pay+'" data-status="'+u.status+'" data-role="'+u.role+'" data-cohort="'+(u.cohort||'')+'">'
-      +'<td class="pay-name" style="min-width:140px;"><span style="'+nameStyle+'">'+u.name+'</span></td>'
-      +'<td>'+u.email+'</td>'
-      +'<td><span class="badge b-'+u.role+'">'+u.role+'</span></td>'
-      +'<td><span class="badge" style="background:'+cohortBg+';color:'+cohortCl+'">'+(u.cohort||'&mdash;')+'</span></td>'
-      +'<td><span class="pay-pill '+(pay||'none')+'" style="background:'+payBg+';color:'+payTc+';border-radius:20px;padding:2px 10px;font-size:11px;font-weight:700;">'+payLabel+'</span></td>'
-      +'<td><span class="badge b-'+u.status+'">'+u.status+'</span></td>'
-      +'<td>'+fmtDate(u.createdAt)+'</td>'
-      +'<td style="display:flex;gap:5px;flex-wrap:wrap;">'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="status">'+( u.status==='active'?'Deactivate':'Activate')+'</button>'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="role">'+( u.role==='admin'?'&rarr; User':'&rarr; Admin')+'</button>'
-        +'<button class="btn btn-sm btn-ghost usr-action" data-action="cohort">Cohort</button>'
-        +'<button class="btn btn-sm usr-action" data-action="payment" style="'+btnPayStyle+'">'+payLabel+'</button>'
-      +'</td>'
-      +'</tr>';
-  });
-  tb.innerHTML=rows;
-  // Event delegation - one listener on tbody handles all actions
-  tb.onclick=function(e){
-    var btn=e.target.closest('.usr-action');
-    if(!btn)return;
-    var tr=btn.closest('tr');
-    var uid=tr.dataset.uid;
-    var action=btn.dataset.action;
-    if(action==='status') toggleStatus(uid,tr.dataset.status);
-    else if(action==='role') toggleRole(uid,tr.dataset.role);
-    else if(action==='cohort') changeCohort(uid,tr.dataset.cohort);
-    else if(action==='payment') changePayment(uid,tr.dataset.pay);
-  };
+  const tb=document.getElementById('users-tbody');
+  if(!users.length){tb.innerHTML='<tr><td colspan="7" class="empty">No users yet.</td></tr>';return;}
+  tb.innerHTML=users.map(u=>`<tr><td><strong>${u.name}</strong></td><td>${u.email}</td><td><span class="badge b-${u.role}">${u.role}</span></td><td><span class="badge" style="background:${u.cohort==='Junior Boys'?'var(--blue-l)':u.cohort==='Senior Boys'?'var(--purple-l)':'var(--border)'};color:${u.cohort==='Junior Boys'?'var(--blue)':u.cohort==='Senior Boys'?'var(--purple)':'var(--muted)'}">${u.cohort||'—'}</span></td><td><span class="badge b-${u.status}">${u.status}</span></td><td>${fmtDate(u.createdAt)}</td><td style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-ghost" onclick="toggleStatus('${u.id}','${u.status}')">${u.status==='active'?'Deactivate':'Activate'}</button><button class="btn btn-sm btn-ghost" onclick="toggleRole('${u.id}','${u.role}')">${u.role==='admin'?'→ User':'→ Admin'}</button><button class="btn btn-sm btn-ghost" onclick="changeCohort('${u.id}','${u.cohort||''}')">Cohort</button></td></tr>`).join('');
 }
-
 function filterUsers(){const q=document.getElementById('user-search').value.toLowerCase();renderUsersTable(_allUsers.filter(u=>(u.name+u.email+u.role).toLowerCase().includes(q)));}
 async function createUser(){
   const name=document.getElementById('nu-name').value.trim();
@@ -2360,57 +2116,10 @@ async function toggleStatus(id,cur){await dbUpdate('Users','id',id,{status:cur==
 async function toggleRole(id,cur){await dbUpdate('Users','id',id,{role:cur==='admin'?'user':'admin'});loadManageUsers();}
 async function changeCohort(id,cur){
   const opts=['Junior Boys','Senior Boys',''];
+  const labels=['Junior Boys','Senior Boys','None'];
   const next=opts[(opts.indexOf(cur)+1)%opts.length];
   await dbUpdate('Users','id',id,{cohort:next});
   loadManageUsers();
-}
-async function changePayment(id,cur){
-  const opts=['','paid','install','scholar'];
-  const PAY_NAMES={'':'No Decision','paid':'Paid in Full','install':'Two Installments','scholar':'Scholarships'};
-  const PAY_ICONS={'':'⬜','paid':'🟢','install':'🟡','scholar':'🟣'};
-  const idx=opts.indexOf(cur)<0?0:opts.indexOf(cur);
-  const next=opts[(idx+1)%opts.length];
-  // Optimistic update — change in-memory cache immediately so UI responds instantly
-  const u=_allUsers.find(x=>String(x.id)===String(id));
-  if(u){ u.payment=next; renderUsersTable(_allUsers); }
-  // Also update attendance list if loaded
-  if(_attStudentList.length){
-    const st=_attStudentList.find(x=>String(x.id)===String(id));
-    if(st){ st.payment=next; }
-  }
-  // Persist to sheet
-  const res=await dbUpdate('Users','id',id,{payment:next});
-  if(res&&res.error){
-    // Revert on error
-    if(u){ u.payment=cur; renderUsersTable(_allUsers); }
-    alert('Could not save payment status: '+res.error);
-    return;
-  }
-  // Re-render attendance table if it is currently visible (so colour updates live)
-  if(_attStudentList && _attStudentList.length){
-    var st=_attStudentList.find(function(x){return String(x.id)===String(id);});
-    if(st){ st.payment=next; renderAttTable(); }
-  }
-  // Show confirmation toast
-  var PAY_ICONS2={'':'&#9634;','paid':'&#128994;','install':'&#128993;','scholar':'&#128995;'};
-  showToast(PAY_ICONS2[next]+' '+PAY_NAMES[next]+' saved for '+(u?u.name:'student'));
-}
-
-function showToast(msg){
-  var t=document.getElementById('pay-toast');
-  if(!t){
-    t=document.createElement('div');
-    t.id='pay-toast';
-    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);'
-      +'background:var(--dark);color:white;padding:10px 22px;border-radius:30px;'
-      +'font-size:13px;font-weight:700;z-index:9999;opacity:0;transition:opacity .3s;'
-      +'box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;';
-    document.body.appendChild(t);
-  }
-  t.textContent=msg;
-  t.style.opacity='1';
-  clearTimeout(t._timer);
-  t._timer=setTimeout(function(){t.style.opacity='0';},2500);
 }
 
 // ═══════════════════════════════════════════
@@ -2431,21 +2140,9 @@ async function createCourse(){
   const thumbB64=document.getElementById('nc-thumb-b64').value;
   const msg=document.getElementById('add-course-msg');
   if(!title){msg.innerHTML='<div class="alert alert-err">Course title is required.</div>';return;}
-  const newCourseId=uid();
-  const res=await dbWrite('Courses',{id:newCourseId,title,description:desc,category:cat,thumbnailUrl:thumbUrl,thumbnailB64:thumbB64,status:'active',createdBy:S.name,createdAt:new Date().toISOString()});
+  const res=await dbWrite('Courses',{id:uid(),title,description:desc,category:cat,thumbnailUrl:thumbUrl,thumbnailB64:thumbB64,status:'active',createdBy:S.name,createdAt:new Date().toISOString()});
   if(res.error){msg.innerHTML=`<div class="alert alert-err">${res.error}</div>`;return;}
-  // Notify all active students
-  try{
-    const users=await dbRead('Users');
-    const students=users.filter(u=>u.role==='user'&&u.status==='active');
-    for(const st of students){
-      await dbWrite('Notifications',{id:uid(),userId:st.id,type:'new_course',
-        title:'New Course: '+title,
-        body:'A new course "'+title+'" has been added to the platform.',
-        courseId:newCourseId,read:'false',createdAt:new Date().toISOString()});
-    }
-  }catch(e){console.warn('Course notif error',e);}
-  msg.innerHTML='<div class="alert alert-ok">✓ Course created! Students notified.</div>';
+  msg.innerHTML='<div class="alert alert-ok">✓ Course created!</div>';
   setTimeout(()=>{closeModal('modal-add-course');loadManageCourses();},1100);
 }
 async function openCourseDetail(cid){
@@ -2526,141 +2223,18 @@ async function loadManageAssignments(){
     return`<div class="assign-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:11px"><h4>${a.title}</h4><div style="display:flex;gap:7px"><span class="badge b-open">${as.length} Submissions</span><button class="btn btn-sm btn-red" onclick="deleteAssignment('${a.id}')">Delete</button></div></div><div class="assign-meta"><span>📚 ${a.courseTitle}</span><span>📅 Open: ${fmtDate(a.openDate)}</span><span>📅 Due: ${fmtDate(a.dueDate)}</span><span>🏆 Max: ${a.maxScore}</span></div><p style="font-size:12.5px;color:var(--text);line-height:1.6;margin-bottom:11px">${a.instructions}</p>${as.length?`<div><strong style="font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase">Submissions (${as.length})</strong><div style="margin-top:8px">${as.map(s=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="flex:1;font-size:13px;font-weight:700;color:var(--dark)">${s.studentName}</div><div style="font-size:12px;color:var(--muted)">${fmtDate(s.submittedAt)}</div><span class="badge b-graded">${s.score}/${a.maxScore} · ${s.grade}</span></div>`).join('')}</div></div>`:''}</div>`;
   }).join('');
 }
-// ─── QUESTION BUILDER HELPERS ────────────────────────
-var _naQCount = 0;
-var _aqOptCounts = {};
-
-function addAssignQuestion(){
-  _naQCount++;
-  var n = _naQCount;
-  var wrap = document.getElementById('na-questions-wrap');
-  var div  = document.createElement('div');
-  div.className = 'aq-card';
-  div.id = 'aq-'+n;
-
-  var numDiv = document.createElement('div');
-  numDiv.className = 'aq-num';
-  numDiv.textContent = 'Question '+n;
-  div.appendChild(numDiv);
-
-  var typeEl2 = document.createElement('select');
-  typeEl2.className = 'aq-type-sel';
-  typeEl2.id = 'aq-type-'+n;
-  div.appendChild(typeEl2);
-
-  var qTextarea = document.createElement('textarea');
-  qTextarea.className = 'aq-input';
-  qTextarea.id = 'aq-q-'+n;
-  qTextarea.rows = 2;
-  qTextarea.placeholder = 'Type your question here...';
-  div.appendChild(qTextarea);
-
-  var optsContainer = document.createElement('div');
-  optsContainer.id = 'aq-opts-'+n;
-  optsContainer.className = 'aq-opts';
-  div.appendChild(optsContainer);
-
-  var delQBtn = document.createElement('button');
-  delQBtn.className = 'aq-del-btn';
-  delQBtn.title = 'Remove question';
-  delQBtn.innerHTML = '&#10005;';
-  delQBtn.addEventListener('click', function(){ div.remove(); });
-  div.appendChild(delQBtn);
-
-  [['mcq','Multiple Choice (one correct)'],['multi','Multiple Select (many correct)'],['text','Written / Short Answer']].forEach(function(p){
-    var o=document.createElement('option'); o.value=p[0]; o.textContent=p[1]; typeEl2.appendChild(o);
-  });
-  typeEl2.addEventListener('change', function(){ aqTypeChange(n); });
-
-  var optsDiv = optsContainer;
-  [1,2,3].forEach(function(i){ optsDiv.appendChild(aqMakeOptRow(n,i)); });
-
-  var addBtn = document.createElement('button');
-  addBtn.className = 'aq-add-opt';
-  addBtn.textContent = '+ Add option';
-  addBtn.addEventListener('click', function(){ aqAddOpt(n); });
-  optsDiv.appendChild(addBtn);
-
-  wrap.appendChild(div);
-}
-
-function aqMakeOptRow(qn, on){
-  var row = document.createElement('div');
-  row.className = 'aq-opt-row';
-  row.id = 'aq-'+qn+'-opt-'+on;
-  row.innerHTML = '<input class="aq-correct-chk" type="checkbox" title="Mark as correct answer" id="aq-'+qn+'-chk-'+on+'">'
-    + '<input class="aq-opt-inp" type="text" placeholder="Option '+on+'..." id="aq-'+qn+'-val-'+on+'">'
-    + '<button class="aq-del-btn" title="Remove option">&#10005;</button>';
-  row.querySelector('.aq-del-btn').addEventListener('click', function(){ row.remove(); });
-  return row;
-}
-
-function aqAddOpt(qn){
-  _aqOptCounts[qn] = (_aqOptCounts[qn]||3)+1;
-  var on = _aqOptCounts[qn];
-  var optsDiv = document.getElementById('aq-opts-'+qn);
-  var addBtn  = optsDiv.querySelector('.aq-add-opt');
-  optsDiv.insertBefore(aqMakeOptRow(qn, on), addBtn);
-}
-
-function aqTypeChange(qn){
-  var type    = document.getElementById('aq-type-'+qn).value;
-  var optsDiv = document.getElementById('aq-opts-'+qn);
-  if(!optsDiv) return;
-  optsDiv.style.display = type === 'text' ? 'none' : 'flex';
-  var chks = optsDiv.querySelectorAll('.aq-correct-chk');
-  chks.forEach(function(chk){
-    if(type === 'mcq'){
-      chk.type = 'radio';
-      chk.name = 'aq-correct-'+qn;
-    } else {
-      chk.type = 'checkbox';
-      chk.name = '';
-    }
-  });
-}
-
-function collectQuestions(){
-  var qs = [];
-  document.querySelectorAll('.aq-card').forEach(function(card){
-    var id      = card.id.replace('aq-','');
-    var typeEl  = document.getElementById('aq-type-'+id);
-    var qEl     = document.getElementById('aq-q-'+id);
-    if(!typeEl || !qEl) return;
-    var type     = typeEl.value;
-    var question = qEl.value.trim();
-    if(!question) return;
-    var opts = [], corrects = [];
-    card.querySelectorAll('.aq-opt-row').forEach(function(row, i){
-      var val = row.querySelector('input[type=text]');
-      var chk = row.querySelector('.aq-correct-chk');
-      if(val && val.value.trim()){
-        opts.push(val.value.trim());
-        if(chk && chk.checked) corrects.push(i);
-      }
-    });
-    qs.push({type:type, question:question, options:opts, correctIndexes:corrects});
-  });
-  return qs;
-}
-
-
 async function createAssignment(){
   const title=document.getElementById('na-title').value.trim();
   const cid=document.getElementById('na-course').value;
   const instr=document.getElementById('na-instructions').value.trim();
   const open=document.getElementById('na-open').value;
   const due=document.getElementById('na-due').value;
-  const ppq=parseInt(document.getElementById('na-max').value)||10;
+  const max=document.getElementById('na-max').value;
   const msg=document.getElementById('add-assign-msg');
-  if(!title||!cid||!open||!due){msg.innerHTML='<div class="alert alert-err">Title, course, and dates are required.</div>';return;}
-  const questions=collectQuestions();
-  const maxScore = questions.length > 0 ? questions.length * ppq : ppq;
+  if(!title||!cid||!instr||!open||!due){msg.innerHTML='<div class="alert alert-err">All fields are required.</div>';return;}
   const c=_allCourses.find(x=>String(x.id)===String(cid));
   const assignId=uid();
-  const res=await dbWrite('Assignments',{id:assignId,courseId:cid,courseTitle:c?c.title:'',title,
-    instructions:instr,questions:JSON.stringify(questions),pointsPerQuestion:ppq,
-    openDate:open,dueDate:due,maxScore,createdBy:S.name});
+  const res=await dbWrite('Assignments',{id:assignId,courseId:cid,courseTitle:c?c.title:'',title,instructions:instr,openDate:open,dueDate:due,maxScore:parseInt(max)||100,createdBy:S.name});
   if(res.error){msg.innerHTML=`<div class="alert alert-err">${res.error}</div>`;return;}
   // Notify all enrolled students
   try{
@@ -2681,7 +2255,7 @@ async function createAssignment(){
     }
   }catch(e){console.warn('Notification write error',e);}
   msg.innerHTML='<div class="alert alert-ok">✓ Assignment created and students notified!</div>';
-  _naQCount=0;document.getElementById('na-questions-wrap').innerHTML='';setTimeout(()=>{closeModal('modal-add-assignment');loadManageAssignments();},1100);
+  setTimeout(()=>{closeModal('modal-add-assignment');loadManageAssignments();},1100);
 }
 async function deleteAssignment(id){if(!confirm('Delete this assignment?'))return;await dbDelete('Assignments','id',id);loadManageAssignments();}
 
@@ -2705,21 +2279,9 @@ async function scheduleMeeting(){
   const notes=document.getElementById('nm-notes').value.trim();
   const msg=document.getElementById('add-meet-msg');
   if(!title||!url||!date||!time){msg.innerHTML='<div class="alert alert-err">Title, link, date and time are required.</div>';return;}
-  const newMeetId=uid();
-  const res=await dbWrite('Meetings',{id:newMeetId,title,cohort,platform,meetingUrl:url,scheduledDate:date,scheduledTime:time,notes,createdBy:S.name});
+  const res=await dbWrite('Meetings',{id:uid(),title,cohort,platform,meetingUrl:url,scheduledDate:date,scheduledTime:time,notes,createdBy:S.name});
   if(res.error){msg.innerHTML=`<div class="alert alert-err">${res.error}</div>`;return;}
-  // Notify students in this cohort
-  try{
-    const users=await dbRead('Users');
-    const targets=users.filter(u=>u.role==='user'&&u.status==='active'&&(cohort==='All Students'||u.cohort===cohort||!cohort));
-    for(const st of targets){
-      await dbWrite('Notifications',{id:uid(),userId:st.id,type:'new_session',
-        title:'New Session: '+title,
-        body:'A new live session "'+title+'" has been scheduled for '+date+' at '+time+'.',
-        courseId:'',read:'false',createdAt:new Date().toISOString()});
-    }
-  }catch(e){console.warn('Session notif error',e);}
-  msg.innerHTML='<div class="alert alert-ok">✓ Session posted! Students notified.</div>';
+  msg.innerHTML='<div class="alert alert-ok">✓ Session posted! Students see it immediately.</div>';
   setTimeout(()=>{closeModal('modal-add-meeting');loadManageMeetings();},1200);
 }
 async function deleteMeeting(id){if(!confirm('Delete this session?'))return;await dbDelete('Meetings','id',id);loadManageMeetings();}
@@ -3106,12 +2668,10 @@ function generateDevotionalQuestion(ref,verseText){
 //  BOYS' ATTENDANCE  (v3 — course-based, frozen headers, CSV export)
 // ═══════════════════════════════════════════
 let _attGroup = 'junior';
-let _attCourseList  = [];  // [{id, title, assignments:[{id,title,maxScore}]}]
+let _attCourseList = [];   // [{id, title, assignments:[{id,title,maxScore}]}]
 let _attStudentList = [];  // students in current group
-let _attScores      = {};  // studentId -> { courseId+'_session': val }
-let _attSubMap      = {};  // studentId -> assignmentId -> numeric score
-let _attCheckMap    = {};  // studentId -> { courseId+'_present': 'true'|'false' }
-let _attDevoMap     = {};  // studentId -> courseId -> total correct devo answers
+let _attScores = {};       // studentId -> { courseId+'_session': val }
+let _attSubMap = {};       // studentId -> assignmentId -> numeric score
 
 function loadBoysAttendance(){
   document.getElementById('att-group-select').style.display = 'flex';
@@ -3166,17 +2726,11 @@ async function openAttendanceList(group){
   const countEl = document.getElementById('att-student-count');
   if(countEl) countEl.textContent = '(' + _attStudentList.length + ' students)';
 
-  // Load saved session scores AND presence checkboxes
-  _attScores   = {};
-  _attCheckMap = {};
-  savedAtt.filter(a => a.group === group).forEach(a => {
-    if(a.type === 'session'){
-      if(!_attScores[a.studentId]) _attScores[a.studentId] = {};
-      _attScores[a.studentId][a.colId] = a.value;
-    } else if(a.type === 'present'){
-      if(!_attCheckMap[a.studentId]) _attCheckMap[a.studentId] = {};
-      _attCheckMap[a.studentId][a.colId] = a.value;
-    }
+  // Load saved session scores
+  _attScores = {};
+  savedAtt.filter(a => a.group === group && a.type === 'session').forEach(a => {
+    if(!_attScores[a.studentId]) _attScores[a.studentId] = {};
+    _attScores[a.studentId][a.colId] = a.value;
   });
 
   // Build submission map: studentId -> assignId -> numeric score
@@ -3186,29 +2740,6 @@ async function openAttendanceList(group){
     const aid = String(s.assignmentId);
     if(!_attSubMap[sid]) _attSubMap[sid] = {};
     _attSubMap[sid][aid] = Number(s.score) || 0;
-  });
-
-  // Build devotional points map: studentId -> courseId -> total correct answers
-  // We assign devotional scores to the most-recently-created course at the time of the devotional
-  _attDevoMap = {};
-  const devos = await dbRead('DevotionalScores');
-  // Sort courses by createdAt ascending so we can bucket devos
-  const sortedCourses = [...courses].sort((a,b) => new Date(a.createdAt) - new Date(b.createdAt));
-  devos.forEach(d => {
-    const dDate = new Date(d.date);
-    // Find which course period this devo belongs to
-    // A devo belongs to course N if it was done before the next course was created
-    let bucketId = sortedCourses.length > 0 ? sortedCourses[sortedCourses.length-1].id : null;
-    for(let i = 0; i < sortedCourses.length - 1; i++){
-      const nextCourseDate = new Date(sortedCourses[i+1].createdAt);
-      if(dDate < nextCourseDate){ bucketId = sortedCourses[i].id; break; }
-    }
-    if(!bucketId) return;
-    const sid = String(d.studentId);
-    if(!_attDevoMap[sid]) _attDevoMap[sid] = {};
-    const correct = d.correct === 'true' || d.correct === true;
-    const pts = correct ? (Number(d.score) || 10) : 0;
-    _attDevoMap[sid][String(bucketId)] = (_attDevoMap[sid][String(bucketId)] || 0) + (correct ? 1 : 0);
   });
 
   if(!_attStudentList.length){
@@ -3227,101 +2758,79 @@ async function openAttendanceList(group){
 }
 
 function renderAttTable(){
-  var thead = document.getElementById('att-thead');
-  var tbody  = document.getElementById('att-tbody');
-  var admin  = isAdmin();
-  var r1 = '<tr><th class="frozen-col" rowspan="2" style="min-width:130px;text-align:left;">Name</th>';
-  var r2 = '<tr>';
-  _attCourseList.forEach(function(co){
-    var span = 3 + co.assignments.length;
-    r1 += '<th class="course-group-hd" colspan="'+span+'">'+co.title+'</th>';
-    r2 += '<th style="background:linear-gradient(135deg,#FFF3CD,#FFE58A);color:#856404;font-size:10px;min-width:52px;">&#9745; Present</th>';
-    r2 += '<th class="sub-score">&#128221; Session</th>';
-    co.assignments.forEach(function(a){
-      var short = a.title.length > 12 ? a.title.slice(0,11)+'\u2026' : a.title;
-      r2 += '<th class="sub-assign" title="'+a.title+' (max '+a.maxScore+')">'+short+'<br><span style="font-size:9px;opacity:.7;">/'+a.maxScore+'</span></th>';
+  const thead = document.getElementById('att-thead');
+  const tbody  = document.getElementById('att-tbody');
+  const admin  = isAdmin();
+
+  // === HEADER ROW 1: frozen name + course group spans ===
+  let r1 = '<tr><th class="frozen-col" rowspan="2" style="min-width:130px;text-align:left;">Name</th>';
+  // === HEADER ROW 2: sub-column labels ===
+  let r2 = '<tr>';
+
+  _attCourseList.forEach(c => {
+    const aCount = c.assignments.length;
+    const span   = 1 + aCount; // session col + assignment cols
+    r1 += '<th class="course-group-hd" colspan="' + span + '">' + c.title + '</th>';
+    r2 += '<th class="sub-score">📝 Session</th>';
+    c.assignments.forEach(a => {
+      const shortTitle = a.title.length > 12 ? a.title.slice(0, 11) + '…' : a.title;
+      r2 += '<th class="sub-assign" title="' + a.title + ' (max ' + a.maxScore + ')">' +
+            shortTitle + '<br><span style="font-size:9px;opacity:.7;">/' + a.maxScore + '</span></th>';
     });
-    r2 += '<th style="background:linear-gradient(135deg,#D1ECF1,#A8D8E8);color:#0c5460;font-size:10px;min-width:60px;">&#128218; Devotional</th>';
   });
-  if(_attCourseList.length===0){
-    r1 += '<th colspan="4" style="color:var(--muted);font-style:italic;">No courses yet</th>';
+
+  if(_attCourseList.length === 0){
+    r1 += '<th>No courses yet — add courses in Admin → Courses</th>';
   }
-  r1 += '<th rowspan="2" style="min-width:120px;">&#127942; Overall %</th></tr>';
+
+  r1 += '<th rowspan="2" style="min-width:110px;">📊 Avg Score</th></tr>';
   r2 += '</tr>';
   thead.innerHTML = r1 + r2;
 
-  tbody.innerHTML = _attStudentList.map(function(st){
-    var stId    = String(st.id);
-    var scores  = _attScores[stId]   || {};
-    var subSt   = _attSubMap[stId]   || {};
-    var devoPts = _attDevoMap[stId]  || {};
-    var chkMap  = _attCheckMap[stId] || {};
-    var payKey  = st.payment || '';
-    var payCls  = {paid:'pay-paid',install:'pay-install',scholar:'pay-scholar'}[payKey] || 'pay-none';
-    var totalPts=0, maxPts=0;
-    var cells='';
+  // === BODY ROWS ===
+  tbody.innerHTML = _attStudentList.map(st => {
+    const scores  = _attScores[String(st.id)]   || {};
+    const subSt   = _attSubMap[String(st.id)]   || {};
+    let totalSess = 0, countSess = 0;
 
-    _attCourseList.forEach(function(co){
-      /* PRESENCE CHECKBOX */
-      var chkKey  = co.id+'_present';
-      var checked = chkMap[chkKey]==='true' || chkMap[chkKey]===true;
-      if(checked) totalPts+=10;
-      maxPts+=10;
+    let cells = '';
+    _attCourseList.forEach(c => {
+      const sessionKey = c.id + '_session';
+      const sessVal    = scores[sessionKey] !== undefined ? scores[sessionKey] : '';
+      const sessNum    = sessVal !== '' ? Number(sessVal) : NaN;
+      if(!isNaN(sessNum)){ totalSess += sessNum; countSess++; }
+
+      const sessCls = isNaN(sessNum) ? '' : sessNum >= 75 ? 'good' : sessNum >= 50 ? 'ok' : 'low';
+
       if(admin){
-        cells += '<td style="text-align:center;">'
-               + '<input type="checkbox"'+(checked?' checked':'')
-               + ' style="width:16px;height:16px;accent-color:var(--org);"'
-               + ' onchange="saveAttCheck(\''+stId+'\',\''+co.id+'_present\',this.checked)">'
-               + '</td>';
+        cells += '<td><input type="number" min="0" max="100" value="' + sessVal +
+                 '" placeholder="—" title="Session score — ' + c.title + '"' +
+                 ' oninput="saveAttScore(\'' + st.id + '\',\'' + c.id + '_session\',this.value)"' +
+                 ' style="width:52px;"></td>';
       } else {
-        cells += '<td style="text-align:center;">'+(checked?'&#10003;':'&mdash;')+'</td>';
+        cells += '<td class="att-score-cell ' + sessCls + '">' + (sessVal !== '' ? sessVal : '—') + '</td>';
       }
 
-      /* SESSION SCORE */
-      var sessKey = co.id+'_session';
-      var sessVal = scores[sessKey]!==undefined ? scores[sessKey] : '';
-      var sessNum = sessVal!=='' ? Number(sessVal) : NaN;
-      if(!isNaN(sessNum)){totalPts+=sessNum;maxPts+=100;}
-      var sessCls = isNaN(sessNum)?'':sessNum>=75?'good':sessNum>=50?'ok':'low';
-      if(admin){
-        cells += '<td>'
-               + '<input type="number" min="0" max="100" value="'+sessVal+'"'
-               + ' placeholder="&mdash;"'
-               + ' oninput="saveAttScore(\''+stId+'\',\''+co.id+'_session\',this.value)"'
-               + ' style="width:52px;">'
-               + '</td>';
-      } else {
-        cells += '<td class="att-score-cell '+sessCls+'">'+(sessVal!==''?sessVal:'&mdash;')+'</td>';
-      }
-
-      /* ASSIGNMENT SCORES */
-      co.assignments.forEach(function(a){
-        var raw = subSt[String(a.id)];
-        var num = raw!==undefined ? Number(raw) : NaN;
-        if(!isNaN(num)){totalPts+=num;maxPts+=a.maxScore;}
-        var pct = !isNaN(num)?Math.round((num/a.maxScore)*100):NaN;
-        var cls = isNaN(pct)?'':pct>=75?'good':pct>=50?'ok':'low';
-        cells += '<td class="att-score-cell '+cls+'">'+(!isNaN(num)?num:'&mdash;')+'</td>';
+      c.assignments.forEach(a => {
+        const raw   = subSt[String(a.id)];
+        const num   = raw !== undefined ? Number(raw) : NaN;
+        const pct   = !isNaN(num) ? Math.round((num / a.maxScore) * 100) : NaN;
+        const cls   = isNaN(pct) ? '' : pct >= 75 ? 'good' : pct >= 50 ? 'ok' : 'low';
+        const disp  = !isNaN(num) ? num : '—';
+        cells += '<td class="att-score-cell ' + cls + '">' + disp + '</td>';
       });
-
-      /* DEVOTIONAL POINTS */
-      var dpts = devoPts[String(co.id)];
-      var dptsNum = dpts!==undefined ? Number(dpts) : NaN;
-      if(!isNaN(dptsNum)&&dptsNum>0){totalPts+=dptsNum*10;maxPts+=100;}
-      var dptsCls = isNaN(dptsNum)?'':dptsNum>=7?'good':dptsNum>=4?'ok':'low';
-      cells += '<td class="att-score-cell '+dptsCls+'" style="color:var(--teal);">'
-             + (!isNaN(dptsNum)?dptsNum:'&mdash;')+'</td>';
     });
 
-    /* OVERALL % METER */
-    var ovPct  = maxPts>0 ? Math.round((totalPts/maxPts)*100) : null;
-    var ovCls  = ovPct===null?'':ovPct>=75?'good':ovPct>=50?'ok':'low';
-    var meterCell = '<td><div class="att-meter-wrap">'
-      + '<div class="att-meter-bar"><div class="att-meter-fill '+ovCls+'" style="width:'+(ovPct||0)+'%"></div></div>'
-      + '<span class="att-pct">'+(ovPct!==null?ovPct+'%':'&mdash;')+'</span>'
-      + '</div></td>';
+    // Overall average meter
+    const avg    = countSess > 0 ? Math.round(totalSess / countSess) : null;
+    const avgCls = avg === null ? '' : avg >= 75 ? 'good' : avg >= 50 ? 'ok' : 'low';
+    const meterCell =
+      '<td><div class="att-meter-wrap">' +
+      '<div class="att-meter-bar"><div class="att-meter-fill ' + avgCls + '" style="width:' + (avg || 0) + '%"></div></div>' +
+      '<span class="att-pct">' + (avg !== null ? avg + '%' : '—') + '</span>' +
+      '</div></td>';
 
-    return '<tr class="'+payCls+'"><td class="frozen-col">'+st.name+'</td>'+cells+meterCell+'</tr>';
+    return '<tr><td class="frozen-col">' + st.name + '</td>' + cells + meterCell + '</tr>';
   }).join('');
 }
 
@@ -3346,27 +2855,6 @@ function renderAttRadar(list){
 }
 
 let _attSaveTimers = {};
-async function saveAttCheck(studentId, colId, checked){
-  if(!_attCheckMap[studentId]) _attCheckMap[studentId] = {};
-  _attCheckMap[studentId][colId] = String(checked);
-  const key = studentId + '|' + colId + '|present';
-  clearTimeout(_attSaveTimers[key]);
-  _attSaveTimers[key] = setTimeout(async () => {
-    try{
-      const existing = await dbRead('Attendance');
-      const found = existing.find(a =>
-        a.studentId === studentId && a.colId === colId &&
-        a.type === 'present' && a.group === _attGroup
-      );
-      if(found){
-        await dbUpdate('Attendance','id',found.id,{value:String(checked)});
-      } else {
-        await dbWrite('Attendance',{id:uid(),group:_attGroup,studentId,colId,
-          type:'present',value:String(checked),updatedAt:new Date().toISOString()});
-      }
-    } catch(e){ console.warn('Attendance check save error',e); }
-  }, 600);
-}
 async function saveAttScore(studentId, colId, value){
   if(!_attScores[studentId]) _attScores[studentId] = {};
   _attScores[studentId][colId] = value;
@@ -3405,16 +2893,14 @@ function exportAttCSV(){
   if(!_attStudentList.length){ alert('No students to export.'); return; }
 
   // Header row 1: course group spans (represented as repeated labels)
-  let headers = ['Name','Payment Status'];
-  _attCourseList.forEach(co => {
-    headers.push(co.title + ' — Present (Y/N)');
-    headers.push(co.title + ' — Session Score');
-    co.assignments.forEach(a => {
-      headers.push(co.title + ' — ' + a.title + ' (/' + a.maxScore + ')');
+  let headers = ['Name'];
+  _attCourseList.forEach(c => {
+    headers.push(c.title + ' — Session Score');
+    c.assignments.forEach(a => {
+      headers.push(c.title + ' — ' + a.title + ' (/' + a.maxScore + ')');
     });
-    headers.push(co.title + ' — Devotional Points');
   });
-  headers.push('Overall %');
+  headers.push('Overall Avg %');
 
   const rows = _attStudentList.map(st => {
     const scores = _attScores[String(st.id)] || {};
@@ -3422,20 +2908,14 @@ function exportAttCSV(){
     const cells  = ['"' + st.name.replace(/"/g,'""') + '"'];
     let total = 0, count = 0;
 
-    _attCourseList.forEach(co => {
-      const chkKey  = co.id + '_present';
-      const chkMap  = _attCheckMap[String(st.id)] || {};
-      const checked = chkMap[chkKey] === 'true' || chkMap[chkKey] === true;
-      cells.push(checked ? 'Y' : 'N');
-      const sessVal = scores[co.id + '_session'] !== undefined ? scores[co.id + '_session'] : '';
+    _attCourseList.forEach(c => {
+      const sessVal = scores[c.id + '_session'] !== undefined ? scores[c.id + '_session'] : '';
       if(sessVal !== ''){ total += Number(sessVal); count++; }
       cells.push(sessVal);
-      co.assignments.forEach(a => {
+      c.assignments.forEach(a => {
         const raw = subSt[String(a.id)];
         cells.push(raw !== undefined ? Number(raw) : '');
       });
-      const dpts = (_attDevoMap[String(st.id)] || {})[String(co.id)];
-      cells.push(dpts !== undefined ? dpts : '');
     });
 
     cells.push(count > 0 ? Math.round(total / count) : '');
@@ -3545,13 +3025,10 @@ function updateNotifBadge(){
 function renderNotifications(){
   const el=document.getElementById('notif-list');
   if(!_notifs.length){el.innerHTML='<div class="notif-empty">You have no notifications yet.</div>';return;}
-  const NOTIF_ICONS={new_assignment:'📝',new_course:'📚',new_session:'📹'};
   el.innerHTML=_notifs.map(n=>{
     const unread=n.read==='false'||n.read===false;
-    const icon=NOTIF_ICONS[n.type]||'🔔';
-    const cls=n.type==='new_assignment'?'new-assign':n.type==='new_course'?'new-course':'';
     return`<div class="notif-item ${unread?'unread':''}" onclick="handleNotifClick('${n.id}','${n.type}','${n.courseId||''}')">
-      <div class="notif-ic ${cls}">${icon}</div>
+      <div class="notif-ic ${n.type==='new_assignment'?'new-assign':''}">${n.type==='new_assignment'?'📝':'🔔'}</div>
       <div class="notif-body">
         <div class="notif-title">${n.title||'Notification'}</div>
         <div class="notif-meta">${n.body||''} · ${n.createdAt?new Date(n.createdAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short'}):''}</div>
@@ -3573,8 +3050,6 @@ async function handleNotifClick(id,type,courseId){
   // Navigate to relevant section
   toggleNotifPanel();
   if(type==='new_assignment'){nav('assignments');}
-  else if(type==='new_course'){nav('courses');}
-  else if(type==='new_session'){nav('meetings');}
 }
 
 async function markAllNotifsRead(){
