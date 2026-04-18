@@ -1944,18 +1944,18 @@ async function loadDashboard(){
     const dt=new Date(d);return isNaN(dt)?null:dt;
   }
   function meetDisplayTime(m){
-    let t=m.scheduledTime||'';
+   let t=String(m.scheduledTime||'').trim();
+    if(t.startsWith('1899-12-30')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:'—';}
     if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
+    if(/^\d{1,2}:\d{2}/.test(t))return t.slice(0,5);
+    return t||'—';
   }
   function parseMeetDT(m){
-    try{
-      const today=new Date();
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
+    let dateStr=String(m.scheduledDate||'').trim();
+      let timeStr=String(m.scheduledTime||'').trim();
 
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
+      // Extract HH:MM — handles 1899-12-30 Sheets time-only artifact
+
       if(timeStr.includes('T')){
         const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
         if(tMatch)timeStr=tMatch[1];
@@ -2201,8 +2201,8 @@ async function loadMyAssignments(){
   if(!_myAssign.length){el.innerHTML='<div class="empty">No assignments for your courses yet.</div>';return;}
   el.innerHTML=_myAssign.map(a=>{
     const sub=_mySubs.find(s=>String(s.assignmentId)===String(a.id));
-    const open=new Date(a.openDate),due=new Date(a.dueDate);
-    const isOpen=now>=open&&now<=due;const isClosed=now>due;
+   const open=new Date(String(a.openDate||'').replace(' ','T')),due=new Date(String(a.dueDate||'').replace(' ','T'));
+    const isOpen=!isNaN(open)&&!isNaN(due)&&now>=open&&now<=due;const isClosed=!isNaN(due)&&now>due;
     let badge=isOpen?'<span class="badge b-open">Open</span>':isClosed?'<span class="badge b-closed">Closed</span>':'<span class="badge" style="background:#FFF8E0;color:#906000">Not Open Yet</span>';
     let subSec='';
     if(sub){
@@ -2368,49 +2368,34 @@ async function loadMyMeetings(){
     const dt=new Date(d);return isNaN(dt)?null:dt;
   }
   function meetDisplayTime(m){
-    let t=m.scheduledTime||'';
+   let t=String(m.scheduledTime||'').trim();
+    if(t.startsWith('1899-12-30')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:'—';}
     if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
+    if(/^\d{1,2}:\d{2}/.test(t))return t.slice(0,5);
+    return t||'—';
   }
   function parseMeetDT(m){
-    try{
-      const today=new Date();
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
+   let dateStr=String(m.scheduledDate||'').trim();
+      let timeStr=String(m.scheduledTime||'').trim();
 
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
-      if(timeStr.includes('T')){
-        const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
-        if(tMatch)timeStr=tMatch[1];
-      }
+      // Extract HH:MM — handles 1899-12-30 Sheets time-only artifact
 
-      // Fix Google Sheets date corruption: year 1899 means date-only wasn't set
-      // Use the scheduledDate field value directly if it's a real date
-      if(dateStr.includes('1899')||dateStr.includes('T')){
-        // dateStr might also be an ISO with 1899 — use today as base date fallback
-        const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        if(dMatch&&!dMatch[1].startsWith('1899')){
-          dateStr=dMatch[1];
-        } else {
-          // No valid date — can't determine if upcoming, skip filtering out
-          dateStr=new Date().toISOString().slice(0,10);
-        }
-      }
-
-      if(dateStr&&timeStr){
-        const dt=new Date(dateStr+'T'+timeStr+':00');
-        if(!isNaN(dt))return dt;
-        const dt2=new Date(dateStr+' '+timeStr);
-        if(!isNaN(dt2))return dt2;
-      }
-      if(dateStr){
-        const d=new Date(dateStr);
-        if(!isNaN(d))return d;
-      }
-      return new Date(0);
+   let hhmm='00:00';
+      if(timeStr.startsWith('1899-12-30')){const tm=timeStr.match(/T(\d{2}:\d{2})/);if(tm)hhmm=tm[1];}
+      else if(timeStr.includes('T')){const tm=timeStr.match(/T(\d{2}:\d{2})/);if(tm)hhmm=tm[1];}
+      else if(/^\d{1,2}:\d{2}/.test(timeStr)){hhmm=timeStr.slice(0,5);}
+      let ymd='';
+      if(!dateStr||dateStr.startsWith('1899-12-30')){return new Date(0);}
+      else if(dateStr.includes('T')){const dm=dateStr.match(/(\d{4}-\d{2}-\d{2})/);ymd=dm?dm[1]:'';}
+      else if(/\d{4}-\d{2}-\d{2}/.test(dateStr)){ymd=dateStr.slice(0,10);}
+      else{const d=new Date(dateStr);ymd=isNaN(d)?'':d.toISOString().slice(0,10);}
+      if(!ymd)return new Date(0);
+      const combined=new Date(ymd+'T'+hhmm+':00');
+      return isNaN(combined)?new Date(0):combined;
     }catch(e){return new Date(0);}
   }
+
+
   const sorted=meets.sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
   const el=document.getElementById('my-meetings-list');
   if(!sorted.length){el.innerHTML='<div class="empty">No sessions scheduled yet.</div>';return;}
