@@ -1008,6 +1008,23 @@ tr:hover td{background:var(--org-pale2);}
 .dash-lb-see-all{width:100%;padding:9px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:9px;color:rgba(255,255,255,.7);font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;transition:all .2s;}
 .dash-lb-see-all:hover{background:rgba(255,255,255,.14);color:white;}
 
+/* Dashboard top row — Slideshow + Leaderboard top-3 glance */
+.dash-top-row{display:flex;gap:18px;align-items:stretch;margin-bottom:22px;}
+.dash-top-row .ss{flex:1 1 auto;min-width:0;margin-bottom:0;}
+.dash-lb-compact{width:300px;flex-shrink:0;max-height:192px;display:flex;flex-direction:column;}
+.dash-lb-compact .dash-lb-body{flex:1;overflow-y:auto;padding:8px 10px;}
+.dash-lb-compact .dash-lb-head{padding:10px 14px 8px;}
+.dash-lb-compact .dash-lb-head-title{font-size:12.5px;}
+.dash-lb-compact .dash-lb-head-sub{font-size:10px;}
+.dash-lb-compact .dash-lb-item{padding:6px 8px;margin-bottom:4px;}
+.dash-lb-compact .dash-lb-my-rank{padding:7px 12px;border-radius:0 0 22px 22px;}
+.dash-lb-compact .dash-lb-my-rank-txt{font-size:10.5px;}
+.dash-lb-compact .dash-lb-see-all{display:none;}
+@media(max-width:900px){
+  .dash-top-row{flex-direction:column;}
+  .dash-lb-compact{width:100%;max-height:none;}
+}
+
 </style>
 </head>
 <body>
@@ -1093,29 +1110,41 @@ tr:hover td{background:var(--org-pale2);}
       <!-- DASHBOARD -->
       <div id="view-dashboard" class="view active">
         <div class="view-head"><div><h1>Dashboard</h1><p id="dash-date"></p></div></div>
-        <div class="ss" id="slideshow">
-          <div class="slide sl1 active">
-            <div class="sl-lbl">✦ Welcome Back</div>
-            <h2 id="sl-welcome-name">Welcome, King!</h2>
-            <p>"You are on a journey to greatness. Keep showing up."</p>
-            <div class="s-meta" id="sl-welcome-meta"></div>
+        <!-- Slideshow + Leaderboard top-3 glance row -->
+        <div class="dash-top-row" id="dash-top-row">
+          <div class="ss" id="slideshow">
+            <div class="slide sl1 active">
+              <div class="sl-lbl">✦ Welcome Back</div>
+              <h2 id="sl-welcome-name">Welcome, King!</h2>
+              <p>"You are on a journey to greatness. Keep showing up."</p>
+              <div class="s-meta" id="sl-welcome-meta"></div>
+            </div>
+            <div class="slide sl2">
+              <div class="sl-lbl">📖 Daily Bible Reading</div>
+              <h2 id="bible-ref">Loading verse...</h2>
+              <p id="bible-text">Fetching today's Word...</p>
+              <div class="s-meta" id="bible-meta"></div>
+            </div>
+            <div class="slide sl3">
+              <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
+              <h2>This Week's Pledge</h2>
+              <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
+              <div class="s-meta" id="pledge-meta"></div>
+            </div>
+            <div class="ss-nav">
+              <div class="sd active" onclick="goSlide(0)"></div>
+              <div class="sd" onclick="goSlide(1)"></div>
+              <div class="sd" onclick="goSlide(2)"></div>
+            </div>
           </div>
-          <div class="slide sl2">
-            <div class="sl-lbl">📖 Daily Bible Reading</div>
-            <h2 id="bible-ref">Loading verse...</h2>
-            <p id="bible-text">Fetching today's Word...</p>
-            <div class="s-meta" id="bible-meta"></div>
-          </div>
-          <div class="slide sl3">
-            <div class="sl-lbl">👑 Kings' Pledge of the Week</div>
-            <h2>This Week's Pledge</h2>
-            <p id="pledge-text" style="font-style:italic;font-size:13.5px;">Loading pledge...</p>
-            <div class="s-meta" id="pledge-meta"></div>
-          </div>
-          <div class="ss-nav">
-            <div class="sd active" onclick="goSlide(0)"></div>
-            <div class="sd" onclick="goSlide(1)"></div>
-            <div class="sd" onclick="goSlide(2)"></div>
+          <div class="dash-lb dash-lb-compact" id="dash-leaderboard-widget">
+            <div class="dash-lb-head"><div><div class="dash-lb-head-title">🏆 Leaderboard</div><div class="dash-lb-head-sub">Top 3 this month</div></div></div>
+            <div class="dash-lb-tabs">
+              <div class="dash-lb-tab active" id="dlb-monthly-tab" onclick="dashLbSwitch('monthly')">Monthly</div>
+              <div class="dash-lb-tab" id="dlb-alltime-tab" onclick="dashLbSwitch('alltime')">All-Time</div>
+            </div>
+            <div class="dash-lb-body" id="dash-lb-body"></div>
+            <div class="dash-lb-my-rank" id="dash-lb-my-rank"><div class="dash-lb-my-rank-txt">Loading your rank...</div></div>
           </div>
         </div>
         <div class="quick-cards">
@@ -1154,20 +1183,10 @@ tr:hover td{background:var(--org-pale2);}
           <div class="card"><div class="card-h"><h3>Upcoming Sessions</h3></div><div id="dash-meetings"></div></div>
           <div class="card"><div class="card-h"><h3>Pending Assignments</h3></div><div id="dash-pending"></div></div>
         </div>
-        <!-- Leaderboard Sidebar -->
-        <div class="two-col" style="margin-top:0;">
-          <div style="grid-column:1/-1;display:grid;grid-template-columns:2fr 1fr;gap:18px;" id="dash-lb-wrap">
-            <div class="card" style="margin-bottom:0;"><div class="card-h"><h3>📊 My Scholar Score</h3><button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;" onclick="nav('leaderboard')">Full Leaderboard</button></div><div id="dash-my-score-card"></div></div>
-            <div class="dash-lb" id="dash-leaderboard-widget">
-              <div class="dash-lb-head"><div><div class="dash-lb-head-title">🏆 Leaderboard</div><div class="dash-lb-head-sub">Community rankings & scores</div></div></div>
-              <div class="dash-lb-tabs">
-                <div class="dash-lb-tab active" id="dlb-monthly-tab" onclick="dashLbSwitch('monthly')">Monthly</div>
-                <div class="dash-lb-tab" id="dlb-alltime-tab" onclick="dashLbSwitch('alltime')">All-Time</div>
-              </div>
-              <div class="dash-lb-body" id="dash-lb-body"></div>
-              <div class="dash-lb-my-rank" id="dash-lb-my-rank"><div class="dash-lb-my-rank-txt">Loading your rank...</div></div>
-            </div>
-          </div>
+        <!-- My Scholar Score (full width, leaderboard widget now lives next to the slideshow above) -->
+        <div class="card" id="dash-lb-wrap" style="margin-bottom:0;">
+          <div class="card-h"><h3>📊 My Scholar Score</h3><button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;" onclick="nav('leaderboard')">Full Leaderboard</button></div>
+          <div id="dash-my-score-card"></div>
         </div>
       </div>
 
