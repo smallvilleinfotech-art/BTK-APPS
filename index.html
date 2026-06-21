@@ -854,6 +854,160 @@ tr:hover td{background:var(--org-pale2);}
   .devo-opt{padding:10px 12px;}
   .devo-opt-text{font-size:13px;}
 }
+
+/* ═══════════════════════════════════════════
+   LEADERBOARD — 3D Hi-Def Multi-Dimensional
+═══════════════════════════════════════════ */
+#view-leaderboard{background:var(--bg);}
+.lb-hero{
+  background:linear-gradient(135deg,#1A0A40 0%,#2D1B69 40%,#4A2C8C 70%,#6B3FA0 100%);
+  border-radius:24px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(90,40,150,.45),0 0 0 1px rgba(180,120,255,.2);
+}
+.lb-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(255,180,80,.15) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 20%,rgba(120,80,255,.2) 0%,transparent 50%);
+}
+.lb-hero-title{font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,210,100,.8);margin-bottom:8px;position:relative;}
+.lb-hero-h{font-size:28px;font-weight:900;color:white;margin-bottom:4px;position:relative;text-shadow:0 2px 12px rgba(180,120,255,.5);}
+.lb-hero-sub{font-size:13px;color:rgba(255,255,255,.65);position:relative;}
+.lb-tabs{display:flex;gap:8px;margin-bottom:22px;}
+.lb-tab{padding:9px 20px;border-radius:30px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:all .2s;}
+.lb-tab.active{background:linear-gradient(135deg,#6B3FA0,#4A2C8C);color:white;box-shadow:0 4px 16px rgba(107,63,160,.4);}
+.lb-tab:not(.active){background:white;color:var(--muted);border:1.5px solid var(--border);}
+.lb-tab:not(.active):hover{border-color:#6B3FA0;color:#6B3FA0;}
+
+/* Top 3 Podium */
+.lb-podium{display:flex;align-items:flex-end;justify-content:center;gap:16px;margin-bottom:28px;padding:20px 0 8px;}
+.lb-pod{display:flex;flex-direction:column;align-items:center;position:relative;}
+.lb-pod-plat{
+  border-radius:16px 16px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:16px 20px 20px;position:relative;overflow:hidden;min-width:120px;
+}
+.lb-pod-plat::before{content:'';position:absolute;inset:0;opacity:.15;background:linear-gradient(180deg,white,transparent);}
+.lb-pod-1 .lb-pod-plat{
+  height:140px;background:linear-gradient(180deg,#FFD700,#FFA500);
+  box-shadow:0 12px 40px rgba(255,165,0,.5),0 0 0 2px rgba(255,215,0,.4),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.lb-pod-2 .lb-pod-plat{
+  height:110px;background:linear-gradient(180deg,#C0C0C0,#888);
+  box-shadow:0 8px 28px rgba(150,150,150,.4),0 0 0 2px rgba(200,200,200,.3);
+}
+.lb-pod-3 .lb-pod-plat{
+  height:90px;background:linear-gradient(180deg,#CD7F32,#8B4513);
+  box-shadow:0 6px 20px rgba(139,69,19,.4),0 0 0 2px rgba(205,127,50,.3);
+}
+.lb-pod-avatar{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.1));
+  border:3px solid rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:900;color:white;
+  text-shadow:0 2px 4px rgba(0,0,0,.3);
+  position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+  z-index:2;
+}
+.lb-pod-1 .lb-pod-avatar{width:60px;height:60px;font-size:22px;top:-32px;border:3px solid #FFD700;background:linear-gradient(135deg,#1A0A40,#4A2C8C);}
+.lb-pod-2 .lb-pod-avatar{border:3px solid #C0C0C0;background:linear-gradient(135deg,#1A0A40,#4A2C8C);}
+.lb-pod-3 .lb-pod-avatar{border:3px solid #CD7F32;background:linear-gradient(135deg,#1A0A40,#4A2C8C);}
+.lb-pod-crown{position:absolute;top:-52px;left:50%;transform:translateX(-50%);font-size:22px;z-index:3;}
+.lb-pod-rank{font-size:22px;font-weight:900;color:white;text-shadow:0 2px 6px rgba(0,0,0,.3);position:relative;z-index:1;}
+.lb-pod-name{font-size:12px;font-weight:800;color:white;text-align:center;margin-top:4px;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-pod-score{font-size:13px;font-weight:900;color:rgba(255,255,255,.9);position:relative;z-index:1;}
+.lb-pod-label{font-size:10px;color:rgba(255,255,255,.65);letter-spacing:.5px;text-align:center;margin-top:6px;}
+
+/* Full rankings list */
+.lb-full-list{display:flex;flex-direction:column;gap:10px;}
+.lb-row{
+  background:white;border-radius:14px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  border:1.5px solid var(--border);box-shadow:var(--sh3);
+  transition:all .2s;cursor:pointer;
+}
+.lb-row:hover{border-color:#6B3FA0;box-shadow:0 4px 20px rgba(107,63,160,.15);transform:translateY(-1px);}
+.lb-row.mine{border-color:#6B3FA0;background:linear-gradient(135deg,rgba(107,63,160,.06),white);}
+.lb-rank-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+.lb-rank-1{background:linear-gradient(135deg,#FFD700,#FFA500);color:white;box-shadow:0 3px 10px rgba(255,165,0,.4);}
+.lb-rank-2{background:linear-gradient(135deg,#C0C0C0,#888);color:white;box-shadow:0 3px 10px rgba(150,150,150,.3);}
+.lb-rank-3{background:linear-gradient(135deg,#CD7F32,#8B4513);color:white;box-shadow:0 3px 10px rgba(139,69,19,.3);}
+.lb-rank-other{background:var(--purple-l);color:var(--purple);border:1.5px solid rgba(107,63,160,.15);}
+.lb-av{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#4A2C8C,#6B3FA0);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:white;
+  box-shadow:0 3px 10px rgba(107,63,160,.3);
+}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-size:14px;font-weight:800;color:var(--dark);display:flex;align-items:center;gap:6px;}
+.lb-you-badge{font-size:9px;font-weight:800;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:linear-gradient(135deg,#6B3FA0,#4A2C8C);color:white;}
+.lb-role{font-size:11px;color:var(--muted);margin-top:1px;}
+.lb-score-big{font-size:18px;font-weight:900;color:#4A2C8C;flex-shrink:0;}
+.lb-score-label{font-size:9px;color:var(--muted);font-weight:700;text-align:right;}
+
+/* Dimension breakdown bars */
+.lb-dims{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;}
+.lb-dim{background:var(--org-pale2);border-radius:8px;padding:6px 8px;border:1px solid var(--border);}
+.lb-dim-lbl{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.lb-dim-bar{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin-bottom:2px;}
+.lb-dim-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+.lb-dim-fill.devo{background:linear-gradient(90deg,#1A6FD4,#3DA8FF);}
+.lb-dim-fill.assign{background:linear-gradient(90deg,var(--purple),#8B78D8);}
+.lb-dim-fill.presence{background:linear-gradient(90deg,var(--green),#28B466);}
+.lb-dim-fill.streak{background:linear-gradient(90deg,#F07C00,#FFA733);}
+.lb-dim-fill.transform{background:linear-gradient(90deg,#E91E8C,#F06292);}
+.lb-dim-fill.overall{background:linear-gradient(90deg,#4A2C8C,#6B3FA0);}
+.lb-dim-val{font-size:10px;font-weight:800;color:var(--dark);}
+
+/* My ranking card */
+.lb-my-card{
+  background:linear-gradient(135deg,#1A0A40,#2D1B69,#4A2C8C);
+  border-radius:18px;padding:20px;margin-bottom:20px;
+  box-shadow:0 12px 40px rgba(90,40,150,.35);
+  position:relative;overflow:hidden;
+}
+.lb-my-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,215,0,.1),transparent 50%);}
+.lb-my-rank-big{font-size:52px;font-weight:900;color:#FFD700;line-height:1;text-shadow:0 4px 20px rgba(255,215,0,.4);position:relative;}
+.lb-my-msg{font-size:14px;color:rgba(255,255,255,.85);line-height:1.6;margin-top:6px;position:relative;}
+.lb-my-pts{font-size:22px;font-weight:900;color:white;position:relative;}
+.lb-my-pts-lbl{font-size:10px;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+
+/* Dashboard leaderboard sidebar */
+.dash-lb{
+  background:linear-gradient(180deg,#1A0A40,#2D1B69);
+  border-radius:18px;padding:0;overflow:hidden;
+  box-shadow:0 8px 32px rgba(90,40,150,.35);
+}
+.dash-lb-head{
+  padding:16px 18px 14px;
+  background:linear-gradient(135deg,#2D1B69,#4A2C8C);
+  display:flex;align-items:center;gap:8px;
+}
+.dash-lb-head-title{font-size:14px;font-weight:800;color:white;}
+.dash-lb-head-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px;}
+.dash-lb-tabs{display:flex;background:rgba(0,0,0,.2);}
+.dash-lb-tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.55);}
+.dash-lb-tab.active{background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.15));color:#FFD700;border-bottom:2px solid #FFD700;}
+.dash-lb-body{padding:12px;}
+.dash-lb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:6px;transition:background .2s;}
+.dash-lb-item:hover{background:rgba(255,255,255,.07);}
+.dash-lb-rank{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.dash-lb-rank.r1{background:linear-gradient(135deg,#FFD700,#FFA500);color:#1A0A40;}
+.dash-lb-rank.r2{background:linear-gradient(135deg,#C0C0C0,#888);color:#1A0A40;}
+.dash-lb-rank.r3{background:linear-gradient(135deg,#CD7F32,#8B4513);color:white;}
+.dash-lb-av{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;flex-shrink:0;}
+.dash-lb-info{flex:1;min-width:0;}
+.dash-lb-name{font-size:12px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dash-lb-role{font-size:10px;color:rgba(255,255,255,.5);}
+.dash-lb-pts{font-size:14px;font-weight:900;color:#FFD700;flex-shrink:0;}
+.dash-lb-pts-lbl{font-size:9px;color:rgba(255,215,0,.6);text-align:right;}
+.dash-lb-my-rank{padding:10px 14px;background:rgba(255,215,0,.1);border-top:1px solid rgba(255,255,255,.08);margin:0;border-radius:0 0 18px 18px;}
+.dash-lb-my-rank-txt{font-size:12px;color:rgba(255,215,0,.8);font-style:italic;}
+.dash-lb-see-all{width:100%;padding:9px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:9px;color:rgba(255,255,255,.7);font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;transition:all .2s;}
+.dash-lb-see-all:hover{background:rgba(255,255,255,.14);color:white;}
+
 </style>
 </head>
 <body>
@@ -915,6 +1069,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="nav-item" onclick="nav('talk-coach')"><span class="ni">💬</span> Talk to the Coach</div>
       <div class="nav-item" onclick="nav('boys-attendance')"><span class="ni">📋</span> Boys' Attendance</div>
       <div class="nav-item" onclick="nav('report-change')" id="nav-rc"><span class="ni">🌱</span> Report a Change <span class="sb-msg-badge" id="badge-rc">0</span></div>
+      <div class="nav-item" onclick="nav('leaderboard')"><span class="ni">🏆</span> Leaderboard</div>
     </div>
     <div class="nav-grp admin-only" id="admin-nav">
       <div class="nav-grp-lbl">Admin Panel</div>
@@ -998,6 +1153,92 @@ tr:hover td{background:var(--org-pale2);}
         <div class="two-col">
           <div class="card"><div class="card-h"><h3>Upcoming Sessions</h3></div><div id="dash-meetings"></div></div>
           <div class="card"><div class="card-h"><h3>Pending Assignments</h3></div><div id="dash-pending"></div></div>
+        </div>
+        <!-- Leaderboard Sidebar -->
+        <div class="two-col" style="margin-top:0;">
+          <div style="grid-column:1/-1;display:grid;grid-template-columns:2fr 1fr;gap:18px;" id="dash-lb-wrap">
+            <div class="card" style="margin-bottom:0;"><div class="card-h"><h3>📊 My Scholar Score</h3><button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;" onclick="nav('leaderboard')">Full Leaderboard</button></div><div id="dash-my-score-card"></div></div>
+            <div class="dash-lb" id="dash-leaderboard-widget">
+              <div class="dash-lb-head"><div><div class="dash-lb-head-title">🏆 Leaderboard</div><div class="dash-lb-head-sub">Community rankings & scores</div></div></div>
+              <div class="dash-lb-tabs">
+                <div class="dash-lb-tab active" id="dlb-monthly-tab" onclick="dashLbSwitch('monthly')">Monthly</div>
+                <div class="dash-lb-tab" id="dlb-alltime-tab" onclick="dashLbSwitch('alltime')">All-Time</div>
+              </div>
+              <div class="dash-lb-body" id="dash-lb-body"></div>
+              <div class="dash-lb-my-rank" id="dash-lb-my-rank"><div class="dash-lb-my-rank-txt">Loading your rank...</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD -->
+      <div id="view-leaderboard" class="view">
+        <div class="view-head"><div><h1>🏆 Scholar Leaderboard</h1><p>Multi-dimensional ranking — Devotion, Assignments, Presence, Consistency & Transformation</p></div></div>
+        <div class="lb-hero">
+          <div class="lb-hero-title">🏅 Boys To Kings</div>
+          <div class="lb-hero-h">The Scholar Rankings</div>
+          <div class="lb-hero-sub">Every point counts. Every day matters. Your journey is measured.</div>
+        </div>
+        <div class="lb-tabs">
+          <button class="lb-tab active" id="lb-monthly-tab" onclick="lbSwitch('monthly')">📅 Monthly Rankings</button>
+          <button class="lb-tab" id="lb-alltime-tab" onclick="lbSwitch('alltime')">⭐ All-Time Rankings</button>
+        </div>
+        <!-- My rank card (shown for non-admin users) -->
+        <div id="lb-my-card" style="display:none;" class="lb-my-card">
+          <div style="display:flex;align-items:flex-start;gap:20px;position:relative;">
+            <div>
+              <div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,215,0,.7);margin-bottom:4px;">YOUR RANK</div>
+              <div class="lb-my-rank-big" id="lb-my-rank-num">#-</div>
+            </div>
+            <div style="flex:1;">
+              <div class="lb-my-pts" id="lb-my-pts">— pts</div>
+              <div class="lb-my-pts-lbl">Overall Scholar Score</div>
+              <div class="lb-my-msg" id="lb-my-msg">Loading your score...</div>
+            </div>
+          </div>
+        </div>
+        <!-- Podium Top 3 -->
+        <div id="lb-podium" class="lb-podium"></div>
+        <!-- Full Rankings -->
+        <div class="card" style="margin-top:0;">
+          <div class="card-h"><h3 id="lb-list-title">Full Rankings</h3></div>
+          <div class="lb-full-list" id="lb-full-list"></div>
+        </div>
+        <!-- Scoring legend -->
+        <div class="card" style="margin-top:16px;background:linear-gradient(135deg,#1A0A40,#2D1B69);border-color:rgba(107,63,160,.3);">
+          <div class="card-h"><h3 style="color:white;">📐 How Scores Are Calculated</h3></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div style="background:rgba(26,111,212,.2);border:1px solid rgba(26,111,212,.3);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">📖</div>
+              <div style="font-size:12px;font-weight:800;color:#3DA8FF;">Devotional Score (20%)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">Daily Bible quiz completions × 10pts each</div>
+            </div>
+            <div style="background:rgba(91,61,200,.2);border:1px solid rgba(91,61,200,.3);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">📝</div>
+              <div style="font-size:12px;font-weight:800;color:#8B78D8;">Assignment Score (25%)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">Average % score across all submitted assignments</div>
+            </div>
+            <div style="background:rgba(30,138,80,.2);border:1px solid rgba(30,138,80,.3);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">🎯</div>
+              <div style="font-size:12px;font-weight:800;color:#28B466;">Presence Score (20%)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">% of sessions attended across all courses</div>
+            </div>
+            <div style="background:rgba(240,124,0,.2);border:1px solid rgba(240,124,0,.3);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">🔥</div>
+              <div style="font-size:12px;font-weight:800;color:#FFA733;">Consistency Score (20%)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">Daily participation streak × 5pts per day</div>
+            </div>
+            <div style="background:rgba(233,30,140,.2);border:1px solid rgba(233,30,140,.3);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">🌱</div>
+              <div style="font-size:12px;font-weight:800;color:#F06292;">Transformation Score (15%)</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">Verified "Report a Change" entries × 30pts each</div>
+            </div>
+            <div style="background:rgba(107,63,160,.25);border:1px solid rgba(107,63,160,.4);border-radius:10px;padding:12px;">
+              <div style="font-size:16px;margin-bottom:4px;">⭐</div>
+              <div style="font-size:12px;font-weight:800;color:#B090FF;">Overall Scholar Score</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.5;">Weighted aggregate of all 5 dimensions</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1172,7 +1413,10 @@ tr:hover td{background:var(--org-pale2);}
             </div>
           </div>
           <div style="margin-top:18px;padding:14px;background:var(--org-pale);border-radius:var(--r);border:1.5px solid var(--border);">
-            <h4 style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;">📊 Attendance Summary — All Students</h4>
+            <h4 style="font-size:12px;font-weight:800;color:var(--dark);margin-bottom:10px;">📊 Attendance & Scholar Score Summary</h4>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px;padding:6px 10px;background:var(--blue-l);border-radius:8px;border:1px solid rgba(26,111,212,.2);">
+              📐 <strong>Unified Scoring:</strong> Each student's score is calculated against the same maximum denominator — total possible points from all sessions attended, assignments submitted, and devotionals completed across all time.
+            </div>
             <div id="att-radar-wrap" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
           </div>
         </div>
@@ -1185,8 +1429,8 @@ tr:hover td{background:var(--org-pale2);}
           <div class="coach-hero" style="background:linear-gradient(135deg,var(--green-l),white);border:1.5px solid rgba(30,138,80,.2);">
             <div class="coach-hero-icon" style="background:linear-gradient(135deg,var(--green),#28B466);">🌱</div>
             <div class="coach-hero-text">
-              <h2>Your Growth Story Matters, King</h2>
-              <p>Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
+              <h2 style="color:#1A5C30;text-shadow:0 1px 2px rgba(0,0,0,.08);">Your Growth Story Matters, King</h2>
+              <p style="color:#1A4020;font-weight:600;text-shadow:none;background:rgba(255,255,255,.7);border-radius:8px;padding:6px 10px;margin-top:4px;border:1px solid rgba(30,138,80,.15);">Coach Kingsley wants to celebrate every change you make. Share what's different about you — big or small — and every admin will see it.</p>
             </div>
           </div>
           <div class="coach-form">
@@ -1232,7 +1476,7 @@ tr:hover td{background:var(--org-pale2);}
       <div class="footer-links">
         <a href="https://www.boystokings.org" target="_blank" class="footer-link"><span class="fl-icon">🌐</span> www.boystokings.org</a>
         <a href="https://wa.me/2348090459999" target="_blank" class="footer-link"><span class="fl-icon">💬</span> +234 809 045 9999</a>
-        <a href="/cdn-cgi/l/email-protection#61080f070e21030e1812150e0a080f06124f0e1306" target="_blank" class="footer-link"><span class="fl-icon">✉️</span> info&#64;boystokings.org</a>
+        <a href="mailto:boys@boystokings.org" target="_blank" class="footer-link"><span class="fl-icon">✉️</span> boys&#64;boystokings.org</a>
       </div>
       <div class="footer-copy">© 2025 Boys To Kings. All rights reserved.</div>
     </div>
@@ -1715,7 +1959,7 @@ function bootApp(){
 //  NAVIGATION
 // ═══════════════════════════════════════════
 const LOADERS={
-  'dashboard':loadDashboard,'courses':loadMyCourses,'assignments':loadMyAssignments,
+  'dashboard':loadDashboard,'courses':loadMyCourses,'assignments':loadMyAssignments,'leaderboard':loadLeaderboard,
   'meetings':loadMyMeetings,'materials':loadMyMaterials,'talk-coach':loadTalkCoach,
   'pledge-view':loadPledgeView,
   'manage-users':loadManageUsers,'manage-courses':loadManageCourses,
@@ -1961,9 +2205,11 @@ async function loadDashboard(){
   document.getElementById('st-assign').textContent=isAdmin()?assign.length:myAssign.length;
   document.getElementById('st-sub').textContent=isAdmin()?subs.length:mySubs.length;
   document.getElementById('st-meet').textContent=upcoming.length;
+  // Load leaderboard sidebar on dashboard
+  try{loadDashLeaderboard();}catch(e){}
   const mEl=document.getElementById('dash-meetings');
   if(!upcoming.length){mEl.innerHTML='<div class="empty">No sessions scheduled yet.</div>';}
-  else{mEl.innerHTML=upcoming.slice(0,3).map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p></div><a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a></div>`;}).join('');}
+  else{mEl.innerHTML=upcoming.slice(0,3).map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const now2=new Date();const mDT=new Date(d.getFullYear(),d.getMonth(),d.getDate(),...(tStr||'').split(':').map(Number));const isPast=mDT<now2-3600000;const joinBtn=isPast?`<span class="btn-join" style="opacity:.45;cursor:not-allowed;background:linear-gradient(135deg,#888,#aaa);" title="Session has ended">Ended</span>`:`<a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a>`;return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p></div>${joinBtn}</div>`;}).join('');}
   const pEl=document.getElementById('dash-pending');
   const pending=isAdmin()?assign.slice(0,4):myAssign.filter(a=>{const sub=mySubs.find(s=>String(s.assignmentId)===String(a.id));return!sub&&new Date(a.dueDate)>=now;}).slice(0,4);
   if(!pending.length){pEl.innerHTML='<div class="empty">No pending assignments.</div>';}
@@ -1985,7 +2231,7 @@ function ccHTML(c,isAdm){
   const cats={'Character Development':'tag-org','Leadership':'tag-blue','Life Skills':'tag-green','Faith & Purpose':'tag-purple','Academic Excellence':'tag-org'};
   const tc=cats[c.category]||'tag-org';
   const thumbSrc=c.thumbnailUrl||c.thumbnailB64||'';
-  const thumb=thumbSrc?`<img src="${thumbSrc}" onerror="this.style.display='none'">`:c.category==='Faith & Purpose'?'✝️':'📚';
+  const thumb=thumbSrc?`<img src="${thumbSrc}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.innerHTML='<div style=display:flex;align-items:center;justify-content:center;height:100%;font-size:44px;>📚</div>'">`:(c.category==='Faith & Purpose'?'✝️':'📚');
   const act=isAdm?`<button class="btn btn-sm btn-org" style="margin-top:11px;width:100%" onclick="openCourseDetail('${c.id}')">Manage Course</button>`:`<button class="btn btn-sm btn-ghost" style="margin-top:11px;width:100%" onclick="openStudentCourse('${c.id}')">View Materials</button>`;
   return`<div class="cc"><div class="cc-thumb">${thumb}</div><div class="cc-body"><div class="cc-title">${c.title}</div><div class="cc-desc">${c.description||''}</div><div class="cc-foot"><span class="tag ${tc}">${c.category||'Course'}</span></div>${act}</div></div>`;
 }
@@ -2217,7 +2463,7 @@ async function loadMyMeetings(){
   const sorted=meets.sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
   const el=document.getElementById('my-meetings-list');
   if(!sorted.length){el.innerHTML='<div class="empty">No sessions scheduled yet.</div>';return;}
-  el.innerHTML=`<div class="card">${sorted.map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const past=parseMeetDT(m)<now;return`<div class="meet-item"><div class="meet-dt" style="${past?'background:linear-gradient(135deg,#999,#BBB)':''}"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">${past?'<span class="badge b-closed">Ended</span>':'<span class="badge b-active">Upcoming</span>'}<a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${past?'opacity:.5':''}">Join</a></div></div>`;}).join('')}</div>`;
+  el.innerHTML=`<div class="card">${sorted.map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const past=parseMeetDT(m)<now;return`<div class="meet-item"><div class="meet-dt" style="${past?'background:linear-gradient(135deg,#999,#BBB)':''}"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">${past?'<span class="badge b-closed">Ended</span>':'<span class="badge b-active">Upcoming</span>'}<a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${past?'opacity:.45;cursor:not-allowed;pointer-events:none;background:linear-gradient(135deg,#888,#aaa);':''}" ${past?'onclick="return false;" title="This session has ended"':''}>${past?'Ended':'Join'}</a></div></div>`;}).join('')}</div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -3489,6 +3735,9 @@ async function loadReportChange(){
   el.innerHTML=sorted.map(p=>{
     const isOwn=String(p.studentId)===String(S.id);
     const pReplies=replies.filter(r=>String(r.postId)===String(p.id)).sort((a,b)=>new Date(a.repliedAt)-new Date(b.repliedAt));
+    // Admins see full details; students only see their own name or "A Fellow King"
+    const displayName=isAdmin()||isOwn?p.studentName:'🛡️ A Fellow King';
+    const displayAvatar=isAdmin()||isOwn?(p.studentName||'?').charAt(0):'K';
     const repliesHTML=pReplies.length?`<div class="rc-replies">
       <div style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;">Admin Responses</div>
       ${pReplies.map(r=>`<div class="rc-reply-item">
@@ -3504,11 +3753,26 @@ async function loadReportChange(){
       <input type="text" id="rcr-${p.id}" placeholder="Write a response as Coach/Admin..." />
       <button class="btn btn-sm btn-org" onclick="sendReportReply('${p.id}','${(p.studentName||'').replace(/'/g,'')}')">Reply</button>
     </div>`:'';
+    // Non-admin, non-own: show anonymized version
+    if(!isAdmin()&&!isOwn){
+      return`<div class="rc-post" style="background:linear-gradient(135deg,#F8F8F8,white);border-color:rgba(0,0,0,.08);">
+        <div class="rc-post-head">
+          <div class="rc-reply-av" style="width:36px;height:36px;background:linear-gradient(135deg,var(--green),#28B466);">${displayAvatar}</div>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:var(--dark);">${displayName}</div>
+            <div style="font-size:11px;color:var(--muted);">${fmtDate(p.postedAt)}</div>
+          </div>
+          <span class="rc-type-badge ${p.changeType||'new_behaviour'}">${p.changeType==='stopped_behaviour'?'🚫 Behaviour Stopped':p.changeType==='both'?'🔄 Start & Stop':'✅ New Behaviour'}</span>
+        </div>
+        <div class="rc-msg-body" style="font-style:italic;color:var(--muted);">This King shared a transformation story. Names are kept private to protect community members. 🌱</div>
+        ${repliesHTML}
+      </div>`;
+    }
     return`<div class="rc-post">
       <div class="rc-post-head">
-        <div class="rc-reply-av" style="width:36px;height:36px;">${(p.studentName||'?').charAt(0)}</div>
+        <div class="rc-reply-av" style="width:36px;height:36px;">${displayAvatar}</div>
         <div>
-          <div style="font-size:14px;font-weight:800;color:var(--dark);">${p.studentName}</div>
+          <div style="font-size:14px;font-weight:800;color:var(--dark);">${displayName}</div>
           <div style="font-size:11px;color:var(--muted);">${fmtDate(p.postedAt)}</div>
         </div>
         <span class="rc-type-badge ${p.changeType||'new_behaviour'}">${p.changeType==='stopped_behaviour'?'🚫 Behaviour Stopped':p.changeType==='both'?'🔄 Start & Stop':'✅ New Behaviour'}</span>
@@ -3518,6 +3782,10 @@ async function loadReportChange(){
       ${adminReplyForm}
     </div>`;
   }).join('');
+  // Trigger notification badge update for testimonies (for admins)
+  if(isAdmin()){
+    updateAdminNotifBadges();
+  }
 }
 async function sendReportChange(){
   const text=document.getElementById('rc-message').value.trim();
@@ -3532,6 +3800,17 @@ async function sendReportChange(){
   msg.innerHTML='<div class="alert alert-ok">✓ Your change has been shared! Coach Kingsley and all admins can see it.</div>';
   document.getElementById('rc-message').value='';
   setTimeout(()=>msg.innerHTML='',4000);
+  // Notify all admins about new testimony
+  try{
+    const adminUsers=await dbRead('Users');
+    const admins=adminUsers.filter(u=>u.role==='admin'&&u.status==='active');
+    for(const adm of admins){
+      await dbWrite('Notifications',{id:uid(),userId:adm.id,type:'new_testimony',
+        title:'New Transformation Story',
+        body:S.name+' shared a change report — check it out!',
+        courseId:'',read:'false',createdAt:new Date().toISOString()});
+    }
+  }catch(e){console.warn('RC notif error',e);}
   loadReportChange();
 }
 async function sendReportReply(postId,studentName){
@@ -3620,6 +3899,283 @@ function toggleNotifPanel(){
   }else{
     panel.classList.add('open');
     loadNotifications(); // refresh on open
+  }
+}
+
+// ═══════════════════════════════════════════
+//  LEADERBOARD — Multi-Dimensional Scholar Scoring
+// ═══════════════════════════════════════════
+let _lbMode='monthly'; // 'monthly' or 'alltime'
+let _lbData=[];
+
+async function computeLeaderboard(mode){
+  try{
+    const [users,subs,assign,devos,attData,rcPosts,enrol]=await Promise.all([
+      dbRead('Users'),dbRead('Submissions'),dbRead('Assignments'),
+      dbRead('DevotionalScores'),dbRead('Attendance'),
+      dbRead('ReportChange'),dbRead('Enrolments')
+    ]);
+    const now=new Date();
+    const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+
+    const students=users.filter(u=>u.role==='user'&&u.status==='active');
+
+    return students.map(u=>{
+      const uid2=String(u.id);
+      const filterDate=mode==='monthly'?(d)=>d&&new Date(d)>=monthStart:(d)=>true;
+
+      // 1. DEVOTIONAL SCORE: each correct devo = 10pts
+      const myDevos=devos.filter(d=>String(d.studentId)===uid2&&filterDate(d.date));
+      const devoCorrect=myDevos.filter(d=>d.correct==='true'||d.correct===true).length;
+      const devoScore=Math.min(devoCorrect*10, 300); // cap at 300
+
+      // 2. ASSIGNMENT SCORE: average % across submitted assignments
+      const myEnrolCourses=enrol.filter(e=>String(e.studentId)===uid2).map(e=>String(e.courseId));
+      const mySubs=subs.filter(s=>String(s.studentId)===uid2&&filterDate(s.submittedAt));
+      let assignScore=0;
+      if(mySubs.length>0){
+        const totalPct=mySubs.reduce((acc,s)=>{
+          const a=assign.find(x=>String(x.id)===String(s.assignmentId));
+          const max=a?Number(a.maxScore)||100:100;
+          return acc+(Number(s.score)||0)/max*100;
+        },0);
+        assignScore=Math.round(totalPct/mySubs.length); // 0-100
+      }
+
+      // 3. PRESENCE SCORE: from attendance data
+      const myAtt=attData.filter(a=>String(a.studentId)===uid2&&filterDate(a.date));
+      const presenceChecks=myAtt.filter(a=>a.type==='presence'&&(a.value==='true'||a.value===true)).length;
+      const totalPossible=Math.max(myAtt.filter(a=>a.type==='presence').length,1);
+      const presenceScore=Math.round((presenceChecks/totalPossible)*100);
+
+      // 4. CONSISTENCY SCORE: daily participation streaks
+      const allDates=[...new Set([
+        ...myDevos.map(d=>d.date?d.date.substring(0,10):''),
+        ...mySubs.map(s=>s.submittedAt?s.submittedAt.substring(0,10):''),
+      ].filter(Boolean))].sort();
+      let streak=0,maxStreak=0,currentStreak=0;
+      for(let i=0;i<allDates.length;i++){
+        if(i===0){currentStreak=1;}
+        else{
+          const prev=new Date(allDates[i-1]);const curr=new Date(allDates[i]);
+          const diff=(curr-prev)/(1000*60*60*24);
+          currentStreak=diff===1?currentStreak+1:1;
+        }
+        maxStreak=Math.max(maxStreak,currentStreak);
+      }
+      const consistencyScore=Math.min(maxStreak*5, 200); // 5pts per day, max 200
+
+      // 5. TRANSFORMATION SCORE: verified report-a-change entries
+      const myRC=rcPosts.filter(p=>String(p.studentId)===uid2&&filterDate(p.postedAt));
+      const transformScore=Math.min(myRC.length*30, 150); // 30pts each, max 150
+
+      // 6. OVERALL SCHOLAR SCORE (weighted aggregate)
+      // Devo 20%, Assign 25%, Presence 20%, Consistency 20%, Transform 15%
+      const overallScore=Math.round(
+        devoScore*0.20 +
+        assignScore*2.5*0.25 + // scale 0-100 to 0-250 equivalent
+        presenceScore*2*0.20 + // scale 0-100 to 0-200 equivalent
+        consistencyScore*0.20 +
+        transformScore*0.15
+      );
+
+      return{
+        id:uid2,name:u.name,role:u.role,cohort:u.cohort||'',
+        devoScore,assignScore,presenceScore,consistencyScore,transformScore,
+        overallScore,streak:maxStreak
+      };
+    }).sort((a,b)=>b.overallScore-a.overallScore);
+  }catch(e){
+    console.warn('Leaderboard compute error',e);
+    return[];
+  }
+}
+
+function getRankMsg(rank,total,name){
+  if(rank===1)return`👑 You're #1! Absolute legend, ${name.split(' ')[0]}! Keep the crown!`;
+  if(rank===2)return`🥈 So close to the top, ${name.split(' ')[0]}! Push harder on devotionals and assignments!`;
+  if(rank===3)return`🥉 Top 3, King! Consistency is your key to reaching #1!`;
+  if(rank<=Math.ceil(total*0.25))return`🌟 Top 25%! You're doing great — daily devotionals will lift you higher!`;
+  if(rank<=Math.ceil(total*0.5))return`💪 Halfway there, ${name.split(' ')[0]}! Submit more assignments and attend sessions daily!`;
+  if(rank<=Math.ceil(total*0.75))return`🎯 Keep going! Report your transformation stories and complete devotionals to climb!`;
+  return`🌱 Every day is a new chance, ${name.split(' ')[0]}! Start with today's devotional — it's worth 10 points!`;
+}
+
+async function loadLeaderboard(){
+  const lb=document.getElementById('lb-full-list');
+  const podium=document.getElementById('lb-podium');
+  if(lb)lb.innerHTML='<div class="empty">Loading rankings...</div>';
+  _lbData=await computeLeaderboard(_lbMode);
+  renderLeaderboard();
+}
+
+function lbSwitch(mode){
+  _lbMode=mode;
+  document.getElementById('lb-monthly-tab').classList.toggle('active',mode==='monthly');
+  document.getElementById('lb-alltime-tab').classList.toggle('active',mode==='alltime');
+  loadLeaderboard();
+}
+
+function dashLbSwitch(mode){
+  document.getElementById('dlb-monthly-tab').classList.toggle('active',mode==='monthly');
+  document.getElementById('dlb-alltime-tab').classList.toggle('active',mode==='alltime');
+  computeLeaderboard(mode).then(data=>{
+    renderDashLeaderboard(data);
+  });
+}
+
+function renderLeaderboard(){
+  const data=_lbData;
+  if(!data.length){
+    document.getElementById('lb-full-list').innerHTML='<div class="empty">No ranking data yet.</div>';
+    document.getElementById('lb-podium').innerHTML='';
+    return;
+  }
+  const myId=String(S.id);
+  const myEntry=data.find(d=>d.id===myId);
+  const myRank=myEntry?data.indexOf(myEntry)+1:null;
+
+  // My card
+  const myCard=document.getElementById('lb-my-card');
+  if(myCard&&!isAdmin()&&myEntry){
+    myCard.style.display='block';
+    document.getElementById('lb-my-rank-num').textContent='#'+myRank;
+    document.getElementById('lb-my-pts').textContent=myEntry.overallScore+' pts';
+    document.getElementById('lb-my-msg').textContent=getRankMsg(myRank,data.length,myEntry.name);
+  }
+
+  // Podium (top 3)
+  const podEl=document.getElementById('lb-podium');
+  const top3=data.slice(0,3);
+  if(top3.length<1){podEl.innerHTML='';return;}
+  const podOrder=[1,0,2]; // show 2nd, 1st, 3rd for visual podium
+  podEl.innerHTML=podOrder.filter(i=>top3[i]).map(i=>{
+    const p=top3[i];const rank=i+1;
+    const crowns=['👑','🥈','🥉'];const cls=['lb-pod-1','lb-pod-2','lb-pod-3'];
+    return`<div class="lb-pod ${cls[i]}">
+      ${rank===1?'<div class="lb-pod-crown">👑</div>':''}
+      <div class="lb-pod-avatar">${(p.name||'K').charAt(0)}</div>
+      <div class="lb-pod-plat">
+        <div class="lb-pod-score">${p.overallScore}</div>
+        <div class="lb-pod-rank">${crowns[i]}</div>
+      </div>
+      <div class="lb-pod-name">${p.name}</div>
+      <div class="lb-pod-label">${p.role||'Scholar'}</div>
+    </div>`;
+  }).join('');
+
+  // Full list
+  const listEl=document.getElementById('lb-full-list');
+  listEl.innerHTML=data.map((p,i)=>{
+    const rank=i+1;
+    const isMe=p.id===myId;
+    const rankCls=rank===1?'lb-rank-1':rank===2?'lb-rank-2':rank===3?'lb-rank-3':'lb-rank-other';
+    const maxAll=Math.max(data[0].devoScore||1,1);
+    const devoW=Math.round((p.devoScore/(300))*100);
+    const assW=Math.round((p.assignScore/100)*100);
+    const presW=Math.round((p.presenceScore/100)*100);
+    const streakW=Math.round((p.consistencyScore/200)*100);
+    const transW=Math.round((p.transformScore/150)*100);
+    return`<div class="lb-row ${isMe?'mine':''}">
+      <div class="lb-rank-num ${rankCls}">${rank}</div>
+      <div class="lb-av">${(p.name||'K').charAt(0)}</div>
+      <div class="lb-info">
+        <div class="lb-name">${p.name}${isMe?'<span class="lb-you-badge">YOU</span>':''}</div>
+        <div class="lb-role">${p.role||'Scholar'} ${p.cohort?'· '+p.cohort:''}</div>
+        <div class="lb-dims">
+          <div class="lb-dim"><div class="lb-dim-lbl">📖 Devo</div><div class="lb-dim-bar"><div class="lb-dim-fill devo" style="width:${devoW}%"></div></div><div class="lb-dim-val">${p.devoScore}pts</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">📝 Assign</div><div class="lb-dim-bar"><div class="lb-dim-fill assign" style="width:${assW}%"></div></div><div class="lb-dim-val">${p.assignScore}%</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">🎯 Present</div><div class="lb-dim-bar"><div class="lb-dim-fill presence" style="width:${presW}%"></div></div><div class="lb-dim-val">${p.presenceScore}%</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">🔥 Streak</div><div class="lb-dim-bar"><div class="lb-dim-fill streak" style="width:${streakW}%"></div></div><div class="lb-dim-val">${p.streak}d</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">🌱 Transform</div><div class="lb-dim-bar"><div class="lb-dim-fill transform" style="width:${transW}%"></div></div><div class="lb-dim-val">${p.transformScore}pts</div></div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="lb-score-big">${p.overallScore}</div>
+        <div class="lb-score-label">Scholar<br>Score</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashLeaderboard(data){
+  const el=document.getElementById('dash-lb-body');
+  const myRankEl=document.getElementById('dash-lb-my-rank');
+  if(!el)return;
+  const top3=data.slice(0,3);
+  if(!top3.length){el.innerHTML='<div style="color:rgba(255,255,255,.5);font-size:12px;text-align:center;padding:10px;">No data yet.</div>';return;}
+  const rankIcons=['🥇','🥈','🥉'];
+  const rCls=['r1','r2','r3'];
+  el.innerHTML=top3.map((p,i)=>
+    `<div class="dash-lb-item">
+      <div class="dash-lb-rank ${rCls[i]}">${i+1}</div>
+      <div class="dash-lb-av">${(p.name||'K').charAt(0)}</div>
+      <div class="dash-lb-info">
+        <div class="dash-lb-name">${p.name}</div>
+        <div class="dash-lb-role">${p.role||'Scholar'}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="dash-lb-pts">${p.overallScore}</div>
+        <div class="dash-lb-pts-lbl">pts</div>
+      </div>
+    </div>`
+  ).join('');
+
+  // Show current user rank
+  const myId=String(S.id);
+  const myIdx=data.findIndex(d=>d.id===myId);
+  if(myIdx>=0&&myRankEl){
+    const myP=data[myIdx];
+    myRankEl.innerHTML=`<div class="dash-lb-my-rank-txt">🎯 You are <strong style="color:#FFD700">#${myIdx+1}</strong> in the community — ${getRankMsg(myIdx+1,data.length,myP.name).split('!')[0]}!</div>`;
+  }else if(myRankEl){
+    myRankEl.innerHTML=`<div class="dash-lb-my-rank-txt" style="color:rgba(255,255,255,.4);">Complete activities to earn your rank!</div>`;
+  }
+  const seeAll=document.createElement('button');
+  seeAll.className='dash-lb-see-all';
+  seeAll.textContent='View Full Leaderboard →';
+  seeAll.onclick=()=>nav('leaderboard');
+  el.appendChild(seeAll);
+}
+
+async function loadDashLeaderboard(){
+  const data=await computeLeaderboard('monthly');
+  renderDashLeaderboard(data);
+  // Also show my score card
+  const myId=String(S.id);
+  const myEntry=data.find(d=>d.id===myId);
+  const myCardEl=document.getElementById('dash-my-score-card');
+  if(myCardEl&&myEntry){
+    myCardEl.innerHTML=`
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--blue-l),#D0E8FF);border-radius:10px;border:1px solid rgba(26,111,212,.2);">
+          <div style="font-size:20px;font-weight:900;color:var(--blue);">${myEntry.devoScore}</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">📖 Devotional</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--purple-l),#DDD8FF);border-radius:10px;border:1px solid rgba(91,61,200,.2);">
+          <div style="font-size:20px;font-weight:900;color:var(--purple);">${myEntry.assignScore}%</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">📝 Assignment</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--green-l),#C8EFC8);border-radius:10px;border:1px solid rgba(30,138,80,.2);">
+          <div style="font-size:20px;font-weight:900;color:var(--green);">${myEntry.presenceScore}%</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">🎯 Presence</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--org-pale),#FFE0C0);border-radius:10px;border:1px solid rgba(240,124,0,.2);">
+          <div style="font-size:20px;font-weight:900;color:var(--org4);">${myEntry.streak}d</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">🔥 Streak</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--pink-l),#FFD0E8);border-radius:10px;border:1px solid rgba(233,30,140,.2);">
+          <div style="font-size:20px;font-weight:900;color:var(--pink);">${myEntry.transformScore}</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">🌱 Transform</div>
+        </div>
+        <div style="text-align:center;padding:12px;background:linear-gradient(135deg,rgba(107,63,160,.1),rgba(74,44,140,.15));border-radius:10px;border:1.5px solid rgba(107,63,160,.3);">
+          <div style="font-size:22px;font-weight:900;color:#4A2C8C;">${myEntry.overallScore}</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">⭐ Total Score</div>
+        </div>
+      </div>
+      <button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;width:100%;" onclick="nav('leaderboard')">See Full Leaderboard 🏆</button>
+    `;
+  } else if(myCardEl){
+    myCardEl.innerHTML=`<div class="empty" style="padding:12px;">Complete activities to earn your Scholar Score!</div><button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;width:100%;margin-top:8px;" onclick="nav('leaderboard')">See Leaderboard 🏆</button>`;
   }
 }
 
