@@ -976,20 +976,21 @@ tr:hover td{background:var(--org-pale2);}
 
 /* Dashboard leaderboard sidebar */
 .dash-lb{
-  background:linear-gradient(180deg,#1A0A40,#2D1B69);
+  background:linear-gradient(160deg,#1A3A6A 0%,#1A5AAA 50%,#1E7AD8 100%);
   border-radius:18px;padding:0;overflow:hidden;
-  box-shadow:0 8px 32px rgba(90,40,150,.35);
+  box-shadow:0 8px 32px rgba(26,90,170,.45),0 0 0 1px rgba(61,168,255,.18);
 }
 .dash-lb-head{
-  padding:16px 18px 14px;
-  background:linear-gradient(135deg,#2D1B69,#4A2C8C);
+  padding:14px 16px 12px;
+  background:linear-gradient(135deg,rgba(0,60,130,.55),rgba(0,80,180,.35));
   display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.12);
 }
 .dash-lb-head-title{font-size:14px;font-weight:800;color:white;}
 .dash-lb-head-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:1px;}
-.dash-lb-tabs{display:flex;background:rgba(0,0,0,.2);}
-.dash-lb-tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.55);}
-.dash-lb-tab.active{background:linear-gradient(135deg,rgba(255,215,0,.2),rgba(255,165,0,.15));color:#FFD700;border-bottom:2px solid #FFD700;}
+.dash-lb-tabs{display:flex;background:rgba(0,0,0,.18);}
+.dash-lb-tab{flex:1;padding:8px;text-align:center;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.6);}
+.dash-lb-tab.active{background:linear-gradient(135deg,rgba(255,215,0,.25),rgba(255,180,0,.15));color:#FFD700;border-bottom:2px solid #FFD700;}
 .dash-lb-body{padding:12px;}
 .dash-lb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:6px;transition:background .2s;}
 .dash-lb-item:hover{background:rgba(255,255,255,.07);}
@@ -1011,12 +1012,12 @@ tr:hover td{background:var(--org-pale2);}
 /* Dashboard top row — Slideshow + Leaderboard top-3 glance */
 .dash-top-row{display:flex;gap:18px;align-items:stretch;margin-bottom:22px;}
 .dash-top-row .ss{flex:1 1 auto;min-width:0;margin-bottom:0;}
-.dash-lb-compact{width:300px;flex-shrink:0;max-height:192px;display:flex;flex-direction:column;}
-.dash-lb-compact .dash-lb-body{flex:1;overflow-y:auto;padding:8px 10px;}
+.dash-lb-compact{width:380px;flex-shrink:0;min-height:210px;display:flex;flex-direction:column;}
+.dash-lb-compact .dash-lb-body{flex:1;overflow-y:visible;padding:10px 12px;}
 .dash-lb-compact .dash-lb-head{padding:10px 14px 8px;}
 .dash-lb-compact .dash-lb-head-title{font-size:12.5px;}
 .dash-lb-compact .dash-lb-head-sub{font-size:10px;}
-.dash-lb-compact .dash-lb-item{padding:6px 8px;margin-bottom:4px;}
+.dash-lb-compact .dash-lb-item{padding:7px 8px;margin-bottom:3px;}
 .dash-lb-compact .dash-lb-my-rank{padding:7px 12px;border-radius:0 0 22px 22px;}
 .dash-lb-compact .dash-lb-my-rank-txt{font-size:10.5px;}
 .dash-lb-compact .dash-lb-see-all{display:none;}
@@ -1737,14 +1738,26 @@ cache.put('Users', JSON.stringify(data), 120);</code><br><br>
 
 <!-- Enrol Student -->
 <div id="modal-enrol" class="overlay">
-  <div class="modal">
-    <h2>Enrol Student</h2><div class="msub">Assign a student to a course.</div>
+  <div class="modal" style="max-width:520px;width:95%">
+    <h2>Enrol Students</h2><div class="msub">Assign one or more students to a course.</div>
     <div id="enrol-msg"></div>
-    <div class="fg"><label>Student</label><select id="enrol-student"></select></div>
-    <div class="fg"><label>Course</label><select id="enrol-course"></select></div>
+    <div class="fg">
+      <label>Course</label>
+      <select id="enrol-course" onchange="filterEnrolStudentList()"></select>
+    </div>
+    <div class="fg">
+      <label style="display:flex;justify-content:space-between;align-items:center">
+        <span>Students</span>
+        <span style="font-size:11px;font-weight:400;color:var(--muted)">
+          <label style="cursor:pointer"><input type="checkbox" id="enrol-select-all" onchange="toggleEnrolAll(this)"> Select all not enrolled</label>
+        </span>
+      </label>
+      <div id="enrol-student-list" style="max-height:220px;overflow-y:auto;border:1px solid #e0d8cc;border-radius:8px;padding:6px 10px;background:#fdfaf5;margin-top:4px;"></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:8px" id="enrol-sel-count">0 student(s) selected</div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="closeModal('modal-enrol')">Cancel</button>
-      <button class="btn btn-org" onclick="enrolStudent()">Enrol</button>
+      <button class="btn btn-org" onclick="enrolStudentsBulk()">Enrol Selected</button>
     </div>
   </div>
 </div>
@@ -2155,69 +2168,47 @@ async function loadDashboard(){
   const now=new Date();
   // Clean display helpers for Google Sheets corrupted date/time values
   function meetDisplayDate(m){
-    // Extract real date from scheduledDate (may be 1899-corrupted ISO)
+    // scheduledDate may be a plain date "2026-06-22" or an ISO corrupted to 1899
+    // scheduledTime may be "1899-12-30T16:43:35.000Z" (Sheets serial time)
     let d=m.scheduledDate||'';
+    // Strip any time component and extract YYYY-MM-DD
     if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
+    // Reject anything that resolved to 1899 (corrupted Sheets value)
     if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);
+    // Parse as local date (append T00:00 to avoid UTC-shift)
+    const dt=new Date(d+'T00:00:00');
     return isNaN(dt)?null:dt;
   }
   function meetDisplayTime(m){
-    // Extract HH:MM from raw time field (may be 1899-12-30T16:30:00.000Z)
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  // Robust date parsing for scheduled sessions
-  function meetDisplayDate(m){
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
+    // scheduledTime is stored as HH:MM or as "1899-12-30T16:30:00.000Z"
     let t=m.scheduledTime||'';
     if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
     return t;
   }
   function parseMeetDT(m){
     try{
-      const today=new Date();
       let dateStr=m.scheduledDate||'';
       let timeStr=m.scheduledTime||'';
-
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
-      if(timeStr.includes('T')){
-        const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
-        if(tMatch)timeStr=tMatch[1];
-      }
-
-      // Fix Google Sheets date corruption: year 1899 means date-only wasn't set
-      // Use the scheduledDate field value directly if it's a real date
-      if(dateStr.includes('1899')||dateStr.includes('T')){
-        // dateStr might also be an ISO with 1899 — use today as base date fallback
+      // Extract HH:MM from Sheets serial time "1899-12-30T16:30:00.000Z"
+      if(timeStr.includes('T')){const tMatch=timeStr.match(/T(\d{2}:\d{2})/);if(tMatch)timeStr=tMatch[1];}
+      // Extract YYYY-MM-DD from dateStr; reject 1899 as corrupted
+      if(dateStr.includes('T')||dateStr.includes('1899')){
         const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        if(dMatch&&!dMatch[1].startsWith('1899')){
-          dateStr=dMatch[1];
-        } else {
-          // No valid date — can't determine if upcoming, skip filtering out
-          dateStr=new Date().toISOString().slice(0,10);
-        }
+        dateStr=(dMatch&&!dMatch[1].startsWith('1899'))?dMatch[1]:'';
       }
-
-      if(dateStr&&timeStr){
+      // If date is still empty/corrupted, treat as far future (Upcoming) — never as past
+      if(!dateStr){
+        // Return a far-future date so the session is always shown as Upcoming
+        return new Date(Date.now()+365*24*3600*1000);
+      }
+      if(timeStr){
         const dt=new Date(dateStr+'T'+timeStr+':00');
         if(!isNaN(dt))return dt;
-        const dt2=new Date(dateStr+' '+timeStr);
-        if(!isNaN(dt2))return dt2;
       }
-      if(dateStr){
-        const d=new Date(dateStr);
-        if(!isNaN(d))return d;
-      }
-      return new Date(0);
-    }catch(e){return new Date(0);}
+      const d=new Date(dateStr+'T00:00:00');
+      if(!isNaN(d))return d;
+      return new Date(Date.now()+365*24*3600*1000);
+    }catch(e){return new Date(Date.now()+365*24*3600*1000);}
   }
   const upcoming=meets.filter(m=>parseMeetDT(m)>=now).sort((a,b)=>parseMeetDT(a)-parseMeetDT(b));
   document.getElementById('st-courses').textContent=isAdmin()?enrol.length:myEnrol.length;
@@ -2228,7 +2219,7 @@ async function loadDashboard(){
   try{loadDashLeaderboard();}catch(e){}
   const mEl=document.getElementById('dash-meetings');
   if(!upcoming.length){mEl.innerHTML='<div class="empty">No sessions scheduled yet.</div>';}
-  else{mEl.innerHTML=upcoming.slice(0,3).map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const now2=new Date();const mDT=new Date(d.getFullYear(),d.getMonth(),d.getDate(),...(tStr||'').split(':').map(Number));const isPast=mDT<now2-3600000;const joinBtn=isPast?`<span class="btn-join" style="opacity:.45;cursor:not-allowed;background:linear-gradient(135deg,#888,#aaa);" title="Session has ended">Ended</span>`:`<a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a>`;return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p></div>${joinBtn}</div>`;}).join('');}
+  else{mEl.innerHTML=upcoming.slice(0,3).map(m=>{const rawD=meetDisplayDate(m);const tStr=meetDisplayTime(m);const now2=new Date();const hasDate=rawD&&rawD.getFullYear()>1900;const d=hasDate?rawD:now2;const mDT=hasDate?new Date(d.getFullYear(),d.getMonth(),d.getDate(),...(tStr||'').split(':').map(Number)):new Date(Date.now()+365*24*3600*1000);const isPast=mDT<now2-3600000;const dayLbl=hasDate?d.getDate():'?';const monLbl=hasDate?d.toLocaleString('en',{month:'short'}):'TBD';const joinBtn=isPast?`<span class="btn-join" style="opacity:.45;cursor:not-allowed;background:linear-gradient(135deg,#888,#aaa);" title="Session has ended">Ended</span>`:`<a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a>`;return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${dayLbl}</div><div class="md-m">${monLbl}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p></div>${joinBtn}</div>`;}).join('');}
   const pEl=document.getElementById('dash-pending');
   const pending=isAdmin()?assign.slice(0,4):myAssign.filter(a=>{const sub=mySubs.find(s=>String(s.assignmentId)===String(a.id));return!sub&&new Date(a.dueDate)>=now;}).slice(0,4);
   if(!pending.length){pEl.innerHTML='<div class="empty">No pending assignments.</div>';}
@@ -2433,7 +2424,8 @@ async function loadMyMeetings(){
     let d=m.scheduledDate||'';
     if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
     if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d);return isNaN(dt)?null:dt;
+    const dt=new Date(d+'T00:00:00');
+    return isNaN(dt)?null:dt;
   }
   function meetDisplayTime(m){
     let t=m.scheduledTime||'';
@@ -2442,47 +2434,23 @@ async function loadMyMeetings(){
   }
   function parseMeetDT(m){
     try{
-      const today=new Date();
       let dateStr=m.scheduledDate||'';
       let timeStr=m.scheduledTime||'';
-
-      // Fix Google Sheets time corruption: 1899-12-30T16:30:00.000Z
-      // Extract HH:MM from ISO timestamp stored in time field
-      if(timeStr.includes('T')){
-        const tMatch=timeStr.match(/T(\d{2}:\d{2})/);
-        if(tMatch)timeStr=tMatch[1];
-      }
-
-      // Fix Google Sheets date corruption: year 1899 means date-only wasn't set
-      // Use the scheduledDate field value directly if it's a real date
-      if(dateStr.includes('1899')||dateStr.includes('T')){
-        // dateStr might also be an ISO with 1899 — use today as base date fallback
+      if(timeStr.includes('T')){const tMatch=timeStr.match(/T(\d{2}:\d{2})/);if(tMatch)timeStr=tMatch[1];}
+      if(dateStr.includes('T')||dateStr.includes('1899')){
         const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        if(dMatch&&!dMatch[1].startsWith('1899')){
-          dateStr=dMatch[1];
-        } else {
-          // No valid date — can't determine if upcoming, skip filtering out
-          dateStr=new Date().toISOString().slice(0,10);
-        }
+        dateStr=(dMatch&&!dMatch[1].startsWith('1899'))?dMatch[1]:'';
       }
-
-      if(dateStr&&timeStr){
-        const dt=new Date(dateStr+'T'+timeStr+':00');
-        if(!isNaN(dt))return dt;
-        const dt2=new Date(dateStr+' '+timeStr);
-        if(!isNaN(dt2))return dt2;
-      }
-      if(dateStr){
-        const d=new Date(dateStr);
-        if(!isNaN(d))return d;
-      }
-      return new Date(0);
-    }catch(e){return new Date(0);}
+      if(!dateStr)return new Date(Date.now()+365*24*3600*1000);
+      if(timeStr){const dt=new Date(dateStr+'T'+timeStr+':00');if(!isNaN(dt))return dt;}
+      const d=new Date(dateStr+'T00:00:00');
+      return isNaN(d)?new Date(Date.now()+365*24*3600*1000):d;
+    }catch(e){return new Date(Date.now()+365*24*3600*1000);}
   }
   const sorted=meets.sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
   const el=document.getElementById('my-meetings-list');
   if(!sorted.length){el.innerHTML='<div class="empty">No sessions scheduled yet.</div>';return;}
-  el.innerHTML=`<div class="card">${sorted.map(m=>{const d=meetDisplayDate(m)||parseMeetDT(m);const tStr=meetDisplayTime(m);const past=parseMeetDT(m)<now;return`<div class="meet-item"><div class="meet-dt" style="${past?'background:linear-gradient(135deg,#999,#BBB)':''}"><div class="md-d">${d.getDate()}</div><div class="md-m">${d.toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">${past?'<span class="badge b-closed">Ended</span>':'<span class="badge b-active">Upcoming</span>'}<a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${past?'opacity:.45;cursor:not-allowed;pointer-events:none;background:linear-gradient(135deg,#888,#aaa);':''}" ${past?'onclick="return false;" title="This session has ended"':''}>${past?'Ended':'Join'}</a></div></div>`;}).join('')}</div>`;
+  el.innerHTML=`<div class="card">${sorted.map(m=>{const rawD=meetDisplayDate(m);const hasDate=rawD&&rawD.getFullYear()>1900;const d=hasDate?rawD:new Date(Date.now()+365*24*3600*1000);const tStr=meetDisplayTime(m);const past=parseMeetDT(m)<now;const dayLbl=hasDate?d.getDate():'?';const monLbl=hasDate?d.toLocaleString('en',{month:'short'}):'TBD';return`<div class="meet-item"><div class="meet-dt" style="${past?'background:linear-gradient(135deg,#999,#BBB)':''}"><div class="md-d">${dayLbl}</div><div class="md-m">${monLbl}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org);margin-top:1px">📌 ${m.notes}</p>`:''}</div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">${past?'<span class="badge b-closed">Ended</span>':'<span class="badge b-active">Upcoming</span>'}<a href="${m.meetingUrl}" target="_blank" class="btn-join" style="${past?'opacity:.45;cursor:not-allowed;pointer-events:none;background:linear-gradient(135deg,#888,#aaa);':''}" ${past?'onclick="return false;" title="This session has ended"':''}>${past?'Ended':'Join'}</a></div></div>`;}).join('')}</div>`;
 }
 
 // ═══════════════════════════════════════════
@@ -2982,8 +2950,14 @@ async function loadManageMeetings(){
   const meets=await dbRead('Meetings');
   const el=document.getElementById('admin-meetings-list');
   if(!meets.length){el.innerHTML='<div class="empty">No sessions yet.</div>';return;}
-  const sorted=meets.sort((a,b)=>new Date(b.scheduledDate)-new Date(a.scheduledDate));
-  el.innerHTML=`<div class="card">${sorted.map(m=>`<div class="meet-item"><div class="meet-dt"><div class="md-d">${new Date(m.scheduledDate).getDate()}</div><div class="md-m">${new Date(m.scheduledDate).toLocaleString('en',{month:'short'})}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${m.scheduledTime} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org)">📌 ${m.notes}</p>`:''}</div><div style="display:flex;gap:8px;align-items:center"><a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a><button class="btn btn-sm btn-red" onclick="deleteMeeting('${m.id}')">Delete</button></div></div>`).join('')}</div>`;
+  function safeAdminMeetDate(m){
+    let d=m.scheduledDate||'';
+    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
+    if(!d||d.startsWith('1899'))return null;
+    const dt=new Date(d+'T00:00:00');return isNaN(dt)?null:dt;
+  }
+  const sorted=meets.sort((a,b)=>{const da=safeAdminMeetDate(a)||new Date(0);const db2=safeAdminMeetDate(b)||new Date(0);return db2-da;});
+  el.innerHTML=`<div class="card">${sorted.map(m=>{const sd=safeAdminMeetDate(m);const dayLbl=sd?sd.getDate():'?';const monLbl=sd?sd.toLocaleString('en',{month:'short'}):'TBD';let tStr=m.scheduledTime||'';if(tStr.includes('T')){const x=tStr.match(/T(\d{2}:\d{2})/);if(x)tStr=x[1];}return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${dayLbl}</div><div class="md-m">${monLbl}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org)">📌 ${m.notes}</p>`:''}</div><div style="display:flex;gap:8px;align-items:center"><a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a><button class="btn btn-sm btn-red" onclick="deleteMeeting('${m.id}')">Delete</button></div></div>`;}).join('')}</div>`;
 }
 async function scheduleMeeting(){
   const title=document.getElementById('nm-meet-title').value.trim();
@@ -3017,28 +2991,62 @@ async function deleteMeeting(id){if(!confirm('Delete this session?'))return;awai
 // ═══════════════════════════════════════════
 //  ADMIN: ENROLMENTS
 // ═══════════════════════════════════════════
+let _enrolUsers=[];let _enrolData=[];
 async function loadManageEnrolments(){
   const [enrol,users,courses]=await Promise.all([dbRead('Enrolments'),dbRead('Users'),dbRead('Courses')]);
-  _allCourses=courses;
+  _allCourses=courses;_enrolUsers=users;_enrolData=enrol;
   const tb=document.getElementById('enrol-tbody');
   if(!enrol.length){tb.innerHTML='<tr><td colspan="5" class="empty">No enrolments yet.</td></tr>';}
   else{tb.innerHTML=enrol.map(e=>`<tr><td><strong>${e.studentName}</strong></td><td>${e.courseTitle}</td><td>${fmtDate(e.enrolledAt)}</td><td>${e.enrolledBy}</td><td><button class="btn btn-sm btn-red" onclick="removeEnrolment('${e.id}')">Remove</button></td></tr>`).join('');}
-  const students=users.filter(u=>u.role==='user'&&u.status==='active');
-  document.getElementById('enrol-student').innerHTML=students.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
   document.getElementById('enrol-course').innerHTML=courses.map(c=>`<option value="${c.id}">${c.title}</option>`).join('');
+  filterEnrolStudentList();
 }
-async function enrolStudent(){
-  const sid=document.getElementById('enrol-student').value;
+function filterEnrolStudentList(){
+  const cid=document.getElementById('enrol-course').value;
+  const students=(_enrolUsers||[]).filter(u=>u.role==='user'&&u.status==='active');
+  const alreadyIn=new Set((_enrolData||[]).filter(e=>String(e.courseId)===String(cid)).map(e=>String(e.studentId)));
+  const list=document.getElementById('enrol-student-list');
+  if(!students.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0">No active students found.</div>';return;}
+  list.innerHTML=students.map(u=>{
+    const enrolled=alreadyIn.has(String(u.id));
+    return`<label style="display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px solid #f0ebe0;cursor:${enrolled?'default':'pointer'};opacity:${enrolled?'.5':'1'}">
+      <input type="checkbox" class="enrol-chk" value="${u.id}" data-name="${u.name}" ${enrolled?'disabled checked':''} onchange="updateEnrolSelCount()">
+      <span style="flex:1;font-size:13px">${u.name}</span>
+      ${enrolled?'<span style="font-size:10px;color:var(--grn);font-weight:700">ENROLLED</span>':''}
+    </label>`;
+  }).join('');
+  document.getElementById('enrol-select-all').checked=false;
+  updateEnrolSelCount();
+}
+function toggleEnrolAll(cb){
+  document.querySelectorAll('.enrol-chk:not(:disabled)').forEach(c=>c.checked=cb.checked);
+  updateEnrolSelCount();
+}
+function updateEnrolSelCount(){
+  const n=document.querySelectorAll('.enrol-chk:not(:disabled):checked').length;
+  document.getElementById('enrol-sel-count').textContent=n+' student(s) selected';
+}
+async function enrolStudentsBulk(){
   const cid=document.getElementById('enrol-course').value;
   const msg=document.getElementById('enrol-msg');
-  const [users,courses,enrol]=await Promise.all([dbRead('Users'),dbRead('Courses'),dbRead('Enrolments')]);
-  if(enrol.find(e=>String(e.studentId)===String(sid)&&String(e.courseId)===String(cid))){msg.innerHTML='<div class="alert alert-warn">Already enrolled.</div>';return;}
-  const st=users.find(u=>String(u.id)===String(sid));const c=courses.find(x=>String(x.id)===String(cid));
-  const res=await dbWrite('Enrolments',{id:uid(),studentId:sid,studentName:st?st.name:'',courseId:cid,courseTitle:c?c.title:'',enrolledAt:new Date().toISOString(),enrolledBy:S.name});
-  if(res.error){msg.innerHTML=`<div class="alert alert-err">${res.error}</div>`;return;}
-  msg.innerHTML='<div class="alert alert-ok">✓ Student enrolled!</div>';
-  setTimeout(()=>{closeModal('modal-enrol');loadManageEnrolments();},1100);
+  const selected=[...document.querySelectorAll('.enrol-chk:not(:disabled):checked')].map(c=>({id:c.value,name:c.dataset.name}));
+  if(!selected.length){msg.innerHTML='<div class="alert alert-warn">Please select at least one student.</div>';return;}
+  const c=(_allCourses||[]).find(x=>String(x.id)===String(cid));
+  msg.innerHTML='<div class="alert alert-ok">⏳ Enrolling '+selected.length+' student(s)…</div>';
+  let ok=0;let errs=0;
+  for(const st of selected){
+    const res=await dbWrite('Enrolments',{id:uid(),studentId:st.id,studentName:st.name,courseId:cid,courseTitle:c?c.title:'',enrolledAt:new Date().toISOString(),enrolledBy:S.name});
+    if(res.error)errs++;else ok++;
+  }
+  if(errs===0){msg.innerHTML=`<div class="alert alert-ok">✓ ${ok} student(s) enrolled successfully!</div>`;}
+  else{msg.innerHTML=`<div class="alert alert-warn">✓ ${ok} enrolled, ${errs} failed. Try again for failed ones.</div>`;}
+  // Refresh enrolment data so checkboxes update
+  _enrolData=await dbRead('Enrolments');
+  filterEnrolStudentList();
+  setTimeout(()=>{closeModal('modal-enrol');loadManageEnrolments();},1800);
 }
+// Legacy single-enrol kept as alias
+async function enrolStudent(){await enrolStudentsBulk();}
 async function removeEnrolment(id){if(!confirm('Remove this enrolment?'))return;await dbDelete('Enrolments','id',id);loadManageEnrolments();}
 
 // ═══════════════════════════════════════════
