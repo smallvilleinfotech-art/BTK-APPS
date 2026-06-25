@@ -1862,6 +1862,67 @@ localStorage.setItem('btk_api_url',API_URL);
 // dbUpdate → GET (small payload, fine)
 // dbDelete → GET (small payload, fine)
 
+// ═══════════════════════════════════════════
+//  UNIVERSAL MEETING DATE/TIME PARSER
+//  Handles all Google Sheets return formats:
+//  - Numeric date serial (e.g. 46144  = 2026-05-02)
+//  - Numeric time serial (e.g. 0.625  = 15:00)
+//  - ISO string "2026-05-02T00:00:00.000Z"
+//  - ISO time "1899-12-30T15:00:00.000Z"
+//  - Long string "Sat Dec 30 1899 15:13:35 GMT+0013..."
+//  - Plain "YYYY-MM-DD" or "HH:MM"
+// ═══════════════════════════════════════════
+const SHEETS_EPOCH=new Date('1899-12-30T00:00:00Z').getTime();
+function sheetsExtractDate(raw){
+  if(raw===null||raw===undefined||raw==='')return null;
+  // Numeric: Sheets date serial (integer >= 1)
+  if(typeof raw==='number'){
+    if(raw<1)return null; // time fraction, not a date
+    const ms=SHEETS_EPOCH+raw*86400000;
+    const d=new Date(ms);
+    return isNaN(d)?null:d;
+  }
+  const s=String(raw).trim();
+  if(!s)return null;
+  // Reject 1899 corrupted strings immediately
+  if(s.includes('1899'))return null;
+  // ISO or YYYY-MM-DD
+  const ymd=s.match(/(\d{4}-\d{2}-\d{2})/);
+  if(ymd){const d=new Date(ymd[1]+'T00:00:00');return isNaN(d)?null:d;}
+  return null;
+}
+function sheetsExtractTime(raw){
+  if(raw===null||raw===undefined||raw==='')return '';
+  // Numeric: Sheets time serial (0 to 1 fraction of day)
+  if(typeof raw==='number'){
+    if(raw<0||raw>1)return ''; // not a time fraction
+    const totalMins=Math.round(raw*24*60);
+    const hh=Math.floor(totalMins/60);
+    const mm=totalMins%60;
+    return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+  }
+  const s=String(raw).trim();
+  if(!s)return '';
+  // ISO format: extract after T
+  if(s.includes('T')){const x=s.match(/T(\d{2}:\d{2})/);if(x)return x[1];}
+  // Any HH:MM pattern
+  const hm=s.match(/(\d{1,2}):(\d{2})(?::\d{2})?/);
+  if(hm)return String(hm[1]).padStart(2,'0')+':'+hm[2];
+  return s;
+}
+function meetParseDT(m){
+  // Returns a JS Date combining scheduledDate + scheduledTime
+  // If date is corrupt/missing → far future (never mark as Ended)
+  const d=sheetsExtractDate(m.scheduledDate);
+  if(!d)return new Date(Date.now()+365*24*3600*1000);
+  const tStr=sheetsExtractTime(m.scheduledTime);
+  if(tStr){
+    const parts=tStr.split(':').map(Number);
+    return new Date(d.getFullYear(),d.getMonth(),d.getDate(),parts[0]||0,parts[1]||0,0);
+  }
+  return new Date(d.getFullYear(),d.getMonth(),d.getDate(),0,0,0);
+}
+
 async function dbRead(tab){
   try{
     const r=await fetch(`${API_URL}?action=read&tab=${encodeURIComponent(tab)}`);
@@ -2167,49 +2228,9 @@ async function loadDashboard(){
   const mySubs=subs.filter(s=>String(s.studentId)===String(S.id));
   const now=new Date();
   // Clean display helpers for Google Sheets corrupted date/time values
-  function meetDisplayDate(m){
-    // scheduledDate may be a plain date "2026-06-22" or an ISO corrupted to 1899
-    // scheduledTime may be "1899-12-30T16:43:35.000Z" (Sheets serial time)
-    let d=m.scheduledDate||'';
-    // Strip any time component and extract YYYY-MM-DD
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    // Reject anything that resolved to 1899 (corrupted Sheets value)
-    if(!d||d.startsWith('1899'))return null;
-    // Parse as local date (append T00:00 to avoid UTC-shift)
-    const dt=new Date(d+'T00:00:00');
-    return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
-    // scheduledTime is stored as HH:MM or as "1899-12-30T16:30:00.000Z"
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  function parseMeetDT(m){
-    try{
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
-      // Extract HH:MM from Sheets serial time "1899-12-30T16:30:00.000Z"
-      if(timeStr.includes('T')){const tMatch=timeStr.match(/T(\d{2}:\d{2})/);if(tMatch)timeStr=tMatch[1];}
-      // Extract YYYY-MM-DD from dateStr; reject 1899 as corrupted
-      if(dateStr.includes('T')||dateStr.includes('1899')){
-        const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        dateStr=(dMatch&&!dMatch[1].startsWith('1899'))?dMatch[1]:'';
-      }
-      // If date is still empty/corrupted, treat as far future (Upcoming) — never as past
-      if(!dateStr){
-        // Return a far-future date so the session is always shown as Upcoming
-        return new Date(Date.now()+365*24*3600*1000);
-      }
-      if(timeStr){
-        const dt=new Date(dateStr+'T'+timeStr+':00');
-        if(!isNaN(dt))return dt;
-      }
-      const d=new Date(dateStr+'T00:00:00');
-      if(!isNaN(d))return d;
-      return new Date(Date.now()+365*24*3600*1000);
-    }catch(e){return new Date(Date.now()+365*24*3600*1000);}
-  }
+  function meetDisplayDate(m){return sheetsExtractDate(m.scheduledDate);}
+  function meetDisplayTime(m){return sheetsExtractTime(m.scheduledTime);}
+  function parseMeetDT(m){return meetParseDT(m);}
   const upcoming=meets.filter(m=>parseMeetDT(m)>=now).sort((a,b)=>parseMeetDT(a)-parseMeetDT(b));
   document.getElementById('st-courses').textContent=isAdmin()?enrol.length:myEnrol.length;
   document.getElementById('st-assign').textContent=isAdmin()?assign.length:myAssign.length;
@@ -2420,33 +2441,9 @@ function lGrade(score,max){const p=(score/max)*100;if(p>=90)return'A+';if(p>=80)
 async function loadMyMeetings(){
   const meets=await dbRead('Meetings');
   const now=new Date();
-  function meetDisplayDate(m){
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d+'T00:00:00');
-    return isNaN(dt)?null:dt;
-  }
-  function meetDisplayTime(m){
-    let t=m.scheduledTime||'';
-    if(t.includes('T')){const x=t.match(/T(\d{2}:\d{2})/);return x?x[1]:t;}
-    return t;
-  }
-  function parseMeetDT(m){
-    try{
-      let dateStr=m.scheduledDate||'';
-      let timeStr=m.scheduledTime||'';
-      if(timeStr.includes('T')){const tMatch=timeStr.match(/T(\d{2}:\d{2})/);if(tMatch)timeStr=tMatch[1];}
-      if(dateStr.includes('T')||dateStr.includes('1899')){
-        const dMatch=dateStr.match(/(\d{4}-\d{2}-\d{2})/);
-        dateStr=(dMatch&&!dMatch[1].startsWith('1899'))?dMatch[1]:'';
-      }
-      if(!dateStr)return new Date(Date.now()+365*24*3600*1000);
-      if(timeStr){const dt=new Date(dateStr+'T'+timeStr+':00');if(!isNaN(dt))return dt;}
-      const d=new Date(dateStr+'T00:00:00');
-      return isNaN(d)?new Date(Date.now()+365*24*3600*1000):d;
-    }catch(e){return new Date(Date.now()+365*24*3600*1000);}
-  }
+  function meetDisplayDate(m){return sheetsExtractDate(m.scheduledDate);}
+  function meetDisplayTime(m){return sheetsExtractTime(m.scheduledTime);}
+  function parseMeetDT(m){return meetParseDT(m);}
   const sorted=meets.sort((a,b)=>parseMeetDT(b)-parseMeetDT(a));
   const el=document.getElementById('my-meetings-list');
   if(!sorted.length){el.innerHTML='<div class="empty">No sessions scheduled yet.</div>';return;}
@@ -2950,14 +2947,8 @@ async function loadManageMeetings(){
   const meets=await dbRead('Meetings');
   const el=document.getElementById('admin-meetings-list');
   if(!meets.length){el.innerHTML='<div class="empty">No sessions yet.</div>';return;}
-  function safeAdminMeetDate(m){
-    let d=m.scheduledDate||'';
-    if(d.includes('T')){const x=d.match(/(\d{4}-\d{2}-\d{2})/);d=x?x[1]:'';}
-    if(!d||d.startsWith('1899'))return null;
-    const dt=new Date(d+'T00:00:00');return isNaN(dt)?null:dt;
-  }
-  const sorted=meets.sort((a,b)=>{const da=safeAdminMeetDate(a)||new Date(0);const db2=safeAdminMeetDate(b)||new Date(0);return db2-da;});
-  el.innerHTML=`<div class="card">${sorted.map(m=>{const sd=safeAdminMeetDate(m);const dayLbl=sd?sd.getDate():'?';const monLbl=sd?sd.toLocaleString('en',{month:'short'}):'TBD';let tStr=m.scheduledTime||'';if(tStr.includes('T')){const x=tStr.match(/T(\d{2}:\d{2})/);if(x)tStr=x[1];}return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${dayLbl}</div><div class="md-m">${monLbl}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org)">📌 ${m.notes}</p>`:''}</div><div style="display:flex;gap:8px;align-items:center"><a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a><button class="btn btn-sm btn-red" onclick="deleteMeeting('${m.id}')">Delete</button></div></div>`;}).join('')}</div>`;
+  const sorted=meets.sort((a,b)=>{const da=sheetsExtractDate(a.scheduledDate)||new Date(0);const db2=sheetsExtractDate(b.scheduledDate)||new Date(0);return db2-da;});
+  el.innerHTML=`<div class="card">${sorted.map(m=>{const sd=sheetsExtractDate(m.scheduledDate);const dayLbl=sd?sd.getDate():'?';const monLbl=sd?sd.toLocaleString('en',{month:'short'}):'TBD';const tStr=sheetsExtractTime(m.scheduledTime);return`<div class="meet-item"><div class="meet-dt"><div class="md-d">${dayLbl}</div><div class="md-m">${monLbl}</div></div><div class="meet-info"><h4>${m.title}</h4><p>${m.platform} · ${tStr} · ${m.cohort}</p>${m.notes?`<p style="color:var(--org)">📌 ${m.notes}</p>`:''}</div><div style="display:flex;gap:8px;align-items:center"><a href="${m.meetingUrl}" target="_blank" class="btn-join">Join</a><button class="btn btn-sm btn-red" onclick="deleteMeeting('${m.id}')">Delete</button></div></div>`;}).join('')}</div>`;
 }
 async function scheduleMeeting(){
   const title=document.getElementById('nm-meet-title').value.trim();
@@ -3944,67 +3935,67 @@ async function computeLeaderboard(mode){
     ]);
     const now=new Date();
     const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+    const inWindow=(dateStr)=>{
+      if(!dateStr)return false;
+      if(mode==='monthly')return new Date(dateStr)>=monthStart;
+      return true; // all-time: everything counts
+    };
 
     const students=users.filter(u=>u.role==='user'&&u.status==='active');
 
     return students.map(u=>{
       const uid2=String(u.id);
-      const filterDate=mode==='monthly'?(d)=>d&&new Date(d)>=monthStart:(d)=>true;
 
-      // 1. DEVOTIONAL SCORE: each correct devo = 10pts
-      const myDevos=devos.filter(d=>String(d.studentId)===uid2&&filterDate(d.date));
+      // ── 1. DEVOTIONAL POINTS ──────────────────────────────────────
+      // Each correct devotional answer = 10 pts (accumulates — more months = more points)
+      const myDevos=devos.filter(d=>String(d.studentId)===uid2&&inWindow(d.date));
       const devoCorrect=myDevos.filter(d=>d.correct==='true'||d.correct===true).length;
-      const devoScore=Math.min(devoCorrect*10, 300); // cap at 300
+      const devoScore=devoCorrect*10; // no cap — encourages long-term engagement
 
-      // 2. ASSIGNMENT SCORE: average % across submitted assignments
-      const myEnrolCourses=enrol.filter(e=>String(e.studentId)===uid2).map(e=>String(e.courseId));
-      const mySubs=subs.filter(s=>String(s.studentId)===uid2&&filterDate(s.submittedAt));
-      let assignScore=0;
-      if(mySubs.length>0){
-        const totalPct=mySubs.reduce((acc,s)=>{
-          const a=assign.find(x=>String(x.id)===String(s.assignmentId));
-          const max=a?Number(a.maxScore)||100:100;
-          return acc+(Number(s.score)||0)/max*100;
-        },0);
-        assignScore=Math.round(totalPct/mySubs.length); // 0-100
-      }
+      // ── 2. ASSIGNMENT POINTS ──────────────────────────────────────
+      // Each submitted assignment earns its actual raw score (not averaged %)
+      // So submitting MORE assignments = MORE points, not diluted average
+      const mySubs=subs.filter(s=>String(s.studentId)===uid2&&inWindow(s.submittedAt));
+      const assignScore=mySubs.reduce((acc,s)=>{
+        const a=assign.find(x=>String(x.id)===String(s.assignmentId));
+        const max=a?Number(a.maxScore)||100:100;
+        // Award proportional points: score/max * 50pts per assignment
+        return acc+Math.round((Number(s.score)||0)/max*50);
+      },0);
 
-      // 3. PRESENCE SCORE: from attendance data
-      const myAtt=attData.filter(a=>String(a.studentId)===uid2&&filterDate(a.date));
-      const presenceChecks=myAtt.filter(a=>a.type==='presence'&&(a.value==='true'||a.value===true)).length;
-      const totalPossible=Math.max(myAtt.filter(a=>a.type==='presence').length,1);
-      const presenceScore=Math.round((presenceChecks/totalPossible)*100);
+      // ── 3. ATTENDANCE POINTS ──────────────────────────────────────
+      // Each verified presence = 15 pts (accumulates per session attended)
+      const myAtt=attData.filter(a=>String(a.studentId)===uid2&&inWindow(a.date));
+      const presenceCount=myAtt.filter(a=>a.type==='presence'&&(a.value==='true'||a.value===true)).length;
+      const presenceScore=presenceCount*15;
 
-      // 4. CONSISTENCY SCORE: daily participation streaks
+      // ── 4. CONSISTENCY STREAK BONUS ───────────────────────────────
+      // Longest consecutive daily participation streak in the window
+      // 5 pts per day in streak — rewards sustained effort
       const allDates=[...new Set([
-        ...myDevos.map(d=>d.date?d.date.substring(0,10):''),
-        ...mySubs.map(s=>s.submittedAt?s.submittedAt.substring(0,10):''),
+        ...myDevos.map(d=>d.date?String(d.date).substring(0,10):''),
+        ...mySubs.map(s=>s.submittedAt?String(s.submittedAt).substring(0,10):''),
       ].filter(Boolean))].sort();
-      let streak=0,maxStreak=0,currentStreak=0;
+      let maxStreak=0,currentStreak=0;
       for(let i=0;i<allDates.length;i++){
         if(i===0){currentStreak=1;}
         else{
-          const prev=new Date(allDates[i-1]);const curr=new Date(allDates[i]);
-          const diff=(curr-prev)/(1000*60*60*24);
+          const diff=(new Date(allDates[i])-new Date(allDates[i-1]))/(1000*60*60*24);
           currentStreak=diff===1?currentStreak+1:1;
         }
         maxStreak=Math.max(maxStreak,currentStreak);
       }
-      const consistencyScore=Math.min(maxStreak*5, 200); // 5pts per day, max 200
+      const consistencyScore=maxStreak*5;
 
-      // 5. TRANSFORMATION SCORE: verified report-a-change entries
-      const myRC=rcPosts.filter(p=>String(p.studentId)===uid2&&filterDate(p.postedAt));
-      const transformScore=Math.min(myRC.length*30, 150); // 30pts each, max 150
+      // ── 5. TRANSFORMATION POINTS ──────────────────────────────────
+      // Each report-a-change entry = 30 pts (accumulates)
+      const myRC=rcPosts.filter(p=>String(p.studentId)===uid2&&inWindow(p.postedAt));
+      const transformScore=myRC.length*30;
 
-      // 6. OVERALL SCHOLAR SCORE (weighted aggregate)
-      // Devo 20%, Assign 25%, Presence 20%, Consistency 20%, Transform 15%
-      const overallScore=Math.round(
-        devoScore*0.20 +
-        assignScore*2.5*0.25 + // scale 0-100 to 0-250 equivalent
-        presenceScore*2*0.20 + // scale 0-100 to 0-200 equivalent
-        consistencyScore*0.20 +
-        transformScore*0.15
-      );
+      // ── OVERALL SCHOLAR SCORE ────────────────────────────────────
+      // Pure accumulation — no ratios, no averages, no caps
+      // All-time will always be >= monthly because every point ever earned counts
+      const overallScore=devoScore+assignScore+presenceScore+consistencyScore+transformScore;
 
       return{
         id:uid2,name:u.name,role:u.role,cohort:u.cohort||'',
