@@ -3928,79 +3928,141 @@ let _lbData=[];
 
 async function computeLeaderboard(mode){
   try{
-    const [users,subs,assign,devos,attData,rcPosts,enrol]=await Promise.all([
+    const [users,subs,assign,devos,attData,rcPosts]=await Promise.all([
       dbRead('Users'),dbRead('Submissions'),dbRead('Assignments'),
       dbRead('DevotionalScores'),dbRead('Attendance'),
-      dbRead('ReportChange'),dbRead('Enrolments')
+      dbRead('ReportChange')
     ]);
     const now=new Date();
     const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
     const inWindow=(dateStr)=>{
       if(!dateStr)return false;
-      if(mode==='monthly')return new Date(dateStr)>=monthStart;
-      return true; // all-time: everything counts
+      const d=new Date(dateStr);
+      if(isNaN(d))return false;
+      if(mode==='monthly')return d>=monthStart;
+      return true;
     };
 
     const students=users.filter(u=>u.role==='user'&&u.status==='active');
 
+    // ═══════════════════════════════════════════════════════════════
+    //  SHARED DENOMINATOR
+    //  The SAME maximum is applied to every boy — no one is penalised
+    //  for joining late or missing an activity they weren't told about.
+    //  Denominator = total points that were available to ALL students
+    //  within the time window.
+    // ═══════════════════════════════════════════════════════════════
+
+    // 1. DEVOTIONAL max — unique devo days × 10 pts each
+    const devoDatesInWindow=[...new Set(
+      devos.filter(d=>inWindow(d.date)).map(d=>String(d.date).substring(0,10))
+    )];
+    const maxDevoPts=devoDatesInWindow.length*10;
+
+    // 2. ASSIGNMENT max — sum of maxScore of all assignments open in window
+    const assignsInWindow=assign.filter(a=>inWindow(a.openDate||a.createdAt));
+    const maxAssignPts=assignsInWindow.reduce((s,a)=>s+Number(a.maxScore||100),0);
+
+    // 3. PRESENCE max — unique sessions (colId) that had any attendance recorded × 15 pts
+    const sessionsInWindow=[...new Set(
+      attData.filter(a=>(a.type==='present'||a.type==='presence')&&inWindow(a.date))
+             .map(a=>String(a.colId||a.date))
+    )];
+    const maxPresencePts=sessionsInWindow.length*15;
+
+    // 4. SESSION SCORE max — unique scored sessions × 100 pts
+    const scoredSessionsInWindow=[...new Set(
+      attData.filter(a=>a.type==='session'&&a.value!==''&&inWindow(a.date))
+             .map(a=>String(a.colId||a.date))
+    )];
+    const maxSessionPts=scoredSessionsInWindow.length*100;
+
+    // 5. STREAK max — total unique activity days in window × 5 pts
+    //    A perfect boy participates every single day any activity exists
+    const allActivityDates=[...new Set([
+      ...devoDatesInWindow,
+      ...subs.filter(s=>inWindow(s.submittedAt)).map(s=>String(s.submittedAt).substring(0,10)),
+    ].filter(Boolean))].sort();
+    const maxStreakPts=allActivityDates.length*5;
+
+    // 6. TRANSFORMATION max — total RC posts by anyone in window × 30 pts
+    //    Every boy had the same opportunity to post
+    const totalRCInWindow=rcPosts.filter(p=>inWindow(p.postedAt)).length;
+    const maxTransformPts=Math.max(totalRCInWindow,0)*30;
+
+    // TOTAL SHARED MAXIMUM (denominator)
+    const totalMaxPts=maxDevoPts+maxAssignPts+maxPresencePts+maxSessionPts+maxStreakPts+maxTransformPts;
+
+    // ═══════════════════════════════════════════════════════════════
+    //  PER-STUDENT EARNED POINTS
+    // ═══════════════════════════════════════════════════════════════
     return students.map(u=>{
       const uid2=String(u.id);
 
-      // ── 1. DEVOTIONAL POINTS ──────────────────────────────────────
-      // Each correct devotional answer = 10 pts (accumulates — more months = more points)
+      // 1. Devotional — each correct answer × 10 pts
       const myDevos=devos.filter(d=>String(d.studentId)===uid2&&inWindow(d.date));
       const devoCorrect=myDevos.filter(d=>d.correct==='true'||d.correct===true).length;
-      const devoScore=devoCorrect*10; // no cap — encourages long-term engagement
+      const devoScore=devoCorrect*10;
 
-      // ── 2. ASSIGNMENT POINTS ──────────────────────────────────────
-      // Each submitted assignment earns its actual raw score (not averaged %)
-      // So submitting MORE assignments = MORE points, not diluted average
+      // 2. Assignment — actual raw score earned on each submission
       const mySubs=subs.filter(s=>String(s.studentId)===uid2&&inWindow(s.submittedAt));
       const assignScore=mySubs.reduce((acc,s)=>{
         const a=assign.find(x=>String(x.id)===String(s.assignmentId));
         const max=a?Number(a.maxScore)||100:100;
-        // Award proportional points: score/max * 50pts per assignment
-        return acc+Math.round((Number(s.score)||0)/max*50);
+        return acc+Math.min(Number(s.score)||0,max);
       },0);
 
-      // ── 3. ATTENDANCE POINTS ──────────────────────────────────────
-      // Each verified presence = 15 pts (accumulates per session attended)
+      // 3. Presence — each verified attendance × 15 pts
       const myAtt=attData.filter(a=>String(a.studentId)===uid2&&inWindow(a.date));
-      const presenceCount=myAtt.filter(a=>a.type==='presence'&&(a.value==='true'||a.value===true)).length;
+      const presenceCount=myAtt.filter(a=>
+        (a.type==='present'||a.type==='presence')&&
+        (a.value==='true'||a.value===true)
+      ).length;
       const presenceScore=presenceCount*15;
 
-      // ── 4. CONSISTENCY STREAK BONUS ───────────────────────────────
-      // Longest consecutive daily participation streak in the window
-      // 5 pts per day in streak — rewards sustained effort
-      const allDates=[...new Set([
+      // 4. Session score — actual score per session (out of 100)
+      const sessionScore=myAtt.filter(a=>a.type==='session'&&a.value!=='')
+        .reduce((acc,a)=>acc+Math.min(Number(a.value)||0,100),0);
+
+      // 5. Streak — longest consecutive participation days × 5 pts
+      const myDates=[...new Set([
         ...myDevos.map(d=>d.date?String(d.date).substring(0,10):''),
         ...mySubs.map(s=>s.submittedAt?String(s.submittedAt).substring(0,10):''),
       ].filter(Boolean))].sort();
-      let maxStreak=0,currentStreak=0;
-      for(let i=0;i<allDates.length;i++){
-        if(i===0){currentStreak=1;}
+      let maxStreak=0,curStreak=0;
+      for(let i=0;i<myDates.length;i++){
+        if(i===0){curStreak=1;}
         else{
-          const diff=(new Date(allDates[i])-new Date(allDates[i-1]))/(1000*60*60*24);
-          currentStreak=diff===1?currentStreak+1:1;
+          const diff=(new Date(myDates[i])-new Date(myDates[i-1]))/86400000;
+          curStreak=diff===1?curStreak+1:1;
         }
-        maxStreak=Math.max(maxStreak,currentStreak);
+        maxStreak=Math.max(maxStreak,curStreak);
       }
       const consistencyScore=maxStreak*5;
 
-      // ── 5. TRANSFORMATION POINTS ──────────────────────────────────
-      // Each report-a-change entry = 30 pts (accumulates)
+      // 6. Transformation — report-a-change posts × 30 pts
       const myRC=rcPosts.filter(p=>String(p.studentId)===uid2&&inWindow(p.postedAt));
       const transformScore=myRC.length*30;
 
-      // ── OVERALL SCHOLAR SCORE ────────────────────────────────────
-      // Pure accumulation — no ratios, no averages, no caps
-      // All-time will always be >= monthly because every point ever earned counts
-      const overallScore=devoScore+assignScore+presenceScore+consistencyScore+transformScore;
+      // TOTAL EARNED
+      const totalEarned=devoScore+assignScore+presenceScore+sessionScore+consistencyScore+transformScore;
+
+      // ── SCHOLAR SCORE ─────────────────────────────────────────────
+      // Score = (earned / shared_max) × 1000
+      // Every boy divided by the SAME denominator → perfectly fair.
+      // Score out of 1000 gives fine-grained separation.
+      // Monthly will always differ meaningfully from all-time because
+      // the denominator shrinks to only what was available that month.
+      const overallScore=totalMaxPts>0
+        ? Math.round((totalEarned/totalMaxPts)*1000)
+        : 0;
+      const pct=totalMaxPts>0?Math.round((totalEarned/totalMaxPts)*100):0;
 
       return{
         id:uid2,name:u.name,role:u.role,cohort:u.cohort||'',
-        devoScore,assignScore,presenceScore,consistencyScore,transformScore,
-        overallScore,streak:maxStreak
+        devoScore,assignScore,presenceScore,sessionScore,
+        consistencyScore,transformScore,
+        totalEarned,totalMaxPts,overallScore,pct,streak:maxStreak
       };
     }).sort((a,b)=>b.overallScore-a.overallScore);
   }catch(e){
@@ -4088,12 +4150,13 @@ function renderLeaderboard(){
     const rank=i+1;
     const isMe=p.id===myId;
     const rankCls=rank===1?'lb-rank-1':rank===2?'lb-rank-2':rank===3?'lb-rank-3':'lb-rank-other';
-    const maxAll=Math.max(data[0].devoScore||1,1);
-    const devoW=Math.round((p.devoScore/(300))*100);
-    const assW=Math.round((p.assignScore/100)*100);
-    const presW=Math.round((p.presenceScore/100)*100);
-    const streakW=Math.round((p.consistencyScore/200)*100);
-    const transW=Math.round((p.transformScore/150)*100);
+    // Use the shared denominator stored on each entry for accurate bar widths
+    const maxD=p.totalMaxPts||1;
+    const devoW=Math.min(Math.round((p.devoScore/maxD)*100*6),100); // scaled for visibility
+    const assW=Math.min(Math.round((p.assignScore/maxD)*100*6),100);
+    const presW=Math.min(Math.round(((p.presenceScore+(p.sessionScore||0))/maxD)*100*6),100);
+    const streakW=Math.min(Math.round((p.consistencyScore/maxD)*100*6),100);
+    const transW=Math.min(Math.round((p.transformScore/maxD)*100*6),100);
     return`<div class="lb-row ${isMe?'mine':''}">
       <div class="lb-rank-num ${rankCls}">${rank}</div>
       <div class="lb-av">${(p.name||'K').charAt(0)}</div>
@@ -4102,15 +4165,15 @@ function renderLeaderboard(){
         <div class="lb-role">${p.role||'Scholar'} ${p.cohort?'· '+p.cohort:''}</div>
         <div class="lb-dims">
           <div class="lb-dim"><div class="lb-dim-lbl">📖 Devo</div><div class="lb-dim-bar"><div class="lb-dim-fill devo" style="width:${devoW}%"></div></div><div class="lb-dim-val">${p.devoScore}pts</div></div>
-          <div class="lb-dim"><div class="lb-dim-lbl">📝 Assign</div><div class="lb-dim-bar"><div class="lb-dim-fill assign" style="width:${assW}%"></div></div><div class="lb-dim-val">${p.assignScore}%</div></div>
-          <div class="lb-dim"><div class="lb-dim-lbl">🎯 Present</div><div class="lb-dim-bar"><div class="lb-dim-fill presence" style="width:${presW}%"></div></div><div class="lb-dim-val">${p.presenceScore}%</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">📝 Assign</div><div class="lb-dim-bar"><div class="lb-dim-fill assign" style="width:${assW}%"></div></div><div class="lb-dim-val">${p.assignScore}pts</div></div>
+          <div class="lb-dim"><div class="lb-dim-lbl">🎯 Present</div><div class="lb-dim-bar"><div class="lb-dim-fill presence" style="width:${presW}%"></div></div><div class="lb-dim-val">${p.presenceScore}pts</div></div>
           <div class="lb-dim"><div class="lb-dim-lbl">🔥 Streak</div><div class="lb-dim-bar"><div class="lb-dim-fill streak" style="width:${streakW}%"></div></div><div class="lb-dim-val">${p.streak}d</div></div>
           <div class="lb-dim"><div class="lb-dim-lbl">🌱 Transform</div><div class="lb-dim-bar"><div class="lb-dim-fill transform" style="width:${transW}%"></div></div><div class="lb-dim-val">${p.transformScore}pts</div></div>
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <div class="lb-score-big">${p.overallScore}</div>
-        <div class="lb-score-label">Scholar<br>Score</div>
+        <div class="lb-score-label">${p.pct}%<br>of max</div>
       </div>
     </div>`;
   }).join('');
@@ -4170,11 +4233,11 @@ async function loadDashLeaderboard(){
           <div style="font-size:10px;font-weight:700;color:var(--muted);">📖 Devotional</div>
         </div>
         <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--purple-l),#DDD8FF);border-radius:10px;border:1px solid rgba(91,61,200,.2);">
-          <div style="font-size:20px;font-weight:900;color:var(--purple);">${myEntry.assignScore}%</div>
+          <div style="font-size:20px;font-weight:900;color:var(--purple);">${myEntry.assignScore}</div>
           <div style="font-size:10px;font-weight:700;color:var(--muted);">📝 Assignment</div>
         </div>
         <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--green-l),#C8EFC8);border-radius:10px;border:1px solid rgba(30,138,80,.2);">
-          <div style="font-size:20px;font-weight:900;color:var(--green);">${myEntry.presenceScore}%</div>
+          <div style="font-size:20px;font-weight:900;color:var(--green);">${myEntry.presenceScore}</div>
           <div style="font-size:10px;font-weight:700;color:var(--muted);">🎯 Presence</div>
         </div>
         <div style="text-align:center;padding:12px;background:linear-gradient(135deg,var(--org-pale),#FFE0C0);border-radius:10px;border:1px solid rgba(240,124,0,.2);">
@@ -4187,7 +4250,7 @@ async function loadDashLeaderboard(){
         </div>
         <div style="text-align:center;padding:12px;background:linear-gradient(135deg,rgba(107,63,160,.1),rgba(74,44,140,.15));border-radius:10px;border:1.5px solid rgba(107,63,160,.3);">
           <div style="font-size:22px;font-weight:900;color:#4A2C8C;">${myEntry.overallScore}</div>
-          <div style="font-size:10px;font-weight:700;color:var(--muted);">⭐ Total Score</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">⭐ ${myEntry.pct}% of max</div>
         </div>
       </div>
       <button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;width:100%;" onclick="nav('leaderboard')">See Full Leaderboard 🏆</button>
