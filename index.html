@@ -3935,66 +3935,63 @@ async function computeLeaderboard(mode){
     ]);
     const now=new Date();
     const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+
+    // inWindow: filter to current month (monthly) or all time (alltime)
     const inWindow=(dateStr)=>{
       if(!dateStr)return false;
       const d=new Date(dateStr);
       if(isNaN(d))return false;
-      if(mode==='monthly')return d>=monthStart;
-      return true;
+      return mode==='monthly'?d>=monthStart:true;
     };
 
     const students=users.filter(u=>u.role==='user'&&u.status==='active');
 
     // ═══════════════════════════════════════════════════════════════
-    //  SHARED DENOMINATOR
-    //  The SAME maximum is applied to every boy — no one is penalised
-    //  for joining late or missing an activity they weren't told about.
-    //  Denominator = total points that were available to ALL students
-    //  within the time window.
+    //  SHARED DENOMINATOR — same for every boy in the window
+    //  Used ONLY for the overall % display, not for ranking.
+    //  Ranking uses raw accumulated points (totalEarned).
     // ═══════════════════════════════════════════════════════════════
 
-    // 1. DEVOTIONAL max — unique devo days × 10 pts each
+    // Devotional max: unique devo days × 10 pts
     const devoDatesInWindow=[...new Set(
       devos.filter(d=>inWindow(d.date)).map(d=>String(d.date).substring(0,10))
     )];
     const maxDevoPts=devoDatesInWindow.length*10;
 
-    // 2. ASSIGNMENT max — sum of maxScore of all assignments open in window
+    // Assignment max: sum of maxScore of all assignments in window
     const assignsInWindow=assign.filter(a=>inWindow(a.openDate||a.createdAt));
-    const maxAssignPts=assignsInWindow.reduce((s,a)=>s+Number(a.maxScore||100),0);
+    const maxAssignPts=assignsInWindow.reduce((s,a)=>s+(Number(a.maxScore)||100),0);
 
-    // 3. PRESENCE max — unique sessions (colId) that had any attendance recorded × 15 pts
+    // Presence max: unique sessions that had attendance recorded × 15 pts
     const sessionsInWindow=[...new Set(
       attData.filter(a=>(a.type==='present'||a.type==='presence')&&inWindow(a.date))
              .map(a=>String(a.colId||a.date))
     )];
     const maxPresencePts=sessionsInWindow.length*15;
 
-    // 4. SESSION SCORE max — unique scored sessions × 100 pts
+    // Session score max: unique scored sessions × 100 pts
     const scoredSessionsInWindow=[...new Set(
       attData.filter(a=>a.type==='session'&&a.value!==''&&inWindow(a.date))
              .map(a=>String(a.colId||a.date))
     )];
     const maxSessionPts=scoredSessionsInWindow.length*100;
 
-    // 5. STREAK max — total unique activity days in window × 5 pts
-    //    A perfect boy participates every single day any activity exists
+    // Streak max: total unique activity days in window × 5 pts
     const allActivityDates=[...new Set([
       ...devoDatesInWindow,
       ...subs.filter(s=>inWindow(s.submittedAt)).map(s=>String(s.submittedAt).substring(0,10)),
     ].filter(Boolean))].sort();
     const maxStreakPts=allActivityDates.length*5;
 
-    // 6. TRANSFORMATION max — total RC posts by anyone in window × 30 pts
-    //    Every boy had the same opportunity to post
+    // Transformation max: total RC posts by anyone × 30 pts
     const totalRCInWindow=rcPosts.filter(p=>inWindow(p.postedAt)).length;
-    const maxTransformPts=Math.max(totalRCInWindow,0)*30;
+    const maxTransformPts=totalRCInWindow*30;
 
-    // TOTAL SHARED MAXIMUM (denominator)
+    // TOTAL SHARED MAX (denominator for % only)
     const totalMaxPts=maxDevoPts+maxAssignPts+maxPresencePts+maxSessionPts+maxStreakPts+maxTransformPts;
 
     // ═══════════════════════════════════════════════════════════════
-    //  PER-STUDENT EARNED POINTS
+    //  PER-STUDENT EARNED POINTS (raw accumulation — no division)
     // ═══════════════════════════════════════════════════════════════
     return students.map(u=>{
       const uid2=String(u.id);
@@ -4020,7 +4017,7 @@ async function computeLeaderboard(mode){
       ).length;
       const presenceScore=presenceCount*15;
 
-      // 4. Session score — actual score per session (out of 100)
+      // 4. Session score — actual score entered per session (out of 100)
       const sessionScore=myAtt.filter(a=>a.type==='session'&&a.value!=='')
         .reduce((acc,a)=>acc+Math.min(Number(a.value)||0,100),0);
 
@@ -4040,29 +4037,26 @@ async function computeLeaderboard(mode){
       }
       const consistencyScore=maxStreak*5;
 
-      // 6. Transformation — report-a-change posts × 30 pts
+      // 6. Transformation — report-a-change entries × 30 pts
       const myRC=rcPosts.filter(p=>String(p.studentId)===uid2&&inWindow(p.postedAt));
       const transformScore=myRC.length*30;
 
-      // TOTAL EARNED
+      // RAW TOTAL — this is what ranks boys on the leaderboard
+      // All-time always > monthly because more activities accumulate
       const totalEarned=devoScore+assignScore+presenceScore+sessionScore+consistencyScore+transformScore;
 
-      // ── SCHOLAR SCORE ─────────────────────────────────────────────
-      // Score = (earned / shared_max) × 1000
-      // Every boy divided by the SAME denominator → perfectly fair.
-      // Score out of 1000 gives fine-grained separation.
-      // Monthly will always differ meaningfully from all-time because
-      // the denominator shrinks to only what was available that month.
-      const overallScore=totalMaxPts>0
-        ? Math.round((totalEarned/totalMaxPts)*1000)
-        : 0;
+      // OVERALL % — fairness metric shown alongside score
+      // Monthly: earned this month ÷ available this month × 100
+      // All-time: earned ever ÷ available ever × 100
       const pct=totalMaxPts>0?Math.round((totalEarned/totalMaxPts)*100):0;
 
       return{
         id:uid2,name:u.name,role:u.role,cohort:u.cohort||'',
         devoScore,assignScore,presenceScore,sessionScore,
         consistencyScore,transformScore,
-        totalEarned,totalMaxPts,overallScore,pct,streak:maxStreak
+        totalEarned,totalMaxPts,
+        overallScore:totalEarned,  // ranking = raw sum, no division
+        pct,streak:maxStreak
       };
     }).sort((a,b)=>b.overallScore-a.overallScore);
   }catch(e){
@@ -4173,7 +4167,7 @@ function renderLeaderboard(){
       </div>
       <div style="text-align:right;flex-shrink:0;">
         <div class="lb-score-big">${p.overallScore}</div>
-        <div class="lb-score-label">${p.pct}%<br>of max</div>
+        <div class="lb-score-label">pts · ${p.pct}%<br>of available</div>
       </div>
     </div>`;
   }).join('');
@@ -4250,7 +4244,7 @@ async function loadDashLeaderboard(){
         </div>
         <div style="text-align:center;padding:12px;background:linear-gradient(135deg,rgba(107,63,160,.1),rgba(74,44,140,.15));border-radius:10px;border:1.5px solid rgba(107,63,160,.3);">
           <div style="font-size:22px;font-weight:900;color:#4A2C8C;">${myEntry.overallScore}</div>
-          <div style="font-size:10px;font-weight:700;color:var(--muted);">⭐ ${myEntry.pct}% of max</div>
+          <div style="font-size:10px;font-weight:700;color:var(--muted);">⭐ ${myEntry.pct}% of available</div>
         </div>
       </div>
       <button class="btn btn-sm" style="background:linear-gradient(135deg,#4A2C8C,#6B3FA0);color:white;border:none;width:100%;" onclick="nav('leaderboard')">See Full Leaderboard 🏆</button>
